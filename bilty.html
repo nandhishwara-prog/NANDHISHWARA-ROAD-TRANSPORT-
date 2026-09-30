@@ -16,15 +16,14 @@
 <div id="app" style="display:none">
 <div class="box"><h2 class="title">Create New Bilty / LR</h2>
 <div class="grid">
-<div><label>LR Number</label><input id="lr_no" readonly></div><div><label>LR Date</label><input id="lr_date" type="date"></div>
+<div><label>LR Number</label><input id="lr_no" value="NRT/45243"></div><div><label>LR Date</label><input id="lr_date" type="date"></div>
 <div><label>Vehicle Number</label><input id="vehicle_no" placeholder="TS / TG 00 XX 0000"></div><div><label>Delivery Type</label><select id="delivery_type"><option>One Day Delivery</option><option>Door Delivery</option><option>Regular Transport</option></select></div>
+<div><label>Freight Type</label><select id="freight_type"><option value="TO PAY">TO PAY</option><option value="PAID">PAID</option><option value="ON ACCOUNT">ON ACCOUNT</option></select></div>
 <div><label>From</label><input id="from_location" value="Hyderabad"></div><div><label>To</label><input id="to_location" placeholder="Destination"></div>
 <div><label>Consignor Name</label><input id="consignor_name"></div><div><label>Consignor Phone</label><input id="consignor_phone"></div>
 <div><label>Consignor GST</label><input id="consignor_gst"></div><div><label>Consignee Name</label><input id="consignee_name"></div>
 <div><label>Consignee Phone</label><input id="consignee_phone"></div><div><label>Consignee GST</label><input id="consignee_gst"></div>
-<div><label>Packages</label><input id="packages" type="number" min="0" value="1"></div><div><label>Weight (Kg)</label><input id="weight" type="number" min="0" step="0.01"></div>
-<div><label>Actual Weight</label><input id="actual_weight" type="number" min="0" step="0.01"></div><div><label>Charged Weight</label><input id="charged_weight" type="number" min="0" step="0.01"></div>
-<div class="full"><label>Goods Description</label><input id="goods" placeholder="Seeds / Auto Parts / Medicine / Machinery / General Goods"></div>
+<div><label>Packages</label><input id="packages" type="number" min="0" value="1"></div><div class="full"><label>Goods Description</label><input id="goods" placeholder="Seeds / Auto Parts / Medicine / Machinery / General Goods"></div>
 <div><label>Invoice No.</label><input id="invoice_no"></div><div><label>Invoice Value (₹)</label><input id="invoice_value" type="number" min="0" value="0"></div>
 <div><label>E-Way Bill No.</label><input id="eway_bill"></div><div><label>Delivery At</label><input id="delivery_at" placeholder="Godown / Door / Office"></div>
 <div><label>Freight (₹)</label><input id="freight" type="number" min="0" value="0"></div><div><label>Stationary (₹)</label><input id="stationary" type="number" min="0" value="0"></div>
@@ -33,19 +32,82 @@
 <div><label>Other (₹)</label><input id="other_charges" type="number" min="0" value="0"></div><div><label>GST Paid By</label><select id="gst_paid_by"><option>Not Applicable</option><option>Consignor</option><option>Consignee</option><option>NRT</option></select></div>
 <div class="full"><label>Remarks</label><textarea id="remarks"></textarea></div>
 </div><div class="actions"><button class="yellow" onclick="saveLR()">💾 Save LR</button><button class="blue" onclick="printLR()">🖨️ A4 3 Copies</button><button class="gray" onclick="clearForm()">New</button><button class="danger" onclick="logout()">Logout</button></div><div id="msg" class="msg"></div></div>
-<div class="box"><h2 class="title">LR Search / Records</h2><div class="search"><input id="search" placeholder="Search LR number, consignee, vehicle, destination..." oninput="loadRecords()"><button class="blue" onclick="loadRecords()">Search</button></div><div class="tablewrap"><table><thead><tr><th>LR</th><th>Date</th><th>Vehicle</th><th>To</th><th>Consignee</th><th>Status</th><th>Print</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+<div class="box"><h2 class="title">LR Search / Records</h2><div class="search"><input id="search" placeholder="Search LR number, consignor, consignee, destination..." oninput="loadRecords()"><button class="blue" onclick="loadRecords()">Search</button></div><div class="tablewrap"><table><thead><tr><th>LR</th><th>Date</th><th>Consignor</th><th>To</th><th>Consignee</th><th>Status</th><th>Print</th><th>Edit</th></tr></thead><tbody id="rows"></tbody></table></div></div>
 </div></div>
 <div id="printArea" class="printarea"></div>
 <script>
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);let current=null;const $=id=>document.getElementById(id);function configured(){return SUPABASE_URL.startsWith("http")&&!SUPABASE_PUBLISHABLE_KEY.includes("PASTE_")}function today(){return new Date().toISOString().slice(0,10)}
-async function login(){if(!configured())return setLogin("First fill supabase-config.js with Project URL and Publishable Key.");let{data,error}=await sb.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error)return setLogin(error.message);setLogin("Logged in.");showApp()}async function signup(){if(!configured())return setLogin("First configure Supabase.");let{error}=await sb.auth.signUp({email:$('email').value,password:$('password').value});setLogin(error?error.message:"Account created. Check email if confirmation is enabled.")}function setLogin(x){$('loginMsg').textContent=x}async function logout(){await sb.auth.signOut();$('app').style.display='none';$('loginBox').style.display='block'}async function showApp(){let{data:{session}}=await sb.auth.getSession();if(!session)return;$('loginBox').style.display='none';$('app').style.display='block';$('lr_date').value=today();$('lr_no').value='NRT/45243';loadRecords()}async function nextLR(){let{data,error}=await sb.rpc('next_nrt_lr_no');if(error){$('msg').textContent=error.message;return null}$('lr_no').value=data;return data}function val(id){return $(id).value.trim()}function num(id){return Number(val(id)||0)}
-function makeRow(){return{lr_no:val('lr_no'),lr_date:val('lr_date'),vehicle_no:val('vehicle_no'),from_location:val('from_location'),to_location:val('to_location'),delivery_type:val('delivery_type'),consignor_name:val('consignor_name'),consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),consignee_phone:val('consignee_phone'),packages:num('packages'),weight:num('weight'),goods:val('goods'),freight:num('freight'),other_charges:num('other_charges'),remarks:val('remarks'),status:'Booked'}}
-async function saveLR(){let{data:generated,error:genError}=await sb.rpc('next_nrt_lr_no');if(genError){$('msg').textContent=genError.message;return}$('lr_no').value=generated;let row=makeRow();let{error}=await sb.from('lrs').insert(row);if(error){$('msg').textContent=error.message;return}$('msg').textContent=`${row.lr_no} saved successfully.`;printLR();loadRecords()}
-async function loadRecords(){if(!(await sb.auth.getSession()).data.session)return;let q=val('search'),query=sb.from('lrs').select('*').order('id',{ascending:false}).limit(100);if(q)query=query.or(`lr_no.ilike.%${q}%,vehicle_no.ilike.%${q}%,to_location.ilike.%${q}%,consignee_name.ilike.%${q}%`);let{data,error}=await query;if(error){$('rows').innerHTML=`<tr><td colspan="7">${error.message}</td></tr>`;return}$('rows').innerHTML=(data||[]).map(r=>`<tr><td><b>${r.lr_no}</b></td><td>${r.lr_date||''}</td><td>${r.vehicle_no||''}</td><td>${r.to_location||''}</td><td>${r.consignee_name||''}</td><td><span class="badge">${r.status}</span></td><td><button class="gray" onclick='printRecord(${JSON.stringify(r).replace(/'/g,'&#39;')})'>Print</button></td></tr>`).join('')}
-function clearForm(){['vehicle_no','to_location','consignor_name','consignor_phone','consignor_gst','consignee_name','consignee_phone','consignee_gst','actual_weight','charged_weight','goods','invoice_no','eway_bill','delivery_at','remarks'].forEach(x=>$(x).value='');['packages'].forEach(x=>$(x).value=1);['weight','invoice_value','freight','stationary','hamali','door_pickup','door_delivery','insurance','other_charges'].forEach(x=>$(x).value=0);$('lr_date').value=today();$('lr_no').value='Next LR will be generated on Save';$('msg').textContent=''}
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);let current=null;let editingId=null;const $=id=>document.getElementById(id);function configured(){return SUPABASE_URL.startsWith("http")&&!SUPABASE_PUBLISHABLE_KEY.includes("PASTE_")}function today(){return new Date().toISOString().slice(0,10)}
+async function login(){if(!configured())return setLogin("First fill supabase-config.js with Project URL and Publishable Key.");let{data,error}=await sb.auth.signInWithPassword({email:$('email').value,password:$('password').value});if(error)return setLogin(error.message);setLogin("Logged in.");showApp()}async function signup(){if(!configured())return setLogin("First configure Supabase.");let{error}=await sb.auth.signUp({email:$('email').value,password:$('password').value});setLogin(error?error.message:"Account created. Check email if confirmation is enabled.")}function setLogin(x){$('loginMsg').textContent=x}async function logout(){await sb.auth.signOut();$('app').style.display='none';$('loginBox').style.display='block'}async function showApp(){let{data:{session}}=await sb.auth.getSession();if(!session)return;$('loginBox').style.display='none';$('app').style.display='block';$('lr_date').value=today();let{count}=await sb.from('lrs').select('id',{count:'exact',head:true});if((count||0)>0){await nextLR();$('lr_no').readOnly=true}else{$('lr_no').value='NRT/45243';$('lr_no').readOnly=false}$('msg').textContent='';loadRecords()}async function nextLR(){let{data,error}=await sb.rpc('next_nrt_lr_no');if(error){$('msg').textContent=error.message;return null}$('lr_no').value=data;return data}function val(id){return $(id).value.trim()}function num(id){return Number(val(id)||0)}
+function makeRow(){return{lr_no:val('lr_no'),lr_date:val('lr_date'),vehicle_no:val('vehicle_no'),from_location:val('from_location'),to_location:val('to_location'),delivery_type:val('delivery_type'),freight_type:val('freight_type'),consignor_name:val('consignor_name'),consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),consignee_phone:val('consignee_phone'),packages:num('packages'),goods:val('goods'),freight:num('freight'),other_charges:num('other_charges'),remarks:val('remarks'),status:'Booked'}}
+async function saveLR(){
+  let row=makeRow();
+  if(editingId){
+    let{error}=await sb.from('lrs').update(row).eq('id',editingId).select();
+    if(error){$('msg').textContent=error.message;return}
+    $('msg').textContent=`${row.lr_no} updated successfully.`;
+    editingId=null;
+    $('lr_no').readOnly=true;
+    printLR();
+    loadRecords();
+    return;
+  }
+  let{count}=await sb.from('lrs').select('id',{count:'exact',head:true});
+  let first=(count||0)===0;
+  let entered=val('lr_no');
+  if(first){
+    if(!/^NRT\/\d+$/.test(entered)){
+      $('msg').textContent='First LR Number must be in NRT/45243 format.';
+      return;
+    }
+    let{error:reserveError}=await sb.rpc('next_nrt_lr_no');
+    if(reserveError){$('msg').textContent=reserveError.message;return}
+  }else{
+    let{data:generated,error:genError}=await sb.rpc('next_nrt_lr_no');
+    if(genError){$('msg').textContent=genError.message;return}
+    $('lr_no').value=generated;
+    row=makeRow();
+  }
+  let{error}=await sb.from('lrs').insert(row);
+  if(error){$('msg').textContent=error.message;return}
+  $('lr_no').readOnly=true;
+  $('msg').textContent=`${row.lr_no} saved successfully.`;
+  printLR();
+  loadRecords();
+}
+async function loadRecords(){
+  if(!(await sb.auth.getSession()).data.session)return;
+  let q=val('search'),query=sb.from('lrs').select('*').order('id',{ascending:false}).limit(100);
+  if(q)query=query.or(`lr_no.ilike.%${q}%,consignor_name.ilike.%${q}%,to_location.ilike.%${q}%,consignee_name.ilike.%${q}%`);
+  let{data,error}=await query;
+  if(error){
+    $('rows').innerHTML=`<tr><td colspan="8">${error.message}</td></tr>`;
+    return;
+  }
+  $('rows').innerHTML=(data||[]).map(r=>`<tr>
+    <td><b>${esc(r.lr_no)}</b></td>
+    <td>${esc(r.lr_date||'')}</td>
+    <td>${esc(r.consignor_name||'')}</td>
+    <td>${esc(r.to_location||'')}</td>
+    <td>${esc(r.consignee_name||'')}</td>
+    <td><span class="badge">${esc(r.status||'Booked')}</span></td>
+    <td><button class="gray" onclick='printRecord(${JSON.stringify(r).replace(/'/g,'&#39;')})'>Print</button></td>
+    <td><button class="blue" onclick='editRecord(${JSON.stringify(r).replace(/'/g,'&#39;')})'>Edit</button></td>
+  </tr>`).join('')
+}
+function editRecord(r){
+  editingId=r.id;
+  const fields=['lr_no','lr_date','vehicle_no','from_location','to_location','consignor_name','consignor_phone','consignee_name','consignee_phone','goods','freight','other_charges'];
+  fields.forEach(k=>{if($(k))$(k).value=(r[k]??'')});
+  if($('freight_type'))$('freight_type').value=r.freight_type||'TO PAY';
+  if($('packages'))$('packages').value=r.packages??1;
+  $('lr_no').readOnly=true;
+  $('msg').textContent=`Editing ${r.lr_no}. Make changes and press Save LR.`;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function clearForm(){editingId=null;['vehicle_no','to_location','consignor_name','consignor_phone','consignor_gst','consignee_name','consignee_phone','consignee_gst','goods','invoice_no','eway_bill','delivery_at','remarks'].forEach(x=>$(x).value='');['packages'].forEach(x=>$(x).value=1);['invoice_value','freight','stationary','hamali','door_pickup','door_delivery','insurance','other_charges'].forEach(x=>$(x).value=0);$('lr_date').value=today();$('lr_no').value='';$('freight_type').value='TO PAY';$('lr_no').readOnly=true;$('msg').textContent='Next LR will be generated automatically on Save'}
 function printLR(){renderPrint(makePrintObject());window.print()}function printRecord(r){renderPrint(r);window.print()}
-function makePrintObject(){return{lr_no:val('lr_no'),lr_date:val('lr_date'),vehicle_no:val('vehicle_no'),from_location:val('from_location'),to_location:val('to_location'),delivery_type:val('delivery_type'),consignor_name:val('consignor_name'),consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),consignee_phone:val('consignee_phone'),packages:val('packages'),weight:val('weight'),actual_weight:val('actual_weight')||val('weight'),charged_weight:val('charged_weight')||val('weight'),goods:val('goods'),invoice_no:val('invoice_no'),invoice_value:val('invoice_value'),eway_bill:val('eway_bill'),delivery_at:val('delivery_at'),freight:val('freight'),stationary:val('stationary'),hamali:val('hamali'),door_pickup:val('door_pickup'),door_delivery:val('door_delivery'),insurance:val('insurance'),other_charges:val('other_charges'),gst_paid_by:val('gst_paid_by'),remarks:val('remarks')}}
+function makePrintObject(){return{lr_no:val('lr_no'),lr_date:val('lr_date'),vehicle_no:val('vehicle_no'),from_location:val('from_location'),to_location:val('to_location'),delivery_type:val('delivery_type'),freight_type:val('freight_type'),consignor_name:val('consignor_name'),consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),consignee_phone:val('consignee_phone'),packages:val('packages'),goods:val('goods'),invoice_no:val('invoice_no'),invoice_value:val('invoice_value'),eway_bill:val('eway_bill'),delivery_at:val('delivery_at'),freight:val('freight'),stationary:val('stationary'),hamali:val('hamali'),door_pickup:val('door_pickup'),door_delivery:val('door_delivery'),insurance:val('insurance'),other_charges:val('other_charges'),gst_paid_by:val('gst_paid_by'),remarks:val('remarks')}}
 function money(x){return '₹'+Number(x||0).toLocaleString('en-IN')}function esc(x){return String(x??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function renderPrint(r){let copies=['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORTER COPY'];let total=['freight','stationary','hamali','door_pickup','door_delivery','insurance','other_charges'].reduce((a,k)=>a+Number(r[k]||0),0);let goods=esc(r.goods);$('printArea').innerHTML=`<div class="sheet">${copies.map((c,i)=>`<div class="copy"><div class="copy-header"><div class="company">NANDHISHWARA ROAD TRANSPORT</div><div class="address">Plot No 1, Block No 3, Autonagar, Hyderabad, Telangana 500070</div><div class="gst">Mobile No : 9885410410 / 9989581732 &nbsp;&nbsp; GST : 36HSYPK0996J1ZM</div><div class="copyname">ONE DAY DELIVERY SERVICE</div><div class="copytype">${c}</div></div><div class="meta"><div><b>Date:</b> ${esc(r.lr_date)}</div><div><b>LR No:</b> <b>${esc(r.lr_no)}</b></div><div><b>Freight Type:</b> TO PAY</div></div><div class="main"><div class="panel"><div class="p"><b>FROM:</b> ${esc(r.from_location)}</div><div class="p"><b>Consignor:</b> ${esc(r.consignor_name)}<br><b>Mobile No:</b> ${esc(r.consignor_phone)}</div><div class="p"><b>Qty:</b> ${esc(r.packages)}</div><div class="goods-title"><div>Qty.</div><div>DESCRIPTION</div><div>Goods / Remarks</div></div><div class="goods-lines"><div class="goods-row"><div>${esc(r.packages)}</div><div>${goods}</div><div>${esc(r.remarks)}</div></div></div></div><div class="panel"><div class="p"><b>TO:</b> ${esc(r.to_location)}</div><div class="p"><b>Consignee:</b> ${esc(r.consignee_name)}<br><b>Mobile No:</b> ${esc(r.consignee_phone)}</div><div class="p"><b>INV:</b> ${esc(r.invoice_no)} &nbsp;&nbsp; <b>VALUE:</b> ${money(r.invoice_value)}</div><div class="p"><b>Actual Wt:</b> ${esc(r.actual_weight)} &nbsp;&nbsp; <b>Charged Wt:</b> ${esc(r.charged_weight)}</div><div class="p"><b>Delivery At:</b> ${esc(r.delivery_at)}</div><div class="p"><b>Ewaybill No.:</b> ${esc(r.eway_bill)}</div></div><div class="panel"><div class="chargebox"><div><b>Freight</b></div><div>${money(r.freight)}</div><div><b>Stationary</b></div><div>${money(r.stationary)}</div><div><b>Hamali</b></div><div>${money(r.hamali)}</div><div><b>Door Pickup</b></div><div>${money(r.door_pickup)}</div><div><b>Door Dly.</b></div><div>${money(r.door_delivery)}</div><div><b>Insurance</b></div><div>${money(r.insurance)}</div><div><b>Other</b></div><div>${money(r.other_charges)}</div></div><div class="p total">Total <span style="float:right">${money(total)}</span></div><div class="p"><b>Delivery:</b> ${esc(r.delivery_type)}</div></div></div><div class="foot"><div class="footline"><b>Remark:</b> ${esc(r.remarks)}</div><div class="footline"><b>GST Paid By:</b> ${esc(r.gst_paid_by)}</div><div class="nonneg">Non Negotiable</div><div class="footline small">Goods booked at Owner's risk and said to contain basis.</div><div class="signs"><span>Consignor Signature</span><span>Receiver Signature</span><span>For NRT</span></div></div></div>`).join('')}</div>`}
+function renderPrint(r){let copies=['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORTER COPY'];let total=['freight','stationary','hamali','door_pickup','door_delivery','insurance','other_charges'].reduce((a,k)=>a+Number(r[k]||0),0);let goods=esc(r.goods);$('printArea').innerHTML=`<div class="sheet">${copies.map((c,i)=>`<div class="copy"><div class="copy-header"><div class="company">NANDHISHWARA ROAD TRANSPORT</div><div class="address">Plot No 1, Block No 3, Autonagar, Hyderabad, Telangana 500070</div><div class="gst">Mobile No : 9885410410 / 9989581732 &nbsp;&nbsp; GST : 36HSYPK0996J1ZM</div><div class="copyname">ONE DAY DELIVERY SERVICE</div><div class="copytype">${c}</div></div><div class="meta"><div><b>Date:</b> ${esc(r.lr_date)}</div><div><b>LR No:</b> <b>${esc(r.lr_no)}</b></div><div><b>Freight Type:</b> ${esc(r.freight_type||"TO PAY")}</div></div><div class="main"><div class="panel"><div class="p"><b>FROM:</b> ${esc(r.from_location)}</div><div class="p"><b>Consignor:</b> ${esc(r.consignor_name)}<br><b>Mobile No:</b> ${esc(r.consignor_phone)}</div><div class="p"><b>Qty:</b> ${esc(r.packages)}</div><div class="goods-title"><div>Qty.</div><div>DESCRIPTION</div><div>Goods / Remarks</div></div><div class="goods-lines"><div class="goods-row"><div>${esc(r.packages)}</div><div>${goods}</div><div>${esc(r.remarks)}</div></div></div></div><div class="panel"><div class="p"><b>TO:</b> ${esc(r.to_location)}</div><div class="p"><b>Consignee:</b> ${esc(r.consignee_name)}<br><b>Mobile No:</b> ${esc(r.consignee_phone)}</div><div class="p"><b>INV:</b> ${esc(r.invoice_no)} &nbsp;&nbsp; <b>VALUE:</b> ${money(r.invoice_value)}</div><div class="p"><b>Delivery At:</b> ${esc(r.delivery_at)}</div><div class="p"><b>Ewaybill No.:</b> ${esc(r.eway_bill)}</div></div><div class="panel"><div class="chargebox"><div><b>Freight</b></div><div>${money(r.freight)}</div><div><b>Stationary</b></div><div>${money(r.stationary)}</div><div><b>Hamali</b></div><div>${money(r.hamali)}</div><div><b>Door Pickup</b></div><div>${money(r.door_pickup)}</div><div><b>Door Dly.</b></div><div>${money(r.door_delivery)}</div><div><b>Insurance</b></div><div>${money(r.insurance)}</div><div><b>Other</b></div><div>${money(r.other_charges)}</div></div><div class="p total">Total <span style="float:right">${money(total)}</span></div><div class="p"><b>Delivery:</b> ${esc(r.delivery_type)}</div></div></div><div class="foot"><div class="footline"><b>Remark:</b> ${esc(r.remarks)}</div><div class="footline"><b>GST Paid By:</b> ${esc(r.gst_paid_by)}</div><div class="nonneg">Non Negotiable</div><div class="footline small">Goods booked at Owner's risk and said to contain basis.</div><div class="signs"><span>Consignor Signature</span><span>Receiver Signature</span><span>For NRT</span></div></div></div>`).join('')}</div>`}
 sb.auth.onAuthStateChange((event,session)=>{if(session)showApp()});if(configured())sb.auth.getSession().then(x=>{if(x.data.session)showApp()});else $('loginMsg').textContent='Supabase setup pending — configure the project keys first.';
 </script></body></html>
