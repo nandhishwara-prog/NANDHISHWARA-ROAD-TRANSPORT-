@@ -49,13 +49,13 @@ table{min-width:0;font-size:9px}th,td{font-size:9px;padding:4px}
 <div class="top">
   <div class="topin">
     <b>📊 NRT REPORTS</b>
-    <a href="index.html">← Website</a>
+    <a href="bilty.html">← Online Bilty</a>
   </div>
 </div>
 
 <div class="wrap">
 
-<div class="box" id="loginBox">
+<div class="box" id="loginBox" style="display:none">
   <h2 class="title">NRT Staff Login</h2>
   <div class="grid">
     <div><label>Email</label><input id="email" type="email" placeholder="NRT account email"></div>
@@ -126,7 +126,7 @@ table{min-width:0;font-size:9px}th,td{font-size:9px;padding:4px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <script>
-const sb = window.supabaseClient || window.sb || window.supabase;
+const sb = window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 
 function $(id){return document.getElementById(id)}
 function today(){return new Date().toISOString().slice(0,10)}
@@ -149,7 +149,11 @@ async function signup(){
 
 async function showApp(){
   const {data:{session}}=await sb.auth.getSession();
-  if(!session)return;
+  if(!session){
+    $('loginBox').style.display='block';
+    $('loginMsg').textContent='Please login from Online Bilty first.';
+    return;
+  }
   $('loginBox').style.display='none';
   $('app').style.display='block';
   $('fromDate').value=today();
