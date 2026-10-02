@@ -74,12 +74,64 @@ async function loadParties(){let{data}=await sb.from('lrs').select('consignor_na
 function row(){return{lr_no:$('lr_no').value,lr_date:$('lr_date').value,vehicle_no:$('vehicle_no').value,from_location:$('from_location').value,to_location:$('to_location').value,freight_type:$('freight_type').value,consignor_name:$('consignor_name').value,consignor_phone:$('consignor_phone').value,consignee_name:$('consignee_name').value,consignee_phone:$('consignee_phone').value,packages:+$('packages').value||0,weight:+$('weight').value||0,goods:$('goods').value,invoice_no:$('invoice_no').value,invoice_value:+$('invoice_value').value||0,freight:+$('freight').value||0,hamali:+$('hamali').value||0,other_charges:+$('other_charges').value||0,remarks:$('remarks').value,status:'Booked'}}
 async function saveLR(){let r=row();let q=editingId?sb.from('lrs').update(r).eq('id',editingId):sb.from('lrs').insert(r);let{error}=await q;if(error){msg(error.message);return}msg(`${r.lr_no} saved successfully.`);editingId=null;printLR();setTimeout(async()=>{$('lr_no').value=await nextLR()},300)}
 function clearForm(){editingId=null;$('lr_date').value=today();$('from_location').value='HYDERABAD';['vehicle_no','to_location','consignor_name','consignor_phone','consignee_name','consignee_phone','goods','invoice_no','remarks'].forEach(id=>$(id).value='');['packages','weight','invoice_value','freight','hamali','other_charges'].forEach(id=>$(id).value=0);nextLR().then(x=>$('lr_no').value=x)}
-function printLR(){
- let r=row();
+async function printLR(){
+
+    const params = new URLSearchParams(window.location.search);
+    const printId = params.get('print');
+
+    let r;
+
+    if(printId){
+
+        const {data, error} = await sb
+            .from('lrs')
+            .select('*')
+            .eq('id', printId)
+            .single();
+
+        if(error){
+            alert('LR data load failed: ' + error.message);
+            return;
+        }
+
+        if(!data){
+            alert('LR record not found');
+            return;
+        }
+
+        r = data;
+
+    }else{
+
+        r = row();
+
+ }
  let total=Number(r.freight||0)+Number(r.hamali||0)+Number(r.other_charges||0);
  let copies=['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORT COPY'];
  $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`<div class="copy"><div class="copyhead"><div class="brand"><div class="company">NANDHISHWARA ROAD TRANSPORT</div><div class="address">Plot No. 1, Block No. 8, Autonagar, Hyderabad, Telangana - 500070</div><div class="phone">Mobile : 9885410410 / 9989581732</div><div class="service">ONE DAY DELIVERY SERVICE</div></div><div class="side"><div class="sidetop"><div class="gstbox">GST No : 36HSYPK0996J1ZM</div><div class="copyname">${c}</div></div><div class="lrbox"><div>LR No : <b>${esc(r.lr_no)}</b></div><div>Date : <b>${esc(r.lr_date)}</b></div></div></div></div><div class="meta"><div>From : <b>${esc(r.from_location)}</b></div><div>To : <b>${esc(r.to_location)}</b></div><div>Freight Type : <b>${esc(r.freight_type||'TO PAY')}</b></div></div><div class="info"><div class="col"><div class="cell"><b>CONSIGNOR :</b> <span class="party">${esc(r.consignor_name)}</span><br><b>Mobile :</b> <span class="party">${esc(r.consignor_phone)}</span></div><div class="cell"><b>Qty :</b> <span class="party">${esc(r.packages)}</span> &nbsp; <b>Packing :</b> Bag / Box / Drums</div></div><div class="col"><div class="cell"><b>CONSIGNEE :</b> <span class="party">${esc(r.consignee_name)}</span><br><b>Mobile :</b> <span class="party">${esc(r.consignee_phone)}</span></div><div class="cell"><b>INV :</b> <b>${esc(r.invoice_no)}</b> &nbsp;&nbsp; <b>VALUE :</b> ${money(r.invoice_value)}</div></div><div class="col"><div class="cell"><b>Vehicle No :</b> ${esc(r.vehicle_no)}</div><div class="cell"><b>Packages :</b> ${esc(r.packages)}</div></div></div><div class="body"><div><div class="goodshead"><div>S.No.</div><div>Description</div><div>Qty.</div><div>Goods / Remarks</div></div><div class="goodsrow"><div>1</div><div>${esc(r.goods)}</div><div>${esc(r.packages)}</div><div>${esc(r.remarks)}</div></div></div><div class="charges"><div class="charge"><div>Freight</div><div>${money(r.freight)}</div></div><div class="charge"><div>Stationary</div><div>₹0</div></div><div class="charge"><div>Hamali</div><div>${money(r.hamali)}</div></div><div class="charge"><div>LR Charge</div><div>${money(r.other_charges)}</div></div><div class="charge"><div class="total">Total</div><div class="total">${money(total)}</div></div></div></div><div class="footer"><div class="remark"><b>Remarks :</b> ${esc(r.remarks)}<br><b>GST Paid By :</b> Not Applicable &nbsp;&nbsp; Goods booked at owner's risk and said to contain basis. Non Negotiable</div><div class="sign"><div class="signbox">Receiver's Sign :<br><br>________________________</div></div></div></div>`).join('')+'</div>';
  window.print();
 }
-window.addEventListener('load',async()=>{let{data:{session}}=await sb.auth.getSession();if(session)showApp()});
+window.addEventListener('load',async()=>{
+
+    let{data:{session}}=await sb.auth.getSession();
+
+    if(!session)return;
+
+    const params=new URLSearchParams(window.location.search);
+    const printId=params.get('print');
+
+    if(printId){
+
+        $('loginBox').style.display='none';
+        $('app').style.display='none';
+
+        await printLR();
+
+    }else{
+
+        showApp();
+
+    }
+
+});
 </script></body></html>
