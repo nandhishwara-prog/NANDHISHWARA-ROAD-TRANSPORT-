@@ -5,221 +5,47 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NRT Reports</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}
-.top{background:#073b8f;color:white;padding:14px 18px}
-.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center}
-.top b{font-size:20px}.top a{color:white;text-decoration:none}
-.wrap{max-width:1200px;margin:18px auto;padding:0 12px}
-.box{background:white;border:1px solid #d5dbe3;border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #00000012}
-.title{margin:0 0 14px;color:#073b8f}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-label{display:block;font-weight:bold;font-size:13px;margin-bottom:5px}
-input,select{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px;background:white}
-.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold;cursor:pointer}
-.blue{background:#073b8f;color:white}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:white}
-.msg{margin-top:8px;color:#b91c1c;font-weight:bold}
-.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
-.stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center;background:#fafcff}
-.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}
-.table-wrap{overflow:auto}
-table{width:100%;border-collapse:collapse;min-width:950px}
-th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}
-th{background:#eef5fb;color:#073b8f}
-.right{text-align:right}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}
+.top{background:#073b8f;color:white;padding:14px 18px}.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}.top b{font-size:20px}.top a{color:white;text-decoration:none}
+.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a{background:white;color:#073b8f;padding:9px 13px;border-radius:7px;font-weight:bold;text-decoration:none}
+.wrap{max-width:1200px;margin:18px auto;padding:0 12px}.box{background:white;border:1px solid #d5dbe3;border-radius:10px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px #00000012}.title{margin:0 0 14px;color:#073b8f}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}label{display:block;font-weight:bold;font-size:13px;margin-bottom:5px}
+input,select{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px;background:white}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold;cursor:pointer}.blue{background:#073b8f;color:white}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:white}.green{background:#16803c;color:white}
+.msg{margin-top:8px;color:#b91c1c;font-weight:bold}.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}.stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center;background:#fafcff}.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:950px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}
 #loginBox{max-width:600px;margin:35px auto}
-@media(max-width:800px){
-.grid{grid-template-columns:repeat(2,1fr)}
-.stats{grid-template-columns:repeat(3,1fr)}
-}
-@media(max-width:500px){
-.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}
-}
-@media print{
-body{background:white}.top,#loginBox,.filters,.actions,.no-print{display:none!important}
-.wrap{max-width:none;margin:0;padding:0}.box{border:0;box-shadow:none;padding:4px}
-table{min-width:0;font-size:9px}th,td{font-size:9px;padding:4px}
-.stats{grid-template-columns:repeat(6,1fr)}
-}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:500px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+@media print{body{background:white}.top,#loginBox,.filters,.actions,.no-print{display:none!important}.wrap{max-width:none;margin:0;padding:0}.box{border:0;box-shadow:none;padding:4px}table{min-width:0;font-size:9px}th,td{font-size:9px;padding:4px}.stats{grid-template-columns:repeat(6,1fr)}}
 </style>
 </head>
 <body>
-
-<div class="top">
-  <div class="topin">
-    <b>📊 NRT REPORTS</b>
-    <a href="bilty.html">← Online Bilty</a>
-  </div>
-</div>
-
+<div class="top"><div class="topin"><b>📊 NRT REPORTS</b><div class="nav"><a href="bilty.html">➕ New Bilty</a><a href="index.html">← Home</a></div></div></div>
 <div class="wrap">
-
 <div class="box" id="loginBox" style="display:none">
-  <h2 class="title">NRT Staff Login</h2>
-  <div class="grid">
-    <div><label>Email</label><input id="email" type="email" placeholder="NRT account email"></div>
-    <div><label>Password</label><input id="password" type="password" placeholder="Password"></div>
-  </div>
-  <div class="actions">
-    <button class="blue" onclick="login()">Login</button>
-    <button class="gray" onclick="signup()">Create account</button>
-  </div>
-  <div id="loginMsg" class="msg"></div>
-</div>
-
+<h2 class="title">NRT Staff Login</h2>
+<div class="grid"><div><label>Email</label><input id="email" type="email" placeholder="NRT account email"></div><div><label>Password</label><input id="password" type="password" placeholder="Password"></div></div>
+<div class="actions"><button class="blue" onclick="login()">Login</button><button class="gray" onclick="signup()">Create account</button></div><div id="loginMsg" class="msg"></div></div>
 <div id="app" style="display:none">
-
-<div class="box filters">
-  <h2 class="title">LR Reports</h2>
-  <div class="grid">
-    <div><label>From Date</label><input id="fromDate" type="date"></div>
-    <div><label>To Date</label><input id="toDate" type="date"></div>
-    <div><label>LR Number</label><input id="lrSearch" placeholder="NRT/45243"></div>
-    <div><label>Status</label>
-      <select id="status">
-        <option value="">All Status</option>
-        <option>Booked</option>
-        <option>In Transit</option>
-        <option>Delivered</option>
-        <option>Cancelled</option>
-      </select>
-    </div>
-  </div>
-  <div class="actions">
-    <button class="blue" onclick="loadReport()">🔎 Search Report</button>
-    <button class="gray" onclick="clearFilters()">Clear</button>
-    <button class="yellow" onclick="window.print()">🖨️ Print / PDF</button>
-  </div>
-  <div id="msg" class="msg"></div>
-</div>
-
-<div class="box">
-  <div class="stats">
-    <div class="stat"><b id="count">0</b><span>Total LRs</span></div>
-    <div class="stat"><b id="packages">0</b><span>Packages</span></div>
-    <div class="stat"><b id="weight">0</b><span>Weight</span></div>
-    <div class="stat"><b id="freight">₹0</b><span>Freight</span></div>
-    <div class="stat"><b id="other">₹0</b><span>Other Charges</span></div>
-    <div class="stat"><b id="total">₹0</b><span>Total</span></div>
-  </div>
-</div>
-
-<div class="box">
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>LR No.</th><th>Date</th><th>Vehicle</th><th>From</th><th>To</th>
-          <th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th>
-          <th>Freight</th><th>Other</th><th>Status</th>
-        </tr>
-      </thead>
-      <tbody id="rows"></tbody>
-    </table>
-  </div>
-</div>
-
-</div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
+<div class="box filters"><h2 class="title">LR Reports</h2>
+<div class="grid"><div><label>From Date</label><input id="fromDate" type="date"></div><div><label>To Date</label><input id="toDate" type="date"></div><div><label>LR Number</label><input id="lrSearch" placeholder="NRT/45243"></div><div><label>Status</label><select id="status"><option value="">All Status</option><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div></div>
+<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search Report</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="window.print()">🖨️ Print / PDF</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div>
+<div id="msg" class="msg"></div></div>
+<div class="box"><div class="stats"><div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="weight">0</b><span>Weight</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="other">₹0</b><span>Other Charges</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div></div></div>
+<div class="box"><div class="table-wrap"><table><thead><tr><th>LR No.</th><th>Date</th><th>Vehicle</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>Other</th><th>Status</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+</div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 <script>
-const sb = window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
-
-function $(id){return document.getElementById(id)}
-function today(){return new Date().toISOString().slice(0,10)}
-
-async function login(){
-  const {error}=await sb.auth.signInWithPassword({
-    email:$('email').value.trim(),
-    password:$('password').value
-  });
-  if(error){$('loginMsg').textContent=error.message;return}
-  showApp();
-}
-
-async function signup(){
-  const email=$('email').value.trim(), password=$('password').value;
-  if(!email||!password){$('loginMsg').textContent='Enter email and password';return}
-  const {error}=await sb.auth.signUp({email,password});
-  $('loginMsg').textContent=error ? error.message : 'Account created. Check your email if confirmation is required.';
-}
-
-async function showApp(){
-  const {data:{session}}=await sb.auth.getSession();
-  if(!session){
-    $('loginBox').style.display='block';
-    $('loginMsg').textContent='Please login from Online Bilty first.';
-    return;
-  }
-  $('loginBox').style.display='none';
-  $('app').style.display='block';
-  $('fromDate').value=today();
-  $('toDate').value=today();
-  loadReport();
-}
-
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+function $(id){return document.getElementById(id)} function today(){return new Date().toISOString().slice(0,10)}
+async function login(){const{error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('loginMsg').textContent=error.message;return}showApp()}
+async function signup(){const email=$('email').value.trim(),password=$('password').value;if(!email||!password){$('loginMsg').textContent='Enter email and password';return}const{error}=await sb.auth.signUp({email,password});$('loginMsg').textContent=error?error.message:'Account created. Check your email if confirmation is required.'}
+async function showApp(){const{data:{session}}=await sb.auth.getSession();if(!session){$('loginBox').style.display='block';$('loginMsg').textContent='Please login from Online Bilty first.';return}$('loginBox').style.display='none';$('app').style.display='block';$('fromDate').value=today();$('toDate').value=today();loadReport()}
 function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
-
-async function loadReport(){
-  $('msg').textContent='Loading...';
-  let q=sb.from('lrs').select('*').order('lr_date',{ascending:false}).order('id',{ascending:false});
-
-  const f=$('fromDate').value, t=$('toDate').value, lr=$('lrSearch').value.trim(), st=$('status').value;
-  if(f) q=q.gte('lr_date',f);
-  if(t) q=q.lte('lr_date',t);
-  if(lr) q=q.ilike('lr_no','%'+lr+'%');
-  if(st) q=q.eq('status',st);
-
-  const {data,error}=await q;
-  if(error){$('msg').textContent=error.message;return}
-
-  let packages=0,weight=0,freight=0,other=0;
-  $('rows').innerHTML=(data||[]).map(x=>{
-    packages+=Number(x.packages||0);
-    weight+=Number(x.weight||0);
-    freight+=Number(x.freight||0);
-    other+=Number(x.other_charges||0);
-    return `<tr>
-      <td><b>${esc(x.lr_no)}</b></td>
-      <td>${esc(x.lr_date)}</td>
-      <td>${esc(x.vehicle_no)}</td>
-      <td>${esc(x.from_location)}</td>
-      <td>${esc(x.to_location)}</td>
-      <td>${esc(x.consignor_name)}</td>
-      <td>${esc(x.consignee_name)}</td>
-      <td>${x.packages||0}</td>
-      <td>${x.weight||0}</td>
-      <td class="right">${money(x.freight)}</td>
-      <td class="right">${money(x.other_charges)}</td>
-      <td>${esc(x.status)}</td>
-    </tr>`;
-  }).join('');
-
-  $('count').textContent=(data||[]).length;
-  $('packages').textContent=packages;
-  $('weight').textContent=weight;
-  $('freight').textContent=money(freight);
-  $('other').textContent=money(other);
-  $('total').textContent=money(freight+other);
-  $('msg').textContent='';
-}
-
-function esc(v){
-  return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-function clearFilters(){
-  $('fromDate').value='';
-  $('toDate').value='';
-  $('lrSearch').value='';
-  $('status').value='';
-  loadReport();
-}
-
-sb.auth.getSession().then(({data:{session}})=>{if(session)showApp()});
+async function loadReport(){$('msg').textContent='Loading...';let q=sb.from('lrs').select('*').order('lr_date',{ascending:false}).order('id',{ascending:false});const f=$('fromDate').value,t=$('toDate').value,lr=$('lrSearch').value.trim(),st=$('status').value;if(f)q=q.gte('lr_date',f);if(t)q=q.lte('lr_date',t);if(lr)q=q.ilike('lr_no','%'+lr+'%');if(st)q=q.eq('status',st);const{data,error}=await q;if(error){$('msg').textContent=error.message;return}let packages=0,weight=0,freight=0,other=0;$('rows').innerHTML=(data||[]).map(x=>{packages+=Number(x.packages||0);weight+=Number(x.weight||0);freight+=Number(x.freight||0);other+=Number(x.other_charges||0);return `<tr><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.vehicle_no)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${x.packages||0}</td><td>${x.weight||0}</td><td class="right">${money(x.freight)}</td><td class="right">${money(x.other_charges)}</td><td>${esc(x.status)}</td></tr>`}).join('');$('count').textContent=(data||[]).length;$('packages').textContent=packages;$('weight').textContent=weight;$('freight').textContent=money(freight);$('other').textContent=money(other);$('total').textContent=money(freight+other);$('msg').textContent=''}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function clearFilters(){$('fromDate').value='';$('toDate').value='';$('lrSearch').value='';$('status').value='';loadReport()}
+sb.auth.getSession().then(({data:{session}})=>{if(session)showApp();else{$('loginBox').style.display='block'}})
 </script>
-</body>
-</html>
+</body></html>
