@@ -11,12 +11,15 @@
 <div class="box" id="loginBox"><h2 class="title">NRT Staff Login</h2><div class="grid"><div><label>Email</label><input id="email" type="email" placeholder="NRT account email"></div><div><label>Password</label><input id="password" type="password" placeholder="Password"></div></div><div class="actions"><button type="button" class="blue" onclick="login()">Login</button></div><div id="loginMsg" class="msg"></div></div>
 <div id="app" style="display:none"><div class="box"><h2 class="title">🧾 New / Edit Bilty</h2><div class="grid">
 <div><label>LR Number</label><input id="lr_no" readonly></div><div><label>Date</label><input id="lr_date" type="date"></div><div><label>Vehicle No.</label><input id="vehicle_no"></div><div><label>Freight Type</label><select id="freight_type"><option>TO PAY</option><option>PAID</option><option>ON ACCOUNT</option></select></div>
-<div><label>From</label><input id="from_location"></div><div><label>To</label><input id="to_location"></div><div><label>Consignor Name</label><input id="consignor_name"></div><div><label>Consignor Phone</label><input id="consignor_phone"></div>
-<div><label>Consignee Name</label><input id="consignee_name"></div><div><label>Consignee Phone</label><input id="consignee_phone"></div><div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div><div><label>Weight</label><input id="weight" type="number" min="0" step="0.01" value="0"></div>
+<div><label>From</label><input id="from_location"></div><div><label>To</label><input id="to_location"></div><div><label>Consignor Name</label><input id="consignor_name" list="consignorSuggestions" autocomplete="off" oninput="partyNameChanged('consignor')"></div><div><label>Consignor Phone</label><input id="consignor_phone"></div>
+<div><label>Consignee Name</label><input id="consignee_name" list="consigneeSuggestions" autocomplete="off" oninput="partyNameChanged('consignee')"></div><div><label>Consignee Phone</label><input id="consignee_phone"></div><div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div><div><label>Weight</label><input id="weight" type="number" min="0" step="0.01" value="0"></div>
 <div style="grid-column:span 2"><label>Goods / Description</label><input id="goods"></div><div><label>Invoice Number</label><input id="invoice_no"></div><div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" step="0.01" value="0"></div>
 <div><label>Freight</label><input id="freight" type="number" min="0" step="0.01" value="0"></div><div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" step="0.01" value="0"></div><div style="grid-column:span 2"><label>Remarks</label><textarea id="remarks"></textarea></div><div><label>Status</label><select id="status"><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div>
 </div><div class="actions"><button type="button" id="saveBtn" class="blue" onclick="saveLR()">💾 Save Bilty</button><button type="button" class="yellow" onclick="printCurrent()">🖨️ Print / PDF</button><button type="button" class="gray" onclick="clearForm()">Clear</button><button type="button" class="green" onclick="location.href='reports.html'">📊 Reports</button></div><div id="msg" class="msg"></div><div id="viewMsg" class="hint"></div></div></div>
-<div id="printArea" class="printarea"></div></div>
+<div id="printArea" class="printarea"></div>
+<datalist id="consignorSuggestions"></datalist>
+<datalist id="consigneeSuggestions"></datalist>
+</div>
 <script>
 /* NRT DIRECT SUPABASE REST VERSION
    Uses the same working login method as the successful Login Test.
@@ -69,15 +72,62 @@ async function nextLR(){
  var data=await db('?select=lr_no&lr_no=like.NRT/*',{method:'GET'});let max=45242;(data||[]).forEach(x=>{const n=Number(String(x.lr_no||'').split('/').pop());if(Number.isFinite(n)&&n>max)max=n});return'NRT/'+(max+1)
 }
 function makeRow(){return{lr_no:val('lr_no'),lr_date:val('lr_date')||new Date().toISOString().slice(0,10),vehicle_no:val('vehicle_no'),from_location:val('from_location'),to_location:val('to_location'),freight_type:val('freight_type'),consignor_name:val('consignor_name'),consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),consignee_phone:val('consignee_phone'),packages:Number(val('packages')||0),weight:Number(val('weight')||0),goods:val('goods'),invoice_no:val('invoice_no'),invoice_value:Number(val('invoice_value')||0),freight:Number(val('freight')||0),other_charges:Number(val('other_charges')||0),remarks:val('remarks'),status:val('status')||'Booked'}}
-async function saveLR(){if(viewMode)return;$('msg').textContent='Saving...';try{const row=makeRow();if(!row.lr_no)row.lr_no=await nextLR();if(editingId){await db('?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(row)})}else{const dup=await db('?select=id&lr_no=eq.'+encodeURIComponent(row.lr_no),{method:'GET'});if(dup&&dup.length)row.lr_no=await nextLR();await db('',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(row)})}$('lr_no').value=row.lr_no;$('msg').textContent='Saved successfully: '+row.lr_no}catch(e){$('msg').textContent=e.message||String(e)}}
+async function saveLR(){if(viewMode)return;$('msg').textContent='Saving...';try{const row=makeRow();if(!row.lr_no)row.lr_no=await nextLR();if(editingId){await db('?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(row)})}else{const dup=await db('?select=id&lr_no=eq.'+encodeURIComponent(row.lr_no),{method:'GET'});if(dup&&dup.length)row.lr_no=await nextLR();await db('',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(row)})}$('lr_no').value=row.lr_no;rememberPartyNames();$('msg').textContent='Saved successfully: '+row.lr_no}catch(e){$('msg').textContent=e.message||String(e)}}
 function fillForm(x){['lr_no','lr_date','vehicle_no','from_location','to_location','freight_type','consignor_name','consignor_phone','consignee_name','consignee_phone','packages','weight','goods','invoice_no','invoice_value','freight','other_charges','remarks','status'].forEach(id=>{if($(id))$(id).value=x[id]??($(id).type==='number'?0:'')})}
 function setViewMode(on){viewMode=on;document.querySelectorAll('#app input,#app select,#app textarea').forEach(e=>e.disabled=on);$('saveBtn').style.display=on?'none':'inline-block';$('viewMsg').textContent=on?'View mode — fields are read-only.':''}
 async function handleURLAction(){const p=new URLSearchParams(location.search),id=p.get('edit')||p.get('print')||p.get('view');if(!id)return;const data=await db('?select=*&id=eq.'+encodeURIComponent(id),{method:'GET'});if(!data||!data.length){$('msg').textContent='LR record not found.';return}var x=data[0];if(p.get('edit')){editingId=id;fillForm(x);$('msg').textContent='Editing '+x.lr_no}else if(p.get('view')){fillForm(x);setViewMode(true);$('msg').textContent='Viewing '+x.lr_no}else{renderPrint(x);startPrint()}}
+
+let partyCache={consignor:[],consignee:[]};
+
+function uniquePartyNames(list){
+  const seen={}; const out=[];
+  (list||[]).forEach(x=>{
+    const n=String(x||'').trim();
+    if(n && !seen[n.toLowerCase()]){seen[n.toLowerCase()]=1;out.push(n)}
+  });
+  return out.sort((a,b)=>a.localeCompare(b));
+}
+function renderPartySuggestions(){
+  const a=uniquePartyNames(partyCache.consignor);
+  const b=uniquePartyNames(partyCache.consignee);
+  $('consignorSuggestions').innerHTML=a.map(n=>'<option value="'+esc(n)+'"></option>').join('');
+  $('consigneeSuggestions').innerHTML=b.map(n=>'<option value="'+esc(n)+'"></option>').join('');
+}
+async function loadPartySuggestions(){
+  try{
+    const rows=await db('?select=consignor_name,consignor_phone,consignee_name,consignee_phone&order=id.desc&limit=1000',{method:'GET'});
+    partyCache={consignor:[],consignee:[]};
+    (rows||[]).forEach(x=>{
+      if(x.consignor_name) partyCache.consignor.push(x.consignor_name);
+      if(x.consignee_name) partyCache.consignee.push(x.consignee_name);
+    });
+    renderPartySuggestions();
+  }catch(e){}
+}
+async function partyNameChanged(type){
+  const field=type==='consignor'?'consignor_name':'consignee_name';
+  const phone=type==='consignor'?'consignor_phone':'consignee_phone';
+  const name=val(field);
+  if(!name)return;
+  try{
+    const col=type==='consignor'?'consignor_name':'consignee_name';
+    const rows=await db('?select='+col+','+phone+'&'+col+'=eq.'+encodeURIComponent(name)+'&limit=1',{method:'GET'});
+    if(rows&&rows.length&&rows[0][phone]) $(phone).value=rows[0][phone];
+  }catch(e){}
+}
+function rememberPartyNames(){
+  const cn=val('consignor_name'), en=val('consignee_name');
+  if(cn) partyCache.consignor.push(cn);
+  if(en) partyCache.consignee.push(en);
+  renderPartySuggestions();
+}
+
 async function showApp(){
  var ok=await ensureAuth();
  if(!ok){$('app').style.display='none';$('loginBox').style.display='block';return}
  $('loginBox').style.display='none';$('app').style.display='block';
  if(!location.search){$('lr_date').value=new Date().toISOString().slice(0,10);try{$('lr_no').value=await nextLR()}catch(e){$('msg').textContent=e.message||String(e)}}
+ await loadPartySuggestions();
  try{await handleURLAction()}catch(e){$('msg').textContent=e.message||String(e)}
 }
 function clearForm(){if(viewMode)return;editingId=null;document.querySelectorAll('#app input:not(#lr_no),#app textarea').forEach(e=>e.value='');$('lr_date').value=new Date().toISOString().slice(0,10);$('packages').value=0;$('weight').value=0;$('invoice_value').value=0;$('freight').value=0;$('other_charges').value=0;$('freight_type').value='TO PAY';$('status').value='Booked';nextLR().then(n=>$('lr_no').value=n).catch(e=>$('msg').textContent=e.message||String(e))}
