@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NRT Reports</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}
 .top{background:#073b8f;color:#fff;padding:14px 18px}.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}
@@ -23,64 +26,192 @@ label{display:block;font-weight:bold;font-size:13px;margin-bottom:5px}input,sele
 <div class="top"><div class="topin"><b>📊 NRT REPORTS</b><div class="nav">
 <a href="bilty.html">➕ New Bilty</a><a href="index.html">← Home</a><button onclick="logout()">Logout</button>
 </div></div></div>
+
 <div class="wrap">
-<div class="box filters"><h2 class="title">LR Reports</h2>
+<div class="box filters">
+<h2 class="title">LR Reports</h2>
 <div class="grid">
 <div><label>From Date</label><input id="fromDate" type="date"></div>
 <div><label>To Date</label><input id="toDate" type="date"></div>
 <div><label>LR Number</label><input id="lrSearch" placeholder="Enter LR Number (optional)"></div>
 <div><label>Status</label><select id="status"><option value="">All Status</option><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div>
 </div>
-<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search Report</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="window.print()">🖨️ Print / PDF</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div>
-<div id="msg" class="msg"></div></div>
-<div class="box"><div class="stats">
-<div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="weight">0</b><span>Weight</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="other">₹0</b><span>LR CHARGE</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div>
-</div></div>
-<div class="box"><div class="table-wrap"><table><thead><tr>
-<th>LR No.</th><th>Date</th><th>Vehicle</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>LR Charge</th><th>Status</th><th>Actions</th>
-</tr></thead><tbody id="rows"></tbody></table></div></div>
+<div class="actions">
+<button class="blue" onclick="loadReport()">🔎 Search Report</button>
+<button class="gray" onclick="clearFilters()">Clear</button>
+<button class="yellow" onclick="window.print()">🖨️ Print / PDF</button>
+<button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button>
 </div>
+<div id="msg" class="msg"></div>
+</div>
+
+<div class="box"><div class="stats">
+<div class="stat"><b id="count">0</b><span>Total LRs</span></div>
+<div class="stat"><b id="packages">0</b><span>Packages</span></div>
+<div class="stat"><b id="weight">0</b><span>Weight</span></div>
+<div class="stat"><b id="freight">₹0</b><span>Freight</span></div>
+<div class="stat"><b id="other">₹0</b><span>LR CHARGE</span></div>
+<div class="stat"><b id="total">₹0</b><span>Total</span></div>
+</div></div>
+
+<div class="box"><div class="table-wrap"><table>
+<thead><tr>
+<th>LR No.</th><th>Date</th><th>Vehicle</th><th>From</th><th>To</th>
+<th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th>
+<th>Freight</th><th>LR Charge</th><th>Status</th><th>Actions</th>
+</tr></thead>
+<tbody id="rows"></tbody>
+</table></div></div>
+</div>
+
 <script>
-var URL="https://psfsrzeuriznupvfbosk.supabase.co";
-var KEY="sb_publishable_XVVZxsLDQJfDLfFayc0IRA_KyCT-NHF";
-var AK="nrt_access_token",RK="nrt_refresh_token";
+var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{
+  auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}
+});
+
 const $=id=>document.getElementById(id);
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
-function authHeaders(extra){let h={'apikey':KEY,'Content-Type':'application/json'};let t=localStorage.getItem(AK);if(t)h.Authorization='Bearer '+t;if(extra)Object.assign(h,extra);return h}
-async function request(path,opts){opts=opts||{};opts.headers=authHeaders(opts.headers);let r=await fetch(URL+path,opts),txt=await r.text(),d=null;try{d=txt?JSON.parse(txt):null}catch(e){}if(!r.ok){let e=new Error((d&&d.message)||(d&&d.error_description)||txt||('HTTP '+r.status));e.status=r.status;throw e}return d}
-async function refresh(){let rt=localStorage.getItem(RK);if(!rt)return false;try{let r=await fetch(URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:rt})});let d=await r.json();if(!r.ok||!d.access_token)return false;localStorage.setItem(AK,d.access_token);if(d.refresh_token)localStorage.setItem(RK,d.refresh_token);return true}catch(e){return false}}
-async function authOK(){try{await request('/auth/v1/user');return true}catch(e){return await refresh()}}
-async function db(path,opts){try{return await request('/rest/v1/lrs'+path,opts)}catch(e){if(e.status===401&&await refresh())return await request('/rest/v1/lrs'+path,opts);throw e}}
-async function logout(){try{await request('/auth/v1/logout',{method:'POST'})}catch(e){}localStorage.removeItem(AK);localStorage.removeItem(RK);location.href='bilty.html'}
+
+function esc(v){
+  return String(v??'').replace(/[&<>"']/g,m=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[m]));
+}
+function money(n){
+  return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+}
+
+async function logout(){
+  await sb.auth.signOut();
+  location.href='bilty.html';
+}
 
 function filtered(data){
- const f=$('fromDate').value,t=$('toDate').value,lr=$('lrSearch').value.trim().toLowerCase(),st=$('status').value;
- return (data||[]).filter(x=>{
-  if(f && String(x.lr_date||'')<f)return false;if(t && String(x.lr_date||'')>t)return false;
-  if(lr && !String(x.lr_no||'').toLowerCase().includes(lr))return false;if(st && x.status!==st)return false;return true;
- }).sort((a,b)=>String(b.lr_date||'').localeCompare(String(a.lr_date||'')) || Number(b.id||0)-Number(a.id||0));
+  const f=$('fromDate').value;
+  const t=$('toDate').value;
+  const lr=$('lrSearch').value.trim().toLowerCase();
+  const st=$('status').value;
+
+  return (data||[]).filter(x=>{
+    if(f && String(x.lr_date||'')<f)return false;
+    if(t && String(x.lr_date||'')>t)return false;
+    if(lr && !String(x.lr_no||'').toLowerCase().includes(lr))return false;
+    if(st && x.status!==st)return false;
+    return true;
+  }).sort((a,b)=>
+    String(b.lr_date||'').localeCompare(String(a.lr_date||'')) ||
+    Number(b.id||0)-Number(a.id||0)
+  );
 }
+
 async function loadReport(){
- $('msg').className='msg';$('msg').textContent='Loading all LR records...';
- try{
-   /* IMPORTANT: fetch all rows without date filters first. Date filtering is done in the browser. */
-   let data=await db('?select=*&limit=1000',{method:'GET'});
-   let rows=filtered(data);let p=0,w=0,fv=0,oc=0;
-   $('rows').innerHTML=rows.map(x=>{
-     p+=Number(x.packages||0);w+=Number(x.weight||0);fv+=Number(x.freight||0);oc+=Number(x.other_charges||0);
-     return `<tr><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.vehicle_no)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${x.packages||0}</td><td>${x.weight||0}</td><td class="right">${money(x.freight)}</td><td class="right">${money(x.other_charges)}</td><td>${esc(x.status)}</td><td class="act"><button class="blue smallbtn" onclick="viewLR(${x.id})">View</button><button class="green smallbtn" onclick="editLR(${x.id})">Edit</button><button class="yellow smallbtn" onclick="printLR(${x.id})">Print</button><button class="red smallbtn" onclick="deleteLR(${x.id},'${esc(x.lr_no)}')">Delete</button></td></tr>`;
-   }).join('');
-   $('count').textContent=rows.length;$('packages').textContent=p;$('weight').textContent=w;$('freight').textContent=money(fv);$('other').textContent=money(oc);$('total').textContent=money(fv+oc);
-   $('msg').className='msg ok';
-   $('msg').textContent=rows.length+' LR records loaded.';
- }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
+  $('msg').className='msg';
+  $('msg').textContent='Loading all LR records...';
+
+  try{
+    let all=[];
+    let from=0;
+
+    while(true){
+      const {data,error}=await sb.from('lrs').select('*').range(from,from+999);
+      if(error)throw error;
+
+      all=all.concat(data||[]);
+      if(!data || data.length<1000)break;
+      from+=1000;
+    }
+
+    const rows=filtered(all);
+    let p=0,w=0,fv=0,oc=0,hm=0;
+
+    $('rows').innerHTML=rows.map(x=>{
+      p+=Number(x.packages||0);
+      w+=Number(x.weight||0);
+      fv+=Number(x.freight||0);
+      oc+=Number(x.other_charges||0);
+      hm+=Number(x.hamali||0);
+
+      return `<tr>
+        <td><b>${esc(x.lr_no)}</b></td>
+        <td>${esc(x.lr_date)}</td>
+        <td>${esc(x.vehicle_no)}</td>
+        <td>${esc(x.from_location)}</td>
+        <td>${esc(x.to_location)}</td>
+        <td>${esc(x.consignor_name)}</td>
+        <td>${esc(x.consignee_name)}</td>
+        <td>${x.packages||0}</td>
+        <td>${x.weight||0}</td>
+        <td class="right">${money(x.freight)}</td>
+        <td class="right">${money(x.other_charges)}</td>
+        <td>${esc(x.status)}</td>
+        <td class="act">
+          <button class="blue smallbtn" onclick="viewLR(${x.id})">View</button>
+          <button class="green smallbtn" onclick="editLR(${x.id})">Edit</button>
+          <button class="yellow smallbtn" onclick="printLR(${x.id})">Print</button>
+          <button class="red smallbtn" onclick="deleteLR(${x.id},'${esc(x.lr_no)}')">Delete</button>
+        </td>
+      </tr>`;
+    }).join('');
+
+    $('count').textContent=rows.length;
+    $('packages').textContent=p;
+    $('weight').textContent=w;
+    $('freight').textContent=money(fv);
+    $('other').textContent=money(oc);
+    $('total').textContent=money(fv+hm+oc);
+
+    $('msg').className='msg ok';
+    $('msg').textContent=rows.length+' LR records loaded.';
+  }catch(e){
+    $('msg').textContent='Database error: '+(e.message||String(e));
+  }
 }
-function viewLR(id){location.href='bilty.html?view='+encodeURIComponent(id)}
-function editLR(id){location.href='bilty.html?edit='+encodeURIComponent(id)}
-function printLR(id){location.href='bilty.html?print='+encodeURIComponent(id)}
-async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{await db('?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{'Prefer':'return=minimal'}});loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
-function clearFilters(){$('fromDate').value='';$('toDate').value='';$('lrSearch').value='';$('status').value='';loadReport()}
-window.addEventListener('load',async()=>{if(!await authOK()){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}loadReport()});
+
+function viewLR(id){
+  location.href='bilty.html?view='+encodeURIComponent(id);
+}
+function editLR(id){
+  location.href='bilty.html?edit='+encodeURIComponent(id);
+}
+function printLR(id){
+  location.href='bilty.html?print='+encodeURIComponent(id);
+}
+
+async function deleteLR(id,lr){
+  if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;
+
+  try{
+    const {error}=await sb.from('lrs').delete().eq('id',id);
+    if(error)throw error;
+    loadReport();
+  }catch(e){
+    $('msg').textContent=e.message||String(e);
+  }
+}
+
+function clearFilters(){
+  $('fromDate').value='';
+  $('toDate').value='';
+  $('lrSearch').value='';
+  $('status').value='';
+  loadReport();
+}
+
+window.addEventListener('load',async()=>{
+  try{
+    const {data,error}=await sb.auth.getSession();
+
+    if(error || !data.session){
+      alert('Please login from NRT Online Bilty first.');
+      location.href='bilty.html';
+      return;
+    }
+
+    loadReport();
+  }catch(e){
+    alert('Please login from NRT Online Bilty first.');
+    location.href='bilty.html';
+  }
+});
 </script>
-</body></html>
+</body>
+</html>
