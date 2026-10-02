@@ -1,224 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NRT Bilty / LR</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}
-.top{background:#073b8f;color:#fff;padding:12px 16px}.topin{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}.top b{font-size:19px}.nav{display:flex;gap:7px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:8px 11px;border-radius:6px;font-weight:bold;text-decoration:none;border:0;cursor:pointer}
-.wrap{max-width:1100px;margin:16px auto;padding:0 10px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:9px;padding:14px;margin-bottom:12px;box-shadow:0 2px 7px #00000012}.title{margin:0 0 12px;color:#073b8f}
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}label{display:block;font-weight:bold;font-size:12px;margin-bottom:4px}
-input,select,textarea{width:100%;padding:8px;border:1px solid #b9c2ce;border-radius:6px;background:#fff;font:inherit}textarea{min-height:60px;resize:vertical}
-.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}button{border:0;border-radius:6px;padding:9px 14px;font-weight:bold;cursor:pointer}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}
-.msg{margin-top:7px;color:#b91c1c;font-weight:bold}.hint{font-size:12px;color:#6b7280;margin-top:4px}
-#loginBox{max-width:600px;margin:35px auto}
-.printarea{display:none}
-.copy{width:190mm;height:91.5mm;margin:0 auto 2mm;border:1px solid #111;padding:3mm;overflow:hidden;page-break-inside:avoid}
-.copy:last-child{margin-bottom:0}.copyhead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;border-bottom:1px solid #111;padding-bottom:1.5mm}.copyhead .name{text-align:center;font-size:17px;font-weight:800}.copyhead .copyname{text-align:right;font-size:12px;font-weight:800}.copyhead .phone{text-align:left;font-size:10px;font-weight:800;line-height:1.25}
-.tag{text-align:center;font-weight:800;font-size:11px;margin:1mm 0}.meta{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #111}.meta>div{padding:1.5mm;border-right:1px solid #111;font-size:10px}.meta>div:last-child{border-right:0}.info{display:grid;grid-template-columns:1fr 1fr 1fr;border-left:1px solid #111;border-right:1px solid #111;border-bottom:1px solid #111}.col{border-right:1px solid #111}.col:last-child{border-right:0}.cell{padding:1.4mm;border-bottom:1px solid #111;min-height:8mm;font-size:10px}.cell:last-child{border-bottom:0}.big{font-size:12px;font-weight:800}.goods{border:1px solid #111;border-top:0;height:25mm;padding:1.5mm;font-size:10px}.sign{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #111;border-top:0;height:12mm}.sign div{padding:1.5mm;border-right:1px solid #111;font-size:9px}.sign div:last-child{border-right:0}
-@page{size:A4 portrait;margin:0}
-@media print{
-html,body{background:#fff!important}
-body.printing .top,body.printing #loginBox,body.printing #app{display:none!important}
-body.printing .wrap{max-width:none;margin:0;padding:0}
-body.printing #printArea{display:block!important;width:210mm;margin:0;padding:5mm 10mm 5mm}
-body.printing .copy{display:block}
-}
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:500px){.grid{grid-template-columns:1fr}.topin{align-items:flex-start;flex-direction:column}}
-</style>
-</head>
-<body>
-<div class="top"><div class="topin"><b>🚚 NANDHISHWARA ROAD TRANSPORT</b><div class="nav"><a href="reports.html">📊 Reports</a><a href="index.html">← Home</a></div></div></div>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}.top{background:#073b8f;color:#fff;padding:12px 16px}.topin{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}.top b{font-size:19px}.nav{display:flex;gap:7px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:8px 11px;border-radius:6px;font-weight:bold;text-decoration:none;border:0;cursor:pointer}.wrap{max-width:1100px;margin:16px auto;padding:0 10px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:9px;padding:14px;margin-bottom:12px;box-shadow:0 2px 7px #00000012}.title{margin:0 0 12px;color:#073b8f}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}label{display:block;font-weight:bold;font-size:12px;margin-bottom:4px}input,select,textarea{width:100%;padding:8px;border:1px solid #b9c2ce;border-radius:6px;background:#fff;font:inherit}textarea{min-height:60px;resize:vertical}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}button{border:0;border-radius:6px;padding:9px 14px;font-weight:bold;cursor:pointer}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}.msg{margin-top:7px;color:#b91c1c;font-weight:bold}.hint{font-size:12px;color:#6b7280;margin-top:4px}#loginBox{max-width:600px;margin:35px auto}.printarea{display:none}.copy{width:190mm;height:91.5mm;margin:0 auto 2mm;border:1px solid #111;padding:3mm;overflow:hidden;page-break-inside:avoid}.copy:last-child{margin-bottom:0}.copyhead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;border-bottom:1px solid #111;padding-bottom:1.5mm}.copyhead .name{text-align:center;font-size:17px;font-weight:800}.copyhead .copyname{text-align:right;font-size:12px;font-weight:800}.copyhead .phone{text-align:left;font-size:10px;font-weight:800;line-height:1.25}.tag{text-align:center;font-weight:800;font-size:11px;margin:1mm 0}.meta{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #111}.meta>div{padding:1.5mm;border-right:1px solid #111;font-size:10px}.meta>div:last-child{border-right:0}.info{display:grid;grid-template-columns:1fr 1fr 1fr;border-left:1px solid #111;border-right:1px solid #111;border-bottom:1px solid #111}.col{border-right:1px solid #111}.col:last-child{border-right:0}.cell{padding:1.4mm;border-bottom:1px solid #111;min-height:8mm;font-size:10px}.cell:last-child{border-bottom:0}.big{font-size:12px;font-weight:800}.goods{border:1px solid #111;border-top:0;height:25mm;padding:1.5mm;font-size:10px}.sign{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #111;border-top:0;height:12mm}.sign div{padding:1.5mm;border-right:1px solid #111;font-size:9px}.sign div:last-child{border-right:0}@page{size:A4 portrait;margin:0}@media print{html,body{background:#fff!important}body.printing .top,body.printing #loginBox,body.printing #app{display:none!important}body.printing .wrap{max-width:none;margin:0;padding:0}body.printing #printArea{display:block!important;width:210mm;margin:0;padding:5mm 10mm 5mm}body.printing .copy{display:block}}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.grid{grid-template-columns:1fr}.topin{align-items:flex-start;flex-direction:column}}
+</style></head><body>
+<div class="top"><div class="topin"><b>🚚 NANDHISHWARA ROAD TRANSPORT</b><div class="nav"><a href="reports.html">📊 Reports</a><a href="index.html">← Home</a><button onclick="logout()">Logout</button></div></div></div>
 <div class="wrap">
-<div class="box" id="loginBox" style="display:none">
-<h2 class="title">NRT Staff Login</h2>
-<div class="grid"><div><label>Email</label><input id="email" type="email" placeholder="NRT account email"></div><div><label>Password</label><input id="password" type="password" placeholder="Password"></div></div>
-<div class="actions"><button class="blue" onclick="login()">Login</button><button class="gray" onclick="signup()">Create account</button></div><div id="loginMsg" class="msg"></div>
-</div>
-
-<div id="app" style="display:none">
-<div class="box">
-<h2 class="title">🧾 New / Edit Bilty</h2>
-<div class="grid">
-<div><label>LR Number</label><input id="lr_no" readonly></div>
-<div><label>Date</label><input id="lr_date" type="date"></div>
-<div><label>Vehicle No.</label><input id="vehicle_no"></div>
-<div><label>Freight Type</label><select id="freight_type"><option>TO PAY</option><option>PAID</option><option>ON ACCOUNT</option></select></div>
-<div><label>From</label><input id="from_location"></div>
-<div><label>To</label><input id="to_location"></div>
-<div><label>Consignor Name</label><input id="consignor_name" list="consignorList"><datalist id="consignorList"></datalist></div>
-<div><label>Consignor Phone</label><input id="consignor_phone"></div>
-<div><label>Consignee Name</label><input id="consignee_name" list="consigneeList"><datalist id="consigneeList"></datalist></div>
-<div><label>Consignee Phone</label><input id="consignee_phone"></div>
-<div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div>
-<div><label>Weight</label><input id="weight" type="number" min="0" step="0.01" value="0"></div>
-<div><label>Invoice Number</label><input id="invoice_no"></div>
-<div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" step="0.01" value="0"></div>
-<div style="grid-column:span 2"><label>Goods / Description</label><input id="goods"></div>
-<div><label>Freight</label><input id="freight" type="number" min="0" step="0.01" value="0"></div>
-<div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" step="0.01" value="0"></div>
-<div style="grid-column:span 2"><label>Remarks</label><textarea id="remarks"></textarea></div>
-<div><label>Status</label><select id="status"><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div>
-</div>
-<div class="actions">
-<button class="blue" id="saveBtn" onclick="saveLR()">💾 Save Bilty</button>
-<button class="yellow" onclick="printCurrent()">🖨️ Print / PDF</button>
-<button class="gray" onclick="clearForm()">Clear</button>
-<button class="green" onclick="location.href='reports.html'">📊 Reports</button>
-</div>
-<div id="msg" class="msg"></div>
-<div id="viewMsg" class="hint"></div>
-</div>
-</div>
-
-<div id="printArea" class="printarea"></div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
+<div class="box" id="loginBox"><h2 class="title">NRT Staff Login</h2><div class="grid"><div><label>Email</label><input id="email" type="email" placeholder="NRT account email"></div><div><label>Password</label><input id="password" type="password" placeholder="Password"></div></div><div class="actions"><button type="button" class="blue" onclick="login()">Login</button></div><div id="loginMsg" class="msg"></div></div>
+<div id="app" style="display:none"><div class="box"><h2 class="title">🧾 New / Edit Bilty</h2><div class="grid">
+<div><label>LR Number</label><input id="lr_no" readonly></div><div><label>Date</label><input id="lr_date" type="date"></div><div><label>Vehicle No.</label><input id="vehicle_no"></div><div><label>Freight Type</label><select id="freight_type"><option>TO PAY</option><option>PAID</option><option>ON ACCOUNT</option></select></div>
+<div><label>From</label><input id="from_location"></div><div><label>To</label><input id="to_location"></div><div><label>Consignor Name</label><input id="consignor_name"></div><div><label>Consignor Phone</label><input id="consignor_phone"></div>
+<div><label>Consignee Name</label><input id="consignee_name"></div><div><label>Consignee Phone</label><input id="consignee_phone"></div><div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div><div><label>Weight</label><input id="weight" type="number" min="0" step="0.01" value="0"></div>
+<div style="grid-column:span 2"><label>Goods / Description</label><input id="goods"></div><div><label>Invoice Number</label><input id="invoice_no"></div><div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" step="0.01" value="0"></div>
+<div><label>Freight</label><input id="freight" type="number" min="0" step="0.01" value="0"></div><div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" step="0.01" value="0"></div><div style="grid-column:span 2"><label>Remarks</label><textarea id="remarks"></textarea></div><div><label>Status</label><select id="status"><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div>
+</div><div class="actions"><button type="button" id="saveBtn" class="blue" onclick="saveLR()">💾 Save Bilty</button><button type="button" class="yellow" onclick="printCurrent()">🖨️ Print / PDF</button><button type="button" class="gray" onclick="clearForm()">Clear</button><button type="button" class="green" onclick="location.href='reports.html'">📊 Reports</button></div><div id="msg" class="msg"></div><div id="viewMsg" class="hint"></div></div></div>
+<div id="printArea" class="printarea"></div></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 <script>
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-const $=id=>document.getElementById(id);
-const val=id=>($(id)?.value??'').trim();
-const esc=v=>String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-function today(){return new Date().toISOString().slice(0,10)}
-function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
-
-async function login(){const{error}=await sb.auth.signInWithPassword({email:val('email'),password:$('password').value});if(error){$('loginMsg').textContent=error.message;return}showApp()}
-async function signup(){const email=val('email'),password=$('password').value;if(!email||!password){$('loginMsg').textContent='Enter email and password';return}const{error}=await sb.auth.signUp({email,password});$('loginMsg').textContent=error?error.message:'Account created. Check your email if confirmation is required.'}
-
-async function nextLR(){
- const {data,error}=await sb.from('lrs').select('lr_no').like('lr_no','NRT/%');
- if(error) throw error;
- let max=45242;
- (data||[]).forEach(x=>{const n=Number(String(x.lr_no||'').split('/').pop());if(Number.isFinite(n)&&n>max)max=n});
- return 'NRT/'+(max+1);
-}
-function makeRow(){
- return {
-  lr_no:val('lr_no'),lr_date:val('lr_date')||today(),vehicle_no:val('vehicle_no'),
-  from_location:val('from_location'),to_location:val('to_location'),
-  freight_type:val('freight_type'),consignor_name:val('consignor_name'),
-  consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),
-  consignee_phone:val('consignee_phone'),packages:Number(val('packages')||0),
-  weight:Number(val('weight')||0),goods:val('goods'),invoice_no:val('invoice_no'),invoice_value:Number(val('invoice_value')||0),freight:Number(val('freight')||0),
-  other_charges:Number(val('other_charges')||0),remarks:val('remarks'),
-  status:val('status')||'Booked'
- };
-}
-let editingId=null,viewMode=false;
-
-async function saveLR(){
- if(viewMode)return;
- $('msg').textContent='Saving...';
- try{
-  const row=makeRow();
-  if(!row.lr_no)row.lr_no=await nextLR();
-  if(editingId){
-   const{error}=await sb.from('lrs').update(row).eq('id',editingId);if(error)throw error;
-  }else{
-   const{data:dup}=await sb.from('lrs').select('id').eq('lr_no',row.lr_no).maybeSingle();
-   if(dup)row.lr_no=await nextLR();
-   const{error}=await sb.from('lrs').insert(row);if(error)throw error;
-  }
-  $('lr_no').value=row.lr_no;$('msg').textContent='Saved successfully: '+row.lr_no;
-  editingId=editingId||null; addHistory();
- }catch(e){$('msg').textContent=e.message||String(e)}
-}
-function addHistory(){
- try{
-  const c=JSON.parse(localStorage.getItem('consignors')||'[]');const n=val('consignor_name');if(n){localStorage.setItem('consignors',JSON.stringify([{name:n,phone:val('consignor_phone')},...c.filter(x=>x.name!==n)].slice(0,100)))}
-  const d=JSON.parse(localStorage.getItem('consignees')||'[]');const n2=val('consignee_name');if(n2){localStorage.setItem('consignees',JSON.stringify([{name:n2,phone:val('consignee_phone')},...d.filter(x=>x.name!==n2)].slice(0,100)))}
- }catch(e){}
-}
-
-function fillForm(x){
- $('lr_no').value=x.lr_no||'';$('lr_date').value=x.lr_date||today();$('vehicle_no').value=x.vehicle_no||'';
- $('from_location').value=x.from_location||'';$('to_location').value=x.to_location||'';
- $('freight_type').value=x.freight_type||'TO PAY';$('consignor_name').value=x.consignor_name||'';
- $('consignor_phone').value=x.consignor_phone||'';$('consignee_name').value=x.consignee_name||'';
- $('consignee_phone').value=x.consignee_phone||'';$('packages').value=x.packages??0;$('weight').value=x.weight??0;
- $('invoice_no').value=x.invoice_no||'';$('invoice_value').value=x.invoice_value??0;$('goods').value=x.goods||'';$('freight').value=x.freight??0;$('other_charges').value=x.other_charges??0;
- $('remarks').value=x.remarks||'';$('status').value=x.status||'Booked';
-}
-function setViewMode(on){
- viewMode=on;
- document.querySelectorAll('#app input,#app select,#app textarea').forEach(e=>e.disabled=on);
- $('saveBtn').style.display=on?'none':'inline-block';
- $('viewMsg').textContent=on?'View mode — fields are read-only. Use Reports to return.':'';
-}
-async function handleURLAction(){
- const p=new URLSearchParams(location.search);
- const id=p.get('edit')||p.get('print')||p.get('view');if(!id)return;
- const{data,error}=await sb.from('lrs').select('*').eq('id',id).single();
- if(error){$('msg').textContent=error.message;return}
- if(p.get('edit')){editingId=id;fillForm(data);$('msg').textContent='Editing '+data.lr_no}
- else if(p.get('view')){fillForm(data);setViewMode(true);$('msg').textContent='Viewing '+data.lr_no}
- else{renderPrint(data);startPrint()}
-}
-async function showApp(){
- const{data:{session}}=await sb.auth.getSession();
- if(!session){$('loginBox').style.display='block';return}
- $('loginBox').style.display='none';$('app').style.display='block';
- $('lr_date').value=today();
- try{if(!location.search) $('lr_no').value=await nextLR();}catch(e){$('msg').textContent=e.message}
- loadHistory();handleURLAction();
-}
-function loadHistory(){
- try{
-  const c=JSON.parse(localStorage.getItem('consignors')||'[]');$('consignorList').innerHTML=c.map(x=>'<option value="'+esc(x.name)+'"></option>').join('');
-  const d=JSON.parse(localStorage.getItem('consignees')||'[]');$('consigneeList').innerHTML=d.map(x=>'<option value="'+esc(x.name)+'"></option>').join('');
- }catch(e){}
-}
-function clearForm(){if(viewMode)return;editingId=null;$('lr_no').value='';$('lr_date').value=today();['vehicle_no','from_location','to_location','consignor_name','consignor_phone','consignee_name','consignee_phone','invoice_no','goods','remarks'].forEach(id=>$(id).value='');['packages','weight','invoice_value','freight','other_charges'].forEach(id=>$(id).value=0);$('freight_type').value='TO PAY';$('status').value='Booked';nextLR().then(n=>$('lr_no').value=n)}
-function makePrintObject(){return makeRow()}
-
-function copyHTML(x,name){
- return `<section class="copy">
-  <div class="copyhead">
-   <div class="phone">9885410410<br>9989581732</div>
-   <div class="name">NANDHISHWARA ROAD TRANSPORT<br><span style="font-size:10px">Autonagar, Hyderabad - Telangana</span></div>
-   <div class="copyname">${name}</div>
-  </div>
-  <div class="tag">ONE DAY DELIVERY SERVICE</div>
-  <div class="meta">
-   <div><b>LR No :</b> <span class="big">${esc(x.lr_no)}</span></div>
-   <div><b>Date :</b> <span class="big">${esc(x.lr_date)}</span></div>
-   <div><b>GST No :</b> <span class="big">36HSYPK0996J1ZM</span></div>
-  </div>
-  <div class="info">
-   <div class="col">
-    <div class="cell"><b>Consignor :</b><br><span class="big">${esc(x.consignor_name)}</span></div>
-    <div class="cell"><b>Phone :</b> ${esc(x.consignor_phone)}</div>
-    <div class="cell"><b>From :</b> ${esc(x.from_location)}</div>
-   </div>
-   <div class="col">
-    <div class="cell"><b>Consignee :</b><br><span class="big">${esc(x.consignee_name)}</span></div>
-    <div class="cell"><b>Phone :</b> ${esc(x.consignee_phone)}</div>
-    <div class="cell"><b>To :</b> ${esc(x.to_location)}</div>
-   </div>
-   <div class="col">
-    <div class="cell"><b>Vehicle No :</b> ${esc(x.vehicle_no)}</div>
-    <div class="cell"><b>Freight Type :</b> ${esc(x.freight_type)}</div>
-    <div class="cell"><b>Qty / Packing :</b> <span class="big">${esc(x.packages)} / Box</span></div>
-   </div>
-  </div>
-  <div class="goods"><b>Invoice No :</b> ${esc(x.invoice_no)} &nbsp;&nbsp; <b>Invoice Value :</b> ${money(x.invoice_value)}<br><b>Goods / Description :</b><br>${esc(x.goods)}<br><br><b>Weight :</b> ${esc(x.weight)} &nbsp;&nbsp; <b>Freight :</b> ${money(x.freight)} &nbsp;&nbsp; <b>LR CHARGE :</b> ${money(x.other_charges)}</div>
-  <div class="sign"><div><b>Remarks</b><br>${esc(x.remarks)}</div><div><b>Receiver's Sign</b></div><div><b>Transporter Sign</b></div></div>
- </section>`
-}
-function renderPrint(x){
- $('printArea').innerHTML=copyHTML(x,'CONSIGNOR COPY')+copyHTML(x,'CONSIGNEE COPY')+copyHTML(x,'TRANSPORT COPY');
-}
-function startPrint(){
- document.body.classList.add('printing');
- requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),150)));
-}
-function printCurrent(){renderPrint(makePrintObject());startPrint()}
-window.addEventListener('afterprint',()=>document.body.classList.remove('printing'));
-sb.auth.getSession().then(({data:{session}})=>{if(session)showApp();else $('loginBox').style.display='block'});
-</script>
-</body>
-</html>
+let sb=null,editingId=null,viewMode=false;
+const $=id=>document.getElementById(id), val=id=>(($(id)||{}).value||'').trim();
+function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function setMsg(s){$('loginMsg').textContent=s||''}
+async function login(){setMsg('Logging in...');try{if(!sb){setMsg('Supabase library/config did not load. Refresh the page.');return}const {error}=await sb.auth.signInWithPassword({email:val('email'),password:$('password').value});if(error){setMsg(error.message);return}setMsg('');await showApp()}catch(e){setMsg(e.message||String(e))}}
+async function logout(){if(sb)await sb.auth.signOut();location.href='bilty.html'}
+async function nextLR(){const{data,error}=await sb.from('lrs').select('lr_no').like('lr_no','NRT/%');if(error)throw error;let max=45242;(data||[]).forEach(x=>{const n=Number(String(x.lr_no||'').split('/').pop());if(Number.isFinite(n)&&n>max)max=n});return'NRT/'+(max+1)}
+function makeRow(){return{lr_no:val('lr_no'),lr_date:val('lr_date')||new Date().toISOString().slice(0,10),vehicle_no:val('vehicle_no'),from_location:val('from_location'),to_location:val('to_location'),freight_type:val('freight_type'),consignor_name:val('consignor_name'),consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),consignee_phone:val('consignee_phone'),packages:Number(val('packages')||0),weight:Number(val('weight')||0),goods:val('goods'),invoice_no:val('invoice_no'),invoice_value:Number(val('invoice_value')||0),freight:Number(val('freight')||0),other_charges:Number(val('other_charges')||0),remarks:val('remarks'),status:val('status')||'Booked'}}
+async function saveLR(){if(viewMode)return;$('msg').textContent='Saving...';try{const row=makeRow();if(!row.lr_no)row.lr_no=await nextLR();if(editingId){const{error}=await sb.from('lrs').update(row).eq('id',editingId);if(error)throw error}else{const{data:dup}=await sb.from('lrs').select('id').eq('lr_no',row.lr_no).maybeSingle();if(dup)row.lr_no=await nextLR();const{error}=await sb.from('lrs').insert(row);if(error)throw error}$('lr_no').value=row.lr_no;$('msg').textContent='Saved successfully: '+row.lr_no}catch(e){$('msg').textContent=e.message||String(e)}}
+function fillForm(x){['lr_no','lr_date','vehicle_no','from_location','to_location','freight_type','consignor_name','consignor_phone','consignee_name','consignee_phone','packages','weight','goods','invoice_no','invoice_value','freight','other_charges','remarks','status'].forEach(id=>{if($(id))$(id).value=x[id]??($(id).type==='number'?0:'')})}
+function setViewMode(on){viewMode=on;document.querySelectorAll('#app input,#app select,#app textarea').forEach(e=>e.disabled=on);$('saveBtn').style.display=on?'none':'inline-block';$('viewMsg').textContent=on?'View mode — fields are read-only.':''}
+async function handleURLAction(){const p=new URLSearchParams(location.search),id=p.get('edit')||p.get('print')||p.get('view');if(!id)return;const{data,error}=await sb.from('lrs').select('*').eq('id',id).single();if(error){$('msg').textContent=error.message;return}if(p.get('edit')){editingId=id;fillForm(data);$('msg').textContent='Editing '+data.lr_no}else if(p.get('view')){fillForm(data);setViewMode(true);$('msg').textContent='Viewing '+data.lr_no}else{renderPrint(data);startPrint()}}
+async function showApp(){const{data:{session}}=await sb.auth.getSession();if(!session){$('app').style.display='none';$('loginBox').style.display='block';return}$('loginBox').style.display='none';$('app').style.display='block';$('lr_date').value=new Date().toISOString().slice(0,10);if(!location.search)try{$('lr_no').value=await nextLR()}catch(e){$('msg').textContent=e.message}await handleURLAction()}
+function clearForm(){if(viewMode)return;editingId=null;document.querySelectorAll('#app input:not(#lr_no),#app textarea').forEach(e=>e.value='');$('lr_date').value=new Date().toISOString().slice(0,10);$('packages').value=0;$('weight').value=0;$('invoice_value').value=0;$('freight').value=0;$('other_charges').value=0;$('freight_type').value='TO PAY';$('status').value='Booked';nextLR().then(n=>$('lr_no').value=n)}
+function renderPrint(x){function cp(n){return`<section class="copy"><div class="copyhead"><div class="phone">9885410410<br>9989581732</div><div class="name">NANDHISHWARA ROAD TRANSPORT<br><span style="font-size:10px">Autonagar, Hyderabad - Telangana</span></div><div class="copyname">${n}</div></div><div class="tag">ONE DAY DELIVERY SERVICE</div><div class="meta"><div><b>LR No :</b> <span class="big">${esc(x.lr_no)}</span></div><div><b>Date :</b> <span class="big">${esc(x.lr_date)}</span></div><div><b>GST No :</b> <span class="big">36HSYPK0996J1ZM</span></div></div><div class="info"><div class="col"><div class="cell"><b>Consignor :</b><br><span class="big">${esc(x.consignor_name)}</span></div><div class="cell"><b>Phone :</b> ${esc(x.consignor_phone)}</div><div class="cell"><b>From :</b> ${esc(x.from_location)}</div></div><div class="col"><div class="cell"><b>Consignee :</b><br><span class="big">${esc(x.consignee_name)}</span></div><div class="cell"><b>Phone :</b> ${esc(x.consignee_phone)}</div><div class="cell"><b>To :</b> ${esc(x.to_location)}</div></div><div class="col"><div class="cell"><b>Vehicle No :</b> ${esc(x.vehicle_no)}</div><div class="cell"><b>Freight Type :</b> ${esc(x.freight_type)}</div><div class="cell"><b>Qty / Packing :</b> <span class="big">${esc(x.packages)} / Box</span></div></div></div><div class="goods"><b>Goods / Description :</b><br>${esc(x.goods)}<br><b>Invoice No :</b> ${esc(x.invoice_no)} &nbsp;&nbsp; <b>Invoice Value :</b> ${money(x.invoice_value)}<br><b>Weight :</b> ${esc(x.weight)} &nbsp;&nbsp; <b>Freight :</b> ${money(x.freight)} &nbsp;&nbsp; <b>LR CHARGE :</b> ${money(x.other_charges)}</div><div class="sign"><div><b>Remarks</b><br>${esc(x.remarks)}</div><div><b>Receiver's Sign</b></div><div><b>Transporter Sign</b></div></div></section>`}$('printArea').innerHTML=cp('CONSIGNOR COPY')+cp('CONSIGNEE COPY')+cp('TRANSPORT COPY')}
+function startPrint(){document.body.classList.add('printing');requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),150)))}function printCurrent(){renderPrint(makeRow());startPrint()}window.addEventListener('afterprint',()=>document.body.classList.remove('printing'));
+window.addEventListener('load',async()=>{try{if(!window.supabase||!window.SUPABASE_URL||!window.SUPABASE_PUBLISHABLE_KEY){setMsg('Supabase library/config did not load. Check supabase-config.js and refresh.');return}sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});await showApp()}catch(e){setMsg(e.message||String(e))}});
+</script></body></html>
