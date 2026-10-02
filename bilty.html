@@ -1,72 +1,90 @@
 <!doctype html>
-<html lang="en"><head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NRT Online Bilty / LR</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase-config.js"></script>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NRT Professional LR</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#172033}
-.top{background:#0c4d96;color:#fff;padding:14px}.topin{max-width:1150px;margin:auto;display:flex;justify-content:space-between;align-items:center}.top a{color:#fff;text-decoration:none}
-.wrap{max-width:1150px;margin:auto;padding:18px}.box{background:#fff;border:1px solid #dfe5ed;border-radius:12px;padding:18px;margin-bottom:16px}.title{color:#1257a6}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.full{grid-column:1/-1}
-label{font-size:12px;font-weight:800;display:block;margin-bottom:5px}input,select,textarea{width:100%;padding:10px;border:1px solid #cbd4df;border-radius:7px;font-size:14px}textarea{min-height:55px}
-.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:7px;padding:10px 15px;font-weight:800;cursor:pointer}.blue{background:#1257a6;color:#fff}.yellow{background:#ffd21c;color:#15396b}.gray{background:#6b7280;color:#fff}.red{background:#c62828;color:#fff}
-.msg{margin-top:8px;font-weight:700}.search{display:flex;gap:8px}.search input{flex:1}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:7px;border-bottom:1px solid #e2e7ee;text-align:left;white-space:nowrap}
-.badge{padding:4px 7px;border-radius:10px;background:#eaf3ff;color:#1257a6;font-weight:800}.printarea{display:none}
-@media(max-width:750px){.grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}.wrap{padding:10px}}@media(max-width:480px){.grid{grid-template-columns:1fr}}
-@media print{
-@page{size:A4 portrait;margin:0}html,body{background:#fff!important}.top,.wrap>*:not(#printArea){display:none!important}.wrap{margin:0;padding:0}
-.printarea{display:block!important;width:210mm;height:297mm;overflow:hidden}.sheet{width:210mm;height:297mm;padding:3mm 6mm;display:flex;flex-direction:column;gap:1mm}
-.copy{height:95.8mm;border:1px solid #111;padding:0;overflow:hidden;font-size:7px}.copyhead{height:19.5mm;display:grid;grid-template-columns:72% 28%;border-bottom:1px solid #111}
-.brand{padding:1.5mm 2mm}.company{font-size:13.5px;font-weight:900}.address,.phone,.service{font-size:7px;font-weight:800;margin-top:.5mm}.side{border-left:1px solid #111}.sidetop{height:8.5mm;display:grid;grid-template-columns:68% 32%;border-bottom:1px solid #111}.gstbox,.copyname{display:flex;align-items:center;justify-content:center;font-weight:900}.copyname{border-left:1px solid #111;font-size:8px;text-align:center}.lrbox{height:11mm;display:grid;grid-template-columns:1fr 1fr;font-weight:900}.lrbox div{display:flex;align-items:center;justify-content:center}.lrbox div+div{border-left:1px solid #111}
-.meta{height:8.5mm;display:grid;grid-template-columns:28% 42% 30%;border-bottom:1px solid #111}.meta div{padding:1mm;display:flex;align-items:center;font-weight:800;border-right:1px solid #111}.meta div:last-child{border:0}
-.info{height:18mm;display:grid;grid-template-columns:39% 36% 25%;border-bottom:1px solid #111}.col+.col{border-left:1px solid #111}.cell{padding:1mm;border-bottom:1px solid #111;line-height:1.15;min-height:6mm}.cell:last-child{border:0}.party{font-weight:900;font-size:8.5px}
-.body{height:32mm;display:grid;grid-template-columns:72% 28%;border-bottom:1px solid #111}.goodshead,.goodsrow{display:grid;grid-template-columns:11% 31% 10% 48%}.goodshead{height:6mm;background:#eef5fb;font-weight:900}.goodshead div,.goodsrow div{padding:.7mm;border-right:1px solid #111;display:flex;align-items:center;justify-content:center}.goodsrow{min-height:5mm}.goodsrow div:nth-child(2),.goodsrow div:nth-child(4){justify-content:flex-start}.charges{border-left:1px solid #111}.charge{display:grid;grid-template-columns:63% 37%;min-height:3.8mm;border-bottom:1px solid #111;font-weight:800}.charge div{padding:.5mm 1mm}.charge div+div{border-left:1px solid #111;text-align:right}.total{font-weight:900}.footer{height:16mm;display:grid;grid-template-columns:65% 35%}.remark{padding:1mm;border-bottom:1px solid #111}.sign{border-left:1px solid #111;padding:1mm}.signbox{border:1px solid #111;height:100%;padding:1mm;font-weight:900}
-}
-</style></head><body>
-<div class="top"><div class="topin"><b>🧾 NRT ONLINE BILTY / LR</b><a href="index.html">← Website</a></div></div>
-<div class="wrap">
-<div class="box" id="loginBox"><h2 class="title">NRT Staff Login</h2><div class="grid"><div><label>Email</label><input id="email" type="email"></div><div><label>Password</label><input id="password" type="password"></div></div><div class="actions"><button class="blue" onclick="login()">Login</button></div><div id="loginMsg" class="msg"></div></div>
-<div id="app" style="display:none">
-<div class="box"><h2 class="title">New / Edit Bilty</h2>
-<div class="grid">
-<div><label>LR Number</label><input id="lr_no" readonly></div>
-<div><label>Date</label><input id="lr_date" type="date"></div>
-<div><label>Vehicle No.</label><input id="vehicle_no"></div>
-<div><label>Freight Type</label><select id="freight_type"><option>TO PAY</option><option>PAID</option><option>ON ACCOUNT</option></select></div>
-<div><label>From</label><input id="from_location" value="HYDERABAD"></div>
-<div><label>To</label><input id="to_location"></div>
-<div><label>Consignor Name</label><input id="consignor_name" list="partyNames"></div>
-<div><label>Consignor Phone</label><input id="consignor_phone"></div>
-<div><label>Consignee Name</label><input id="consignee_name" list="partyNames"></div>
-<div><label>Consignee Phone</label><input id="consignee_phone"></div>
-<div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div>
-<div><label>Weight</label><input id="weight" type="number" min="0" value="0"></div>
-<div class="full"><label>Goods / Description</label><input id="goods"></div>
-<div><label>Invoice Number</label><input id="invoice_no"></div>
-<div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" value="0"></div>
-<div><label>Freight</label><input id="freight" type="number" min="0" value="0"></div>
-<div><label>Hamali Charge</label><input id="hamali" type="number" min="0" value="0"></div>
-<div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" value="0"></div>
-<div class="full"><label>Remarks</label><textarea id="remarks"></textarea></div>
-</div>
-<div class="actions"><button class="blue" onclick="saveLR()">💾 Save Bilty</button><button class="yellow" onclick="printLR()">🖨️ Print / PDF</button><button class="gray" onclick="clearForm()">Clear</button><button class="green" onclick="location.href='reports.html'">📊 Reports</button><button class="red" onclick="logout()">Logout</button></div>
-<div id="msg" class="msg"></div></div>
-</div></div>
-<datalist id="partyNames"></datalist><div id="printArea" class="printarea"></div>
+*{box-sizing:border-box}
+@page{size:A4 portrait;margin:0}
+html,body{margin:0;padding:0;background:#ddd;color:#111;font-family:Arial,Helvetica,sans-serif}
+.page{width:210mm;height:297mm;background:#fff;margin:4mm auto;padding:3mm;overflow:hidden}
+.copy{height:96.1mm;border:1.4px solid #111;margin-bottom:1.15mm;overflow:hidden}
+.copy:last-child{margin-bottom:0}
+.header{height:27.5mm;display:grid;grid-template-columns:1fr 79mm;border-bottom:1.2px solid #111}
+.brand{padding:2.2mm 2.5mm}
+.company{font-size:15.5px;font-weight:900;line-height:1.05}
+.address{font-size:7.2px;font-weight:700;margin-top:1.2mm}
+.mobile{font-size:8px;font-weight:900;margin-top:1mm}
+.tag{font-size:8.2px;font-weight:900;margin-top:.8mm}
+.right{border-left:1.2px solid #111;display:grid;grid-template-columns:1fr 31mm;grid-template-rows:9.5mm 18mm}
+.gst{padding:2.2mm;font-size:8px;font-weight:900;border-bottom:1px solid #111}
+.copyname{background:#111;color:#fff;text-align:center;font-size:8.5px;font-weight:900;padding:3mm 1mm}
+.lrdate{grid-column:1/3;display:grid;grid-template-columns:1fr 1fr}
+.lrdate div{padding:3mm 2mm;font-size:8px;font-weight:900}
+.lrdate div+div{border-left:1px solid #111}
+.route{height:8mm;display:grid;grid-template-columns:1fr 1.45fr 1.4fr;border-bottom:1px solid #111}
+.cell{padding:1.8mm 2mm;font-size:7.2px}
+.cell+.cell{border-left:1px solid #111}
+.label{font-weight:900}
+.party{height:20.5mm;display:grid;grid-template-columns:1fr 1fr 1.22fr;border-bottom:1px solid #111}
+.partycell{padding:1.5mm 2mm}
+.partytitle{font-size:7px;font-weight:900}
+.partyname{font-size:9.5px;font-weight:900;margin-top:.5mm}
+.partyphone{font-size:7.7px;font-weight:900;margin-top:1mm}
+.gstline{font-size:6.8px;margin-top:.6mm}
+.invoice{border-left:1px solid #111}
+.inv{height:6.75mm;padding:1.6mm 2mm;font-size:7px;border-bottom:1px solid #111}
+.inv:last-child{border-bottom:0}
+.middle{height:27mm;display:grid;grid-template-columns:1fr 48mm;border-bottom:1px solid #111}
+.goods{display:grid;grid-template-columns:11mm 1.25fr 13mm 1.15fr;grid-template-rows:7mm 20mm}
+.goods div{border-right:1px solid #111;padding:1.6mm 1.2mm;font-size:6.8px}
+.goods .th{background:#f1f1f1;font-weight:900;text-align:center;font-size:7px}
+.charges{display:grid;grid-template-columns:1fr 18mm;grid-template-rows:repeat(5,5.4mm)}
+.charges div{padding:1.3mm 1.4mm;font-size:6.8px;border-bottom:1px solid #111}
+.charges .cl{font-weight:900;border-right:1px solid #111}
+.charges .last{border-bottom:0}
+.charges .total{font-weight:900}
+.footer{height:12.2mm;display:grid;grid-template-columns:1fr 48mm}
+.remarks{padding:1.4mm 2mm;font-size:6.5px;line-height:1.25}
+.sign{border-left:1px solid #111;padding:1.8mm 2mm;font-size:7px;font-weight:900}
+@media print{html,body{background:#fff}.page{width:210mm;height:297mm;margin:0;padding:3mm}}
+</style>
+</head>
+<body><div class="page">
 <script>
-var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY),editingId=null;
-const $=id=>document.getElementById(id),today=()=>new Date().toISOString().slice(0,10);
-function msg(t){$('msg').textContent=t} function esc(x){return String(x??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
-function money(x){return '₹'+Number(x||0).toLocaleString('en-IN')}
-async function login(){let{error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('loginMsg').textContent=error.message;return}showApp()}
-async function logout(){await sb.auth.signOut();location.reload()}
-async function nextLR(){let{data,error}=await sb.from('lrs').select('lr_no').like('lr_no','NRT/%').limit(1000);if(error)throw error;let max=0;(data||[]).forEach(x=>{let m=String(x.lr_no||'').match(/^NRT\/(\d+)$/);if(m)max=Math.max(max,+m[1])});return 'NRT/'+(max?max+1:45243)}
-async function showApp(){$('loginBox').style.display='none';$('app').style.display='block';$('lr_date').value=today();$('from_location').value='HYDERABAD';$('lr_no').value=await nextLR();loadParties()}
-async function loadParties(){let{data}=await sb.from('lrs').select('consignor_name,consignor_phone,consignee_name,consignee_phone').limit(1000);let map={};(data||[]).forEach(r=>{if(r.consignor_name)map[r.consignor_name]=r.consignor_phone||'';if(r.consignee_name)map[r.consignee_name]=r.consignee_phone||''});$('partyNames').innerHTML=Object.keys(map).map(n=>`<option value="${esc(n)}">`).join('');$('consignor_name').onchange=()=>{let r=(data||[]).find(x=>x.consignor_name===$('consignor_name').value||x.consignee_name===$('consignor_name').value);if(r)$('consignor_phone').value=r.consignor_name===$('consignor_name').value?r.consignor_phone:r.consignee_phone};$('consignee_name').onchange=()=>{let r=(data||[]).find(x=>x.consignee_name===$('consignee_name').value||x.consignor_name===$('consignee_name').value);if(r)$('consignee_phone').value=r.consignee_name===$('consignee_name').value?r.consignee_phone:r.consignor_phone}}
-function row(){return{lr_no:$('lr_no').value,lr_date:$('lr_date').value,vehicle_no:$('vehicle_no').value,from_location:$('from_location').value,to_location:$('to_location').value,freight_type:$('freight_type').value,consignor_name:$('consignor_name').value,consignor_phone:$('consignor_phone').value,consignee_name:$('consignee_name').value,consignee_phone:$('consignee_phone').value,packages:+$('packages').value||0,weight:+$('weight').value||0,goods:$('goods').value,invoice_no:$('invoice_no').value,invoice_value:+$('invoice_value').value||0,freight:+$('freight').value||0,hamali:+$('hamali').value||0,other_charges:+$('other_charges').value||0,remarks:$('remarks').value,status:'Booked'}}
-async function saveLR(){let r=row();let q=editingId?sb.from('lrs').update(r).eq('id',editingId):sb.from('lrs').insert(r);let{error}=await q;if(error){msg(error.message);return}msg(`${r.lr_no} saved successfully.`);editingId=null;printLR();setTimeout(async()=>{$('lr_no').value=await nextLR()},300)}
-function clearForm(){editingId=null;$('lr_date').value=today();$('from_location').value='HYDERABAD';['vehicle_no','to_location','consignor_name','consignor_phone','consignee_name','consignee_phone','goods','invoice_no','remarks'].forEach(id=>$(id).value='');['packages','weight','invoice_value','freight','hamali','other_charges'].forEach(id=>$(id).value=0);nextLR().then(x=>$('lr_no').value=x)}
-function printLR(){let r=row();let total=r.freight+r.hamali+r.other_charges;$('printArea').innerHTML=`<div class="sheet">${['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORT COPY'].map(c=>`<div class="copy"><div class="copyhead"><div class="brand"><div class="company">NANDHISHWARA ROAD TRANSPORT</div><div class="address">Plot No. 1, Block No. 8, Autonagar, Hyderabad, Telangana - 500070</div><div class="phone">Mobile : 9885410410 / 9989581732</div><div class="service">ONE DAY DELIVERY SERVICE</div></div><div class="side"><div class="sidetop"><div class="gstbox">GST No : 36HSYPK0996J1ZM</div><div class="copyname">${c}</div></div><div class="lrbox"><div>LR No : <b>${esc(r.lr_no)}</b></div><div>Date : <b>${esc(r.lr_date)}</b></div></div></div></div><div class="meta"><div>From : ${esc(r.from_location)}</div><div>To : ${esc(r.to_location)}</div><div>Freight Type : ${esc(r.freight_type)}</div></div><div class="info"><div class="col"><div class="cell"><b>Consignor :</b> <span class="party">${esc(r.consignor_name)}</span><br><b>Mobile :</b> <span class="party">${esc(r.consignor_phone)}</span></div><div class="cell"><b>Qty :</b> ${r.packages}</div></div><div class="col"><div class="cell"><b>Consignee :</b> <span class="party">${esc(r.consignee_name)}</span><br><b>Mobile :</b> <span class="party">${esc(r.consignee_phone)}</span></div><div class="cell"><b>INV :</b> ${esc(r.invoice_no)} &nbsp; <b>VALUE :</b> ${money(r.invoice_value)}</div></div><div class="col"><div class="cell"><b>Freight Type :</b> ${esc(r.freight_type)}</div><div class="cell"><b>Packages / Packing :</b> ${r.packages} / Box</div></div></div><div class="body"><div><div class="goodshead"><div>S.No.</div><div>Description</div><div>Qty.</div><div>Goods / Remarks</div></div><div class="goodsrow"><div>1</div><div>${esc(r.goods)}</div><div>${r.packages}</div><div>${esc(r.remarks)}</div></div></div><div class="charges"><div class="charge"><div>Freight</div><div>${money(r.freight)}</div></div><div class="charge"><div>Hamali</div><div>${money(r.hamali)}</div></div><div class="charge"><div>LR CHARGE</div><div>${money(r.other_charges)}</div></div><div class="charge total"><div>Total</div><div>${money(total)}</div></div></div></div><div class="footer"><div class="remark"><b>Remarks :</b> ${esc(r.remarks)}</div><div class="sign"><div class="signbox">Receiver's Sign :</div></div></div></div>`).join('')}</div>`;window.print()}
-window.addEventListener('load',async()=>{let{data:{session}}=await sb.auth.getSession();if(session)showApp()});
-</script></body></html>
+function makeCopy(copyName){
+document.write(`
+<section class="copy">
+<div class="header">
+<div class="brand">
+<div class="company">NANDHISHWARA ROAD TRANSPORT</div>
+<div class="address">Plot No. 1, Block No. 8, Autonagar, Hyderabad, Telangana - 500070</div>
+<div class="mobile">Mobile : 9885410410 / 9989581732</div>
+<div class="tag">ONE DAY DELIVERY SERVICE</div>
+</div>
+<div class="right">
+<div class="gst">GST No : 36HSYPK0996J1ZM</div>
+<div class="copyname">${copyName}</div>
+<div class="lrdate"><div>LR No : __________________</div><div>Date : ____ / ____ / ______</div></div>
+</div>
+</div>
+<div class="route">
+<div class="cell"><span class="label">From :</span> Hyderabad</div>
+<div class="cell"><span class="label">To :</span> ______________________________</div>
+<div class="cell"><span class="label">Freight Type :</span> TO PAY ☐ &nbsp; PAID ☐ &nbsp; ON ACCOUNT ☐</div>
+</div>
+<div class="party">
+<div class="partycell"><div class="partytitle">CONSIGNOR</div><div class="partyname">____________________________</div><div class="partyphone">Mobile : ____________________</div><div class="gstline">GST : ________________________</div></div>
+<div class="partycell"><div class="partytitle">CONSIGNEE</div><div class="partyname">____________________________</div><div class="partyphone">Mobile : ____________________</div><div class="gstline">GST : ________________________</div></div>
+<div class="invoice"><div class="inv"><b>Invoice No. :</b> __________________________</div><div class="inv"><b>Invoice Value :</b> ₹ ____________________</div><div class="inv"><b>No. of Packages :</b> __________ &nbsp; <b>Packing :</b> Bag / Box / Drums</div></div>
+</div>
+<div class="middle">
+<div class="goods"><div class="th">S.No.</div><div class="th">Description</div><div class="th">Qty.</div><div class="th">Goods / Remarks</div><div>1</div><div></div><div></div><div></div></div>
+<div class="charges"><div class="cl">Freight</div><div>₹ __________</div><div class="cl">Stationary</div><div>₹ __________</div><div class="cl">Hamali</div><div>₹ __________</div><div class="cl">LR Charge</div><div>₹ __________</div><div class="cl total last">TOTAL</div><div class="total last">₹ __________</div></div>
+</div>
+<div class="footer"><div class="remarks"><b>Remarks :</b> ___________________________________________________________________________________<br><b>GST Paid By :</b> Consignor ☐ &nbsp;&nbsp; Consignee ☐ &nbsp;&nbsp;&nbsp; Goods booked at owner's risk and said to contain basis. Non Negotiable</div><div class="sign">Receiver's Sign :<br><br>____________________________</div></div>
+</section>`);
+}
+makeCopy("CONSIGNOR COPY");makeCopy("CONSIGNEE COPY");makeCopy("TRANSPORT COPY");
+</script></div></body></html>
