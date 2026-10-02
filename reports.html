@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NRT Reports</title>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}
@@ -13,12 +12,10 @@
 label{display:block;font-weight:bold;font-size:13px;margin-bottom:5px}input,select{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px;background:#fff}
 .actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold;cursor:pointer}
 .blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}
-.msg{margin-top:8px;color:#b91c1c;font-weight:bold}.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.msg{margin-top:8px;color:#b91c1c;font-weight:bold}.ok{color:#16803c}.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
 .stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center;background:#fafcff}.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}
-.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1100px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}.act{white-space:nowrap}
-.smallbtn{padding:5px 7px;font-size:11px;border-radius:4px;margin:1px 0}
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:500px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
+.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1100px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}.act{white-space:nowrap}.smallbtn{padding:5px 7px;font-size:11px;border-radius:4px;margin:1px 0}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}.stats{grid-template-columns:repeat(3,1fr)}}@media(max-width:500px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 @media print{body{background:#fff}.top,.filters,.actions,.no-print{display:none!important}.wrap{max-width:none;margin:0;padding:0}.box{border:0;box-shadow:none;padding:4px}table{min-width:0;font-size:9px}th,td{font-size:9px;padding:4px}.stats{grid-template-columns:repeat(6,1fr)}}
 </style>
 </head>
@@ -26,89 +23,64 @@ label{display:block;font-weight:bold;font-size:13px;margin-bottom:5px}input,sele
 <div class="top"><div class="topin"><b>📊 NRT REPORTS</b><div class="nav">
 <a href="bilty.html">➕ New Bilty</a><a href="index.html">← Home</a><button onclick="logout()">Logout</button>
 </div></div></div>
-
 <div class="wrap">
-<div class="box filters">
-<h2 class="title">LR Reports</h2>
+<div class="box filters"><h2 class="title">LR Reports</h2>
 <div class="grid">
 <div><label>From Date</label><input id="fromDate" type="date"></div>
 <div><label>To Date</label><input id="toDate" type="date"></div>
 <div><label>LR Number</label><input id="lrSearch" placeholder="Enter LR Number (optional)"></div>
 <div><label>Status</label><select id="status"><option value="">All Status</option><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div>
 </div>
-<div class="actions">
-<button type="button" class="blue" onclick="loadReport()">🔎 Search Report</button>
-<button type="button" class="gray" onclick="clearFilters()">Clear</button>
-<button type="button" class="yellow" onclick="window.print()">🖨️ Print / PDF</button>
-<button type="button" class="green" onclick="location.href='bilty.html'">➕ New Bilty</button>
-</div>
-<div id="msg" class="msg"></div>
-</div>
-
+<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search Report</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="window.print()">🖨️ Print / PDF</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div>
+<div id="msg" class="msg"></div></div>
 <div class="box"><div class="stats">
-<div class="stat"><b id="count">0</b><span>Total LRs</span></div>
-<div class="stat"><b id="packages">0</b><span>Packages</span></div>
-<div class="stat"><b id="weight">0</b><span>Weight</span></div>
-<div class="stat"><b id="freight">₹0</b><span>Freight</span></div>
-<div class="stat"><b id="other">₹0</b><span>LR CHARGE</span></div>
-<div class="stat"><b id="total">₹0</b><span>Total</span></div>
+<div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="weight">0</b><span>Weight</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="other">₹0</b><span>LR CHARGE</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div>
 </div></div>
-
-<div class="box"><div class="table-wrap"><table>
-<thead><tr><th>LR No.</th><th>Date</th><th>Vehicle</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>LR Charge</th><th>Status</th><th>Actions</th></tr></thead>
-<tbody id="rows"></tbody>
-</table></div></div>
+<div class="box"><div class="table-wrap"><table><thead><tr>
+<th>LR No.</th><th>Date</th><th>Vehicle</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>LR Charge</th><th>Status</th><th>Actions</th>
+</tr></thead><tbody id="rows"></tbody></table></div></div>
 </div>
-
 <script>
 var URL="https://psfsrzeuriznupvfbosk.supabase.co";
 var KEY="sb_publishable_XVVZxsLDQJfDLfFayc0IRA_KyCT-NHF";
 var AK="nrt_access_token",RK="nrt_refresh_token";
-
+const $=id=>document.getElementById(id);
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
-function headers(extra){var h={'apikey':KEY,'Content-Type':'application/json'};var t=localStorage.getItem(AK);if(t)h.Authorization='Bearer '+t;if(extra)Object.assign(h,extra);return h}
-async function api(path,opts){opts=opts||{};opts.headers=headers(opts.headers);var r=await fetch(URL+path,opts);var text=await r.text(),d=null;try{d=text?JSON.parse(text):null}catch(e){d=text}if(!r.ok){var e=new Error((d&&d.message)||(d&&d.error_description)||text||('HTTP '+r.status));e.status=r.status;throw e}return d}
-async function refreshSession(){var rt=localStorage.getItem(RK);if(!rt)return false;try{var r=await fetch(URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:rt})});var d=await r.json();if(!r.ok||!d.access_token)return false;localStorage.setItem(AK,d.access_token);if(d.refresh_token)localStorage.setItem(RK,d.refresh_token);return true}catch(e){return false}}
-async function authOK(){var t=localStorage.getItem(AK);if(!t)return false;try{await api('/auth/v1/user');return true}catch(e){if(await refreshSession()){try{await api('/auth/v1/user');return true}catch(x){}}}return false}
-async function db(path,opts){try{return await api('/rest/v1/lrs'+path,opts)}catch(e){if(e.status===401&&await refreshSession())return await api('/rest/v1/lrs'+path,opts);throw e}}
-async function logout(){try{await api('/auth/v1/logout',{method:'POST'})}catch(e){}localStorage.removeItem(AK);localStorage.removeItem(RK);location.href='bilty.html'}
+function authHeaders(extra){let h={'apikey':KEY,'Content-Type':'application/json'};let t=localStorage.getItem(AK);if(t)h.Authorization='Bearer '+t;if(extra)Object.assign(h,extra);return h}
+async function request(path,opts){opts=opts||{};opts.headers=authHeaders(opts.headers);let r=await fetch(URL+path,opts),txt=await r.text(),d=null;try{d=txt?JSON.parse(txt):null}catch(e){}if(!r.ok){let e=new Error((d&&d.message)||(d&&d.error_description)||txt||('HTTP '+r.status));e.status=r.status;throw e}return d}
+async function refresh(){let rt=localStorage.getItem(RK);if(!rt)return false;try{let r=await fetch(URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:rt})});let d=await r.json();if(!r.ok||!d.access_token)return false;localStorage.setItem(AK,d.access_token);if(d.refresh_token)localStorage.setItem(RK,d.refresh_token);return true}catch(e){return false}}
+async function authOK(){try{await request('/auth/v1/user');return true}catch(e){return await refresh()}}
+async function db(path,opts){try{return await request('/rest/v1/lrs'+path,opts)}catch(e){if(e.status===401&&await refresh())return await request('/rest/v1/lrs'+path,opts);throw e}}
+async function logout(){try{await request('/auth/v1/logout',{method:'POST'})}catch(e){}localStorage.removeItem(AK);localStorage.removeItem(RK);location.href='bilty.html'}
 
+function filtered(data){
+ const f=$('fromDate').value,t=$('toDate').value,lr=$('lrSearch').value.trim().toLowerCase(),st=$('status').value;
+ return (data||[]).filter(x=>{
+  if(f && String(x.lr_date||'')<f)return false;if(t && String(x.lr_date||'')>t)return false;
+  if(lr && !String(x.lr_no||'').toLowerCase().includes(lr))return false;if(st && x.status!==st)return false;return true;
+ }).sort((a,b)=>String(b.lr_date||'').localeCompare(String(a.lr_date||'')) || Number(b.id||0)-Number(a.id||0));
+}
 async function loadReport(){
- $('msg').textContent='Loading...';
- let q='?select=*&order=lr_date.desc,id.desc';
- const f=document.getElementById('fromDate').value,t=document.getElementById('toDate').value,lr=document.getElementById('lrSearch').value.trim(),st=document.getElementById('status').value;
- const filters=[];
- if(f)filters.push('lr_date=gte.'+encodeURIComponent(f));
- if(t)filters.push('lr_date=lte.'+encodeURIComponent(t));
- if(lr)filters.push('lr_no=ilike.*'+encodeURIComponent(lr)+'*');
- if(st)filters.push('status=eq.'+encodeURIComponent(st));
- q=filters.length?'?select=*&'+filters.join('&')+'&order=lr_date.desc,id.desc':q;
+ $('msg').className='msg';$('msg').textContent='Loading all LR records...';
  try{
-  const data=await db(q,{method:'GET'});let p=0,w=0,fv=0,oc=0;
-  document.getElementById('rows').innerHTML=(data||[]).map(x=>{
-   p+=Number(x.packages||0);w+=Number(x.weight||0);fv+=Number(x.freight||0);oc+=Number(x.other_charges||0);
-   return `<tr><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.vehicle_no)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${x.packages||0}</td><td>${x.weight||0}</td><td class="right">${money(x.freight)}</td><td class="right">${money(x.other_charges)}</td><td>${esc(x.status)}</td><td class="act"><button type="button" class="blue smallbtn" onclick="viewLR(${x.id})">View</button><button type="button" class="green smallbtn" onclick="editLR(${x.id})">Edit</button><button type="button" class="yellow smallbtn" onclick="printLR(${x.id})">Print</button><button type="button" class="red smallbtn" onclick="deleteLR(${x.id},'${esc(x.lr_no)}')">Delete</button></td></tr>`
-  }).join('');
-  document.getElementById('count').textContent=(data||[]).length;
-  document.getElementById('packages').textContent=p;document.getElementById('weight').textContent=w;
-  document.getElementById('freight').textContent=money(fv);document.getElementById('other').textContent=money(oc);document.getElementById('total').textContent=money(fv+oc);
-  $('msg').textContent='';
- }catch(e){$('msg').textContent=e.message||String(e)}
+   /* IMPORTANT: fetch all rows without date filters first. Date filtering is done in the browser. */
+   let data=await db('?select=*&limit=1000',{method:'GET'});
+   let rows=filtered(data);let p=0,w=0,fv=0,oc=0;
+   $('rows').innerHTML=rows.map(x=>{
+     p+=Number(x.packages||0);w+=Number(x.weight||0);fv+=Number(x.freight||0);oc+=Number(x.other_charges||0);
+     return `<tr><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.vehicle_no)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${x.packages||0}</td><td>${x.weight||0}</td><td class="right">${money(x.freight)}</td><td class="right">${money(x.other_charges)}</td><td>${esc(x.status)}</td><td class="act"><button class="blue smallbtn" onclick="viewLR(${x.id})">View</button><button class="green smallbtn" onclick="editLR(${x.id})">Edit</button><button class="yellow smallbtn" onclick="printLR(${x.id})">Print</button><button class="red smallbtn" onclick="deleteLR(${x.id},'${esc(x.lr_no)}')">Delete</button></td></tr>`;
+   }).join('');
+   $('count').textContent=rows.length;$('packages').textContent=p;$('weight').textContent=w;$('freight').textContent=money(fv);$('other').textContent=money(oc);$('total').textContent=money(fv+oc);
+   $('msg').className='msg ok';
+   $('msg').textContent=rows.length+' LR records loaded.';
+ }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
 }
 function viewLR(id){location.href='bilty.html?view='+encodeURIComponent(id)}
 function editLR(id){location.href='bilty.html?edit='+encodeURIComponent(id)}
 function printLR(id){location.href='bilty.html?print='+encodeURIComponent(id)}
-async function deleteLR(id,lr){
- if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;
- try{await db('?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{'Prefer':'return=minimal'}});loadReport()}catch(e){$('msg').textContent=e.message||String(e)}
-}
-function clearFilters(){document.getElementById('fromDate').value='';document.getElementById('toDate').value='';document.getElementById('lrSearch').value='';document.getElementById('status').value='';loadReport()}
-
-window.addEventListener('load',async()=>{
- const ok=await authOK();
- if(!ok){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}
- loadReport();
-});
+async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{await db('?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{'Prefer':'return=minimal'}});loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
+function clearFilters(){$('fromDate').value='';$('toDate').value='';$('lrSearch').value='';$('status').value='';loadReport()}
+window.addEventListener('load',async()=>{if(!await authOK()){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}loadReport()});
 </script>
 </body></html>
