@@ -4,7 +4,7 @@
 
 const SUPABASE_URL = "https://psfsrzeuriznupvfbosk.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_... key";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_XVVZxsLDQJfDLfFayc0IRA_KyCT-NHF";
 
 // Make config available to Bilty and Reports pages.
 window.SUPABASE_URL = SUPABASE_URL;
