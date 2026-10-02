@@ -54,9 +54,11 @@ body.printing .copy{display:block}
 <div><label>Consignee Phone</label><input id="consignee_phone"></div>
 <div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div>
 <div><label>Weight</label><input id="weight" type="number" min="0" step="0.01" value="0"></div>
+<div><label>Invoice Number</label><input id="invoice_no"></div>
+<div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" step="0.01" value="0"></div>
 <div style="grid-column:span 2"><label>Goods / Description</label><input id="goods"></div>
 <div><label>Freight</label><input id="freight" type="number" min="0" step="0.01" value="0"></div>
-<div><label>Other Charges</label><input id="other_charges" type="number" min="0" step="0.01" value="0"></div>
+<div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" step="0.01" value="0"></div>
 <div style="grid-column:span 2"><label>Remarks</label><textarea id="remarks"></textarea></div>
 <div><label>Status</label><select id="status"><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div>
 </div>
@@ -101,7 +103,7 @@ function makeRow(){
   freight_type:val('freight_type'),consignor_name:val('consignor_name'),
   consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),
   consignee_phone:val('consignee_phone'),packages:Number(val('packages')||0),
-  weight:Number(val('weight')||0),goods:val('goods'),freight:Number(val('freight')||0),
+  weight:Number(val('weight')||0),goods:val('goods'),invoice_no:val('invoice_no'),invoice_value:Number(val('invoice_value')||0),freight:Number(val('freight')||0),
   other_charges:Number(val('other_charges')||0),remarks:val('remarks'),
   status:val('status')||'Booked'
  };
@@ -138,7 +140,7 @@ function fillForm(x){
  $('freight_type').value=x.freight_type||'TO PAY';$('consignor_name').value=x.consignor_name||'';
  $('consignor_phone').value=x.consignor_phone||'';$('consignee_name').value=x.consignee_name||'';
  $('consignee_phone').value=x.consignee_phone||'';$('packages').value=x.packages??0;$('weight').value=x.weight??0;
- $('goods').value=x.goods||'';$('freight').value=x.freight??0;$('other_charges').value=x.other_charges??0;
+ $('invoice_no').value=x.invoice_no||'';$('invoice_value').value=x.invoice_value??0;$('goods').value=x.goods||'';$('freight').value=x.freight??0;$('other_charges').value=x.other_charges??0;
  $('remarks').value=x.remarks||'';$('status').value=x.status||'Booked';
 }
 function setViewMode(on){
@@ -170,7 +172,7 @@ function loadHistory(){
   const d=JSON.parse(localStorage.getItem('consignees')||'[]');$('consigneeList').innerHTML=d.map(x=>'<option value="'+esc(x.name)+'"></option>').join('');
  }catch(e){}
 }
-function clearForm(){if(viewMode)return;editingId=null;$('lr_no').value='';$('lr_date').value=today();['vehicle_no','from_location','to_location','consignor_name','consignor_phone','consignee_name','consignee_phone','goods','remarks'].forEach(id=>$(id).value='');['packages','weight','freight','other_charges'].forEach(id=>$(id).value=0);$('freight_type').value='TO PAY';$('status').value='Booked';nextLR().then(n=>$('lr_no').value=n)}
+function clearForm(){if(viewMode)return;editingId=null;$('lr_no').value='';$('lr_date').value=today();['vehicle_no','from_location','to_location','consignor_name','consignor_phone','consignee_name','consignee_phone','invoice_no','goods','remarks'].forEach(id=>$(id).value='');['packages','weight','invoice_value','freight','other_charges'].forEach(id=>$(id).value=0);$('freight_type').value='TO PAY';$('status').value='Booked';nextLR().then(n=>$('lr_no').value=n)}
 function makePrintObject(){return makeRow()}
 
 function copyHTML(x,name){
@@ -203,7 +205,7 @@ function copyHTML(x,name){
     <div class="cell"><b>Qty / Packing :</b> <span class="big">${esc(x.packages)} / Box</span></div>
    </div>
   </div>
-  <div class="goods"><b>Goods / Description :</b><br>${esc(x.goods)}<br><br><b>Weight :</b> ${esc(x.weight)} &nbsp;&nbsp; <b>Freight :</b> ${money(x.freight)} &nbsp;&nbsp; <b>Other :</b> ${money(x.other_charges)}</div>
+  <div class="goods"><b>Invoice No :</b> ${esc(x.invoice_no)} &nbsp;&nbsp; <b>Invoice Value :</b> ${money(x.invoice_value)}<br><b>Goods / Description :</b><br>${esc(x.goods)}<br><br><b>Weight :</b> ${esc(x.weight)} &nbsp;&nbsp; <b>Freight :</b> ${money(x.freight)} &nbsp;&nbsp; <b>LR CHARGE :</b> ${money(x.other_charges)}</div>
   <div class="sign"><div><b>Remarks</b><br>${esc(x.remarks)}</div><div><b>Receiver's Sign</b></div><div><b>Transporter Sign</b></div></div>
  </section>`
 }
