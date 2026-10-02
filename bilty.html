@@ -1,139 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NRT Bilty / LR</title>
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NRT Online Bilty / LR</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}.top{background:#073b8f;color:#fff;padding:12px 16px}.topin{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px}.top b{font-size:19px}.nav{display:flex;gap:7px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:8px 11px;border-radius:6px;font-weight:bold;text-decoration:none;border:0;cursor:pointer}.wrap{max-width:1100px;margin:16px auto;padding:0 10px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:9px;padding:14px;margin-bottom:12px;box-shadow:0 2px 7px #00000012}.title{margin:0 0 12px;color:#073b8f}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}label{display:block;font-weight:bold;font-size:12px;margin-bottom:4px}input,select,textarea{width:100%;padding:8px;border:1px solid #b9c2ce;border-radius:6px;background:#fff;font:inherit}textarea{min-height:60px;resize:vertical}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}button{border:0;border-radius:6px;padding:9px 14px;font-weight:bold;cursor:pointer}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}.msg{margin-top:7px;color:#b91c1c;font-weight:bold}.hint{font-size:12px;color:#6b7280;margin-top:4px}#loginBox{max-width:600px;margin:35px auto}.printarea{display:none}.copy{width:190mm;height:91.5mm;margin:0 auto 2mm;border:1px solid #111;padding:3mm;overflow:hidden;page-break-inside:avoid}.copy:last-child{margin-bottom:0}.copyhead{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;border-bottom:1px solid #111;padding-bottom:1.5mm}.copyhead .name{text-align:center;font-size:17px;font-weight:800}.copyhead .copyname{text-align:right;font-size:12px;font-weight:800}.copyhead .phone{text-align:left;font-size:10px;font-weight:800;line-height:1.25}.tag{text-align:center;font-weight:800;font-size:11px;margin:1mm 0}.meta{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #111}.meta>div{padding:1.5mm;border-right:1px solid #111;font-size:10px}.meta>div:last-child{border-right:0}.info{display:grid;grid-template-columns:1fr 1fr 1fr;border-left:1px solid #111;border-right:1px solid #111;border-bottom:1px solid #111}.col{border-right:1px solid #111}.col:last-child{border-right:0}.cell{padding:1.4mm;border-bottom:1px solid #111;min-height:8mm;font-size:10px}.cell:last-child{border-bottom:0}.big{font-size:12px;font-weight:800}.goods{border:1px solid #111;border-top:0;height:25mm;padding:1.5mm;font-size:10px}.sign{display:grid;grid-template-columns:1fr 1fr 1fr;border:1px solid #111;border-top:0;height:12mm}.sign div{padding:1.5mm;border-right:1px solid #111;font-size:9px}.sign div:last-child{border-right:0}@page{size:A4 portrait;margin:0}@media print{html,body{background:#fff!important}body.printing .top,body.printing #loginBox,body.printing #app{display:none!important}body.printing .wrap{max-width:none;margin:0;padding:0}body.printing #printArea{display:block!important;width:210mm;margin:0;padding:5mm 10mm 5mm}body.printing .copy{display:block}}@media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:500px){.grid{grid-template-columns:1fr}.topin{align-items:flex-start;flex-direction:column}}
+*{box-sizing:border-box}body{margin:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#172033}
+.top{background:#0c4d96;color:#fff;padding:14px}.topin{max-width:1150px;margin:auto;display:flex;justify-content:space-between;align-items:center}.top a{color:#fff;text-decoration:none}
+.wrap{max-width:1150px;margin:auto;padding:18px}.box{background:#fff;border:1px solid #dfe5ed;border-radius:12px;padding:18px;margin-bottom:16px}.title{color:#1257a6}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}.full{grid-column:1/-1}
+label{font-size:12px;font-weight:800;display:block;margin-bottom:5px}input,select,textarea{width:100%;padding:10px;border:1px solid #cbd4df;border-radius:7px;font-size:14px}textarea{min-height:55px}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}button{border:0;border-radius:7px;padding:10px 15px;font-weight:800;cursor:pointer}.blue{background:#1257a6;color:#fff}.yellow{background:#ffd21c;color:#15396b}.gray{background:#6b7280;color:#fff}.red{background:#c62828;color:#fff}
+.msg{margin-top:8px;font-weight:700}.search{display:flex;gap:8px}.search input{flex:1}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:7px;border-bottom:1px solid #e2e7ee;text-align:left;white-space:nowrap}
+.badge{padding:4px 7px;border-radius:10px;background:#eaf3ff;color:#1257a6;font-weight:800}.printarea{display:none}
+@media(max-width:750px){.grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}.wrap{padding:10px}}@media(max-width:480px){.grid{grid-template-columns:1fr}}
+@media print{
+@page{size:A4 portrait;margin:0}html,body{background:#fff!important}.top,.wrap>*:not(#printArea){display:none!important}.wrap{margin:0;padding:0}
+.printarea{display:block!important;width:210mm;height:297mm;overflow:hidden}.sheet{width:210mm;height:297mm;padding:3mm 6mm;display:flex;flex-direction:column;gap:1mm}
+.copy{height:95.8mm;border:1px solid #111;padding:0;overflow:hidden;font-size:7px}.copyhead{height:19.5mm;display:grid;grid-template-columns:72% 28%;border-bottom:1px solid #111}
+.brand{padding:1.5mm 2mm}.company{font-size:13.5px;font-weight:900}.address,.phone,.service{font-size:7px;font-weight:800;margin-top:.5mm}.side{border-left:1px solid #111}.sidetop{height:8.5mm;display:grid;grid-template-columns:68% 32%;border-bottom:1px solid #111}.gstbox,.copyname{display:flex;align-items:center;justify-content:center;font-weight:900}.copyname{border-left:1px solid #111;font-size:8px;text-align:center}.lrbox{height:11mm;display:grid;grid-template-columns:1fr 1fr;font-weight:900}.lrbox div{display:flex;align-items:center;justify-content:center}.lrbox div+div{border-left:1px solid #111}
+.meta{height:8.5mm;display:grid;grid-template-columns:28% 42% 30%;border-bottom:1px solid #111}.meta div{padding:1mm;display:flex;align-items:center;font-weight:800;border-right:1px solid #111}.meta div:last-child{border:0}
+.info{height:18mm;display:grid;grid-template-columns:39% 36% 25%;border-bottom:1px solid #111}.col+.col{border-left:1px solid #111}.cell{padding:1mm;border-bottom:1px solid #111;line-height:1.15;min-height:6mm}.cell:last-child{border:0}.party{font-weight:900;font-size:8.5px}
+.body{height:32mm;display:grid;grid-template-columns:72% 28%;border-bottom:1px solid #111}.goodshead,.goodsrow{display:grid;grid-template-columns:11% 31% 10% 48%}.goodshead{height:6mm;background:#eef5fb;font-weight:900}.goodshead div,.goodsrow div{padding:.7mm;border-right:1px solid #111;display:flex;align-items:center;justify-content:center}.goodsrow{min-height:5mm}.goodsrow div:nth-child(2),.goodsrow div:nth-child(4){justify-content:flex-start}.charges{border-left:1px solid #111}.charge{display:grid;grid-template-columns:63% 37%;min-height:3.8mm;border-bottom:1px solid #111;font-weight:800}.charge div{padding:.5mm 1mm}.charge div+div{border-left:1px solid #111;text-align:right}.total{font-weight:900}.footer{height:16mm;display:grid;grid-template-columns:65% 35%}.remark{padding:1mm;border-bottom:1px solid #111}.sign{border-left:1px solid #111;padding:1mm}.signbox{border:1px solid #111;height:100%;padding:1mm;font-weight:900}
+}
 </style></head><body>
-<div class="top"><div class="topin"><b>🚚 NANDHISHWARA ROAD TRANSPORT</b><div class="nav"><a href="reports.html">📊 Reports</a><a href="index.html">← Home</a><button onclick="logout()">Logout</button></div></div></div>
+<div class="top"><div class="topin"><b>🧾 NRT ONLINE BILTY / LR</b><a href="index.html">← Website</a></div></div>
 <div class="wrap">
-<div class="box" id="loginBox"><h2 class="title">NRT Staff Login</h2><div class="grid"><div><label>Email</label><input id="email" type="email" placeholder="NRT account email"></div><div><label>Password</label><input id="password" type="password" placeholder="Password"></div></div><div class="actions"><button type="button" class="blue" onclick="login()">Login</button></div><div id="loginMsg" class="msg"></div></div>
-<div id="app" style="display:none"><div class="box"><h2 class="title">🧾 New / Edit Bilty</h2><div class="grid">
-<div><label>LR Number</label><input id="lr_no" readonly></div><div><label>Date</label><input id="lr_date" type="date"></div><div><label>Vehicle No.</label><input id="vehicle_no"></div><div><label>Freight Type</label><select id="freight_type"><option>TO PAY</option><option>PAID</option><option>ON ACCOUNT</option></select></div>
-<div><label>From</label><input id="from_location"></div><div><label>To</label><input id="to_location"></div><div><label>Consignor Name</label><input id="consignor_name" list="consignorSuggestions" autocomplete="off" oninput="partyNameChanged('consignor')"></div><div><label>Consignor Phone</label><input id="consignor_phone"></div>
-<div><label>Consignee Name</label><input id="consignee_name" list="consigneeSuggestions" autocomplete="off" oninput="partyNameChanged('consignee')"></div><div><label>Consignee Phone</label><input id="consignee_phone"></div><div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div><div><label>Weight</label><input id="weight" type="number" min="0" step="0.01" value="0"></div>
-<div style="grid-column:span 2"><label>Goods / Description</label><input id="goods"></div><div><label>Invoice Number</label><input id="invoice_no"></div><div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" step="0.01" value="0"></div>
-<div><label>Freight</label><input id="freight" type="number" min="0" step="0.01" value="0"></div><div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" step="0.01" value="0"></div><div style="grid-column:span 2"><label>Remarks</label><textarea id="remarks"></textarea></div><div><label>Status</label><select id="status"><option>Booked</option><option>In Transit</option><option>Delivered</option><option>Cancelled</option></select></div>
-</div><div class="actions"><button type="button" id="saveBtn" class="blue" onclick="saveLR()">💾 Save Bilty</button><button type="button" class="yellow" onclick="printCurrent()">🖨️ Print / PDF</button><button type="button" class="gray" onclick="clearForm()">Clear</button><button type="button" class="green" onclick="location.href='reports.html'">📊 Reports</button></div><div id="msg" class="msg"></div><div id="viewMsg" class="hint"></div></div></div>
-<div id="printArea" class="printarea"></div>
-<datalist id="consignorSuggestions"></datalist>
-<datalist id="consigneeSuggestions"></datalist>
+<div class="box" id="loginBox"><h2 class="title">NRT Staff Login</h2><div class="grid"><div><label>Email</label><input id="email" type="email"></div><div><label>Password</label><input id="password" type="password"></div></div><div class="actions"><button class="blue" onclick="login()">Login</button></div><div id="loginMsg" class="msg"></div></div>
+<div id="app" style="display:none">
+<div class="box"><h2 class="title">New / Edit Bilty</h2>
+<div class="grid">
+<div><label>LR Number</label><input id="lr_no" readonly></div>
+<div><label>Date</label><input id="lr_date" type="date"></div>
+<div><label>Vehicle No.</label><input id="vehicle_no"></div>
+<div><label>Freight Type</label><select id="freight_type"><option>TO PAY</option><option>PAID</option><option>ON ACCOUNT</option></select></div>
+<div><label>From</label><input id="from_location" value="HYDERABAD"></div>
+<div><label>To</label><input id="to_location"></div>
+<div><label>Consignor Name</label><input id="consignor_name" list="partyNames"></div>
+<div><label>Consignor Phone</label><input id="consignor_phone"></div>
+<div><label>Consignee Name</label><input id="consignee_name" list="partyNames"></div>
+<div><label>Consignee Phone</label><input id="consignee_phone"></div>
+<div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div>
+<div><label>Weight</label><input id="weight" type="number" min="0" value="0"></div>
+<div class="full"><label>Goods / Description</label><input id="goods"></div>
+<div><label>Invoice Number</label><input id="invoice_no"></div>
+<div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" value="0"></div>
+<div><label>Freight</label><input id="freight" type="number" min="0" value="0"></div>
+<div><label>Hamali Charge</label><input id="hamali" type="number" min="0" value="0"></div>
+<div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" value="0"></div>
+<div class="full"><label>Remarks</label><textarea id="remarks"></textarea></div>
 </div>
+<div class="actions"><button class="blue" onclick="saveLR()">💾 Save Bilty</button><button class="yellow" onclick="printLR()">🖨️ Print / PDF</button><button class="gray" onclick="clearForm()">Clear</button><button class="green" onclick="location.href='reports.html'">📊 Reports</button><button class="red" onclick="logout()">Logout</button></div>
+<div id="msg" class="msg"></div></div>
+</div></div>
+<datalist id="partyNames"></datalist><div id="printArea" class="printarea"></div>
 <script>
-/* NRT DIRECT SUPABASE REST VERSION
-   Uses the same working login method as the successful Login Test.
-   No Supabase JS library is required. */
-var NRT_SUPABASE_URL="https://psfsrzeuriznupvfbosk.supabase.co";
-var NRT_SUPABASE_KEY="sb_publishable_XVVZxsLDQJfDLfFayc0IRA_KyCT-NHF";
-var NRT_ACCESS_KEY="nrt_access_token";
-var NRT_REFRESH_KEY="nrt_refresh_token";
-var sb={};
-var editingId=null,viewMode=false;
-const $=id=>document.getElementById(id), val=id=>(($(id)||{}).value||'').trim();
-function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
-function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
-function setMsg(s){if($('loginMsg'))$('loginMsg').textContent=s||''}
-function apiHeaders(extra){var h={'apikey':NRT_SUPABASE_KEY,'Content-Type':'application/json'};var t=localStorage.getItem(NRT_ACCESS_KEY);if(t)h.Authorization='Bearer '+t;if(extra)Object.keys(extra).forEach(k=>h[k]=extra[k]);return h}
-async function api(path,opts){opts=opts||{};opts.headers=apiHeaders(opts.headers);var r=await fetch(NRT_SUPABASE_URL+path,opts);var text=await r.text();var data=null;try{data=text?JSON.parse(text):null}catch(e){data=text}if(!r.ok){var msg=(data&&data.message)||(data&&data.error_description)||(data&&data.hint)||text||('HTTP '+r.status);var er=new Error(msg);er.status=r.status;throw er}return data}
-async function authUser(){return await api('/auth/v1/user',{method:'GET'})}
-async function login(){
- setMsg('Logging in...');
- var em=val('email'),pw=$('password').value;
- if(!em||!pw){setMsg('Email and Password enter cheyyandi.');return}
- try{
-  var r=await fetch(NRT_SUPABASE_URL+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':NRT_SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})});
-  var text=await r.text(),d=null;try{d=text?JSON.parse(text):null}catch(e){}
-  if(!r.ok){setMsg((d&&d.error_description)||(d&&d.msg)||(d&&d.message)||text||('Login failed. HTTP '+r.status));return}
-  localStorage.setItem(NRT_ACCESS_KEY,d.access_token||'');
-  if(d.refresh_token)localStorage.setItem(NRT_REFRESH_KEY,d.refresh_token);
-  setMsg('');
-  await showApp();
- }catch(e){setMsg('Browser/Internet error: '+(e.message||String(e)))}
-}
-async function refreshSession(){
- var rt=localStorage.getItem(NRT_REFRESH_KEY);if(!rt)return false;
- try{
-  var r=await fetch(NRT_SUPABASE_URL+'/auth/v1/token?grant_type=refresh_token',{method:'POST',headers:{'apikey':NRT_SUPABASE_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:rt})});
-  var d=await r.json();if(!r.ok||!d.access_token)return false;
-  localStorage.setItem(NRT_ACCESS_KEY,d.access_token);if(d.refresh_token)localStorage.setItem(NRT_REFRESH_KEY,d.refresh_token);return true;
- }catch(e){return false}
-}
-async function logout(){localStorage.removeItem(NRT_ACCESS_KEY);localStorage.removeItem(NRT_REFRESH_KEY);location.href='bilty.html'}
-async function ensureAuth(){
- var t=localStorage.getItem(NRT_ACCESS_KEY);if(!t)return false;
- try{await authUser();return true}catch(e){if(await refreshSession()){try{await authUser();return true}catch(e2){}}}
- localStorage.removeItem(NRT_ACCESS_KEY);localStorage.removeItem(NRT_REFRESH_KEY);return false;
-}
-async function db(path,opts){
- try{return await api('/rest/v1/lrs'+path,opts)}catch(e){if(e.status===401&&await refreshSession())return await api('/rest/v1/lrs'+path,opts);throw e}
-}
-async function nextLR(){
- var data=await db('?select=lr_no&lr_no=like.NRT/*',{method:'GET'});let max=45242;(data||[]).forEach(x=>{const n=Number(String(x.lr_no||'').split('/').pop());if(Number.isFinite(n)&&n>max)max=n});return'NRT/'+(max+1)
-}
-function makeRow(){return{lr_no:val('lr_no'),lr_date:val('lr_date')||new Date().toISOString().slice(0,10),vehicle_no:val('vehicle_no'),from_location:val('from_location'),to_location:val('to_location'),freight_type:val('freight_type'),consignor_name:val('consignor_name'),consignor_phone:val('consignor_phone'),consignee_name:val('consignee_name'),consignee_phone:val('consignee_phone'),packages:Number(val('packages')||0),weight:Number(val('weight')||0),goods:val('goods'),invoice_no:val('invoice_no'),invoice_value:Number(val('invoice_value')||0),freight:Number(val('freight')||0),other_charges:Number(val('other_charges')||0),remarks:val('remarks'),status:val('status')||'Booked'}}
-async function saveLR(){if(viewMode)return;$('msg').textContent='Saving...';try{const row=makeRow();if(!row.lr_no)row.lr_no=await nextLR();if(editingId){await db('?id=eq.'+encodeURIComponent(editingId),{method:'PATCH',headers:{'Prefer':'return=minimal'},body:JSON.stringify(row)})}else{const dup=await db('?select=id&lr_no=eq.'+encodeURIComponent(row.lr_no),{method:'GET'});if(dup&&dup.length)row.lr_no=await nextLR();await db('',{method:'POST',headers:{'Prefer':'return=minimal'},body:JSON.stringify(row)})}$('lr_no').value=row.lr_no;rememberPartyNames();$('msg').textContent='Saved successfully: '+row.lr_no}catch(e){$('msg').textContent=e.message||String(e)}}
-function fillForm(x){['lr_no','lr_date','vehicle_no','from_location','to_location','freight_type','consignor_name','consignor_phone','consignee_name','consignee_phone','packages','weight','goods','invoice_no','invoice_value','freight','other_charges','remarks','status'].forEach(id=>{if($(id))$(id).value=x[id]??($(id).type==='number'?0:'')})}
-function setViewMode(on){viewMode=on;document.querySelectorAll('#app input,#app select,#app textarea').forEach(e=>e.disabled=on);$('saveBtn').style.display=on?'none':'inline-block';$('viewMsg').textContent=on?'View mode — fields are read-only.':''}
-async function handleURLAction(){const p=new URLSearchParams(location.search),id=p.get('edit')||p.get('print')||p.get('view');if(!id)return;const data=await db('?select=*&id=eq.'+encodeURIComponent(id),{method:'GET'});if(!data||!data.length){$('msg').textContent='LR record not found.';return}var x=data[0];if(p.get('edit')){editingId=id;fillForm(x);$('msg').textContent='Editing '+x.lr_no}else if(p.get('view')){fillForm(x);setViewMode(true);$('msg').textContent='Viewing '+x.lr_no}else{renderPrint(x);startPrint()}}
-
-let partyCache={consignor:[],consignee:[]};
-
-function uniquePartyNames(list){
-  const seen={}; const out=[];
-  (list||[]).forEach(x=>{
-    const n=String(x||'').trim();
-    if(n && !seen[n.toLowerCase()]){seen[n.toLowerCase()]=1;out.push(n)}
-  });
-  return out.sort((a,b)=>a.localeCompare(b));
-}
-function renderPartySuggestions(){
-  const a=uniquePartyNames(partyCache.consignor);
-  const b=uniquePartyNames(partyCache.consignee);
-  $('consignorSuggestions').innerHTML=a.map(n=>'<option value="'+esc(n)+'"></option>').join('');
-  $('consigneeSuggestions').innerHTML=b.map(n=>'<option value="'+esc(n)+'"></option>').join('');
-}
-async function loadPartySuggestions(){
-  try{
-    const rows=await db('?select=consignor_name,consignor_phone,consignee_name,consignee_phone&order=id.desc&limit=1000',{method:'GET'});
-    partyCache={consignor:[],consignee:[]};
-    (rows||[]).forEach(x=>{
-      if(x.consignor_name) partyCache.consignor.push(x.consignor_name);
-      if(x.consignee_name) partyCache.consignee.push(x.consignee_name);
-    });
-    renderPartySuggestions();
-  }catch(e){}
-}
-async function partyNameChanged(type){
-  const field=type==='consignor'?'consignor_name':'consignee_name';
-  const phone=type==='consignor'?'consignor_phone':'consignee_phone';
-  const name=val(field);
-  if(!name)return;
-  try{
-    const col=type==='consignor'?'consignor_name':'consignee_name';
-    const rows=await db('?select='+col+','+phone+'&'+col+'=eq.'+encodeURIComponent(name)+'&limit=1',{method:'GET'});
-    if(rows&&rows.length&&rows[0][phone]) $(phone).value=rows[0][phone];
-  }catch(e){}
-}
-function rememberPartyNames(){
-  const cn=val('consignor_name'), en=val('consignee_name');
-  if(cn) partyCache.consignor.push(cn);
-  if(en) partyCache.consignee.push(en);
-  renderPartySuggestions();
-}
-
-async function showApp(){
- var ok=await ensureAuth();
- if(!ok){$('app').style.display='none';$('loginBox').style.display='block';return}
- $('loginBox').style.display='none';$('app').style.display='block';
- if(!location.search){$('lr_date').value=new Date().toISOString().slice(0,10);try{$('lr_no').value=await nextLR()}catch(e){$('msg').textContent=e.message||String(e)}}
- await loadPartySuggestions();
- try{await handleURLAction()}catch(e){$('msg').textContent=e.message||String(e)}
-}
-function clearForm(){if(viewMode)return;editingId=null;document.querySelectorAll('#app input:not(#lr_no),#app textarea').forEach(e=>e.value='');$('lr_date').value=new Date().toISOString().slice(0,10);$('packages').value=0;$('weight').value=0;$('invoice_value').value=0;$('freight').value=0;$('other_charges').value=0;$('freight_type').value='TO PAY';$('status').value='Booked';nextLR().then(n=>$('lr_no').value=n).catch(e=>$('msg').textContent=e.message||String(e))}
-function renderPrint(x){function cp(n){return`<section class="copy"><div class="copyhead"><div class="phone">9885410410<br>9989581732</div><div class="name">NANDHISHWARA ROAD TRANSPORT<br><span style="font-size:10px">Autonagar, Hyderabad - Telangana</span></div><div class="copyname">${n}</div></div><div class="tag">ONE DAY DELIVERY SERVICE</div><div class="meta"><div><b>LR No :</b> <span class="big">${esc(x.lr_no)}</span></div><div><b>Date :</b> <span class="big">${esc(x.lr_date)}</span></div><div><b>GST No :</b> <span class="big">36HSYPK0996J1ZM</span></div></div><div class="info"><div class="col"><div class="cell"><b>Consignor :</b><br><span class="big">${esc(x.consignor_name)}</span></div><div class="cell"><b>Phone :</b> ${esc(x.consignor_phone)}</div><div class="cell"><b>From :</b> ${esc(x.from_location)}</div></div><div class="col"><div class="cell"><b>Consignee :</b><br><span class="big">${esc(x.consignee_name)}</span></div><div class="cell"><b>Phone :</b> ${esc(x.consignee_phone)}</div><div class="cell"><b>To :</b> ${esc(x.to_location)}</div></div><div class="col"><div class="cell"><b>Vehicle No :</b> ${esc(x.vehicle_no)}</div><div class="cell"><b>Freight Type :</b> ${esc(x.freight_type)}</div><div class="cell"><b>Qty / Packing :</b> <span class="big">${esc(x.packages)} / Box</span></div></div></div><div class="goods"><b>Goods / Description :</b><br>${esc(x.goods)}<br><b>Invoice No :</b> ${esc(x.invoice_no)} &nbsp;&nbsp; <b>Invoice Value :</b> ${money(x.invoice_value)}<br><b>Weight :</b> ${esc(x.weight)} &nbsp;&nbsp; <b>Freight :</b> ${money(x.freight)} &nbsp;&nbsp; <b>LR CHARGE :</b> ${money(x.other_charges)}</div><div class="sign"><div><b>Remarks</b><br>${esc(x.remarks)}</div><div><b>Receiver's Sign</b></div><div><b>Transporter Sign</b></div></div></section>`}$('printArea').innerHTML=cp('CONSIGNOR COPY')+cp('CONSIGNEE COPY')+cp('TRANSPORT COPY')}
-function startPrint(){document.body.classList.add('printing');requestAnimationFrame(()=>requestAnimationFrame(()=>setTimeout(()=>window.print(),150)))}
-function printCurrent(){renderPrint(makeRow());startPrint()}
-window.addEventListener('afterprint',()=>document.body.classList.remove('printing'));
-window.addEventListener('load',async()=>{try{await showApp()}catch(e){setMsg(e.message||String(e))}});
+var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY),editingId=null;
+const $=id=>document.getElementById(id),today=()=>new Date().toISOString().slice(0,10);
+function msg(t){$('msg').textContent=t} function esc(x){return String(x??'').replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]))}
+function money(x){return '₹'+Number(x||0).toLocaleString('en-IN')}
+async function login(){let{error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});if(error){$('loginMsg').textContent=error.message;return}showApp()}
+async function logout(){await sb.auth.signOut();location.reload()}
+async function nextLR(){let{data,error}=await sb.from('lrs').select('lr_no').like('lr_no','NRT/%').limit(1000);if(error)throw error;let max=0;(data||[]).forEach(x=>{let m=String(x.lr_no||'').match(/^NRT\/(\d+)$/);if(m)max=Math.max(max,+m[1])});return 'NRT/'+(max?max+1:45243)}
+async function showApp(){$('loginBox').style.display='none';$('app').style.display='block';$('lr_date').value=today();$('from_location').value='HYDERABAD';$('lr_no').value=await nextLR();loadParties()}
+async function loadParties(){let{data}=await sb.from('lrs').select('consignor_name,consignor_phone,consignee_name,consignee_phone').limit(1000);let map={};(data||[]).forEach(r=>{if(r.consignor_name)map[r.consignor_name]=r.consignor_phone||'';if(r.consignee_name)map[r.consignee_name]=r.consignee_phone||''});$('partyNames').innerHTML=Object.keys(map).map(n=>`<option value="${esc(n)}">`).join('');$('consignor_name').onchange=()=>{let r=(data||[]).find(x=>x.consignor_name===$('consignor_name').value||x.consignee_name===$('consignor_name').value);if(r)$('consignor_phone').value=r.consignor_name===$('consignor_name').value?r.consignor_phone:r.consignee_phone};$('consignee_name').onchange=()=>{let r=(data||[]).find(x=>x.consignee_name===$('consignee_name').value||x.consignor_name===$('consignee_name').value);if(r)$('consignee_phone').value=r.consignee_name===$('consignee_name').value?r.consignee_phone:r.consignor_phone}}
+function row(){return{lr_no:$('lr_no').value,lr_date:$('lr_date').value,vehicle_no:$('vehicle_no').value,from_location:$('from_location').value,to_location:$('to_location').value,freight_type:$('freight_type').value,consignor_name:$('consignor_name').value,consignor_phone:$('consignor_phone').value,consignee_name:$('consignee_name').value,consignee_phone:$('consignee_phone').value,packages:+$('packages').value||0,weight:+$('weight').value||0,goods:$('goods').value,invoice_no:$('invoice_no').value,invoice_value:+$('invoice_value').value||0,freight:+$('freight').value||0,hamali:+$('hamali').value||0,other_charges:+$('other_charges').value||0,remarks:$('remarks').value,status:'Booked'}}
+async function saveLR(){let r=row();let q=editingId?sb.from('lrs').update(r).eq('id',editingId):sb.from('lrs').insert(r);let{error}=await q;if(error){msg(error.message);return}msg(`${r.lr_no} saved successfully.`);editingId=null;printLR();setTimeout(async()=>{$('lr_no').value=await nextLR()},300)}
+function clearForm(){editingId=null;$('lr_date').value=today();$('from_location').value='HYDERABAD';['vehicle_no','to_location','consignor_name','consignor_phone','consignee_name','consignee_phone','goods','invoice_no','remarks'].forEach(id=>$(id).value='');['packages','weight','invoice_value','freight','hamali','other_charges'].forEach(id=>$(id).value=0);nextLR().then(x=>$('lr_no').value=x)}
+function printLR(){let r=row();let total=r.freight+r.hamali+r.other_charges;$('printArea').innerHTML=`<div class="sheet">${['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORT COPY'].map(c=>`<div class="copy"><div class="copyhead"><div class="brand"><div class="company">NANDHISHWARA ROAD TRANSPORT</div><div class="address">Plot No. 1, Block No. 8, Autonagar, Hyderabad, Telangana - 500070</div><div class="phone">Mobile : 9885410410 / 9989581732</div><div class="service">ONE DAY DELIVERY SERVICE</div></div><div class="side"><div class="sidetop"><div class="gstbox">GST No : 36HSYPK0996J1ZM</div><div class="copyname">${c}</div></div><div class="lrbox"><div>LR No : <b>${esc(r.lr_no)}</b></div><div>Date : <b>${esc(r.lr_date)}</b></div></div></div></div><div class="meta"><div>From : ${esc(r.from_location)}</div><div>To : ${esc(r.to_location)}</div><div>Freight Type : ${esc(r.freight_type)}</div></div><div class="info"><div class="col"><div class="cell"><b>Consignor :</b> <span class="party">${esc(r.consignor_name)}</span><br><b>Mobile :</b> <span class="party">${esc(r.consignor_phone)}</span></div><div class="cell"><b>Qty :</b> ${r.packages}</div></div><div class="col"><div class="cell"><b>Consignee :</b> <span class="party">${esc(r.consignee_name)}</span><br><b>Mobile :</b> <span class="party">${esc(r.consignee_phone)}</span></div><div class="cell"><b>INV :</b> ${esc(r.invoice_no)} &nbsp; <b>VALUE :</b> ${money(r.invoice_value)}</div></div><div class="col"><div class="cell"><b>Freight Type :</b> ${esc(r.freight_type)}</div><div class="cell"><b>Packages / Packing :</b> ${r.packages} / Box</div></div></div><div class="body"><div><div class="goodshead"><div>S.No.</div><div>Description</div><div>Qty.</div><div>Goods / Remarks</div></div><div class="goodsrow"><div>1</div><div>${esc(r.goods)}</div><div>${r.packages}</div><div>${esc(r.remarks)}</div></div></div><div class="charges"><div class="charge"><div>Freight</div><div>${money(r.freight)}</div></div><div class="charge"><div>Hamali</div><div>${money(r.hamali)}</div></div><div class="charge"><div>LR CHARGE</div><div>${money(r.other_charges)}</div></div><div class="charge total"><div>Total</div><div>${money(total)}</div></div></div></div><div class="footer"><div class="remark"><b>Remarks :</b> ${esc(r.remarks)}</div><div class="sign"><div class="signbox">Receiver's Sign :</div></div></div></div>`).join('')}</div>`;window.print()}
+window.addEventListener('load',async()=>{let{data:{session}}=await sb.auth.getSession();if(session)showApp()});
 </script></body></html>
