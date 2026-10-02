@@ -4,7 +4,7 @@
 
 const SUPABASE_URL = "https://psfsrzeuriznupvfbosk.supabase.co";
 
-const SUPABASE_PUBLISHABLE_KEY = "మీ ప్రస్తుత supabase publishable key ఇక్కడే ఉంచండి";
+const SUPABASE_PUBLISHABLE_KEY = 
 
 // Make config available to Bilty and Reports pages.
 window.SUPABASE_URL = SUPABASE_URL;
