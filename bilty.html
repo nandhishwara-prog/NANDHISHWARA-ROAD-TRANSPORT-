@@ -49,7 +49,7 @@ html,body{background:#fff!important}
 .copyhead{height:27.5mm;display:grid;grid-template-columns:1fr 78mm;border-bottom:1.1px solid #111}
 .brand{padding:2mm 2.4mm}
 .company{font-size:15px;font-weight:900;line-height:1.05}
-.address{font-size:7px;font-weight:700;margin-top:1.1mm}
+.address{font-size:9px;font-weight:800;margin-top:1.1mm;line-height:1.15}
 .phone{font-size:8px;font-weight:900;margin-top:1mm}
 .service{font-size:8px;font-weight:900;margin-top:.8mm}
 .side{border-left:1.1px solid #111}
@@ -71,26 +71,26 @@ border-left:1px solid #111;
 .lrno-big{font-size:11px;font-weight:900;margin-left:1mm}
 .date-big{font-size:9px;font-weight:900;margin-left:1mm}
 
-.meta{height:8mm;display:grid;grid-template-columns:1fr 1.45fr 1.42fr;border-bottom:1px solid #111}
-.meta div{padding:1.8mm 2mm;display:flex;align-items:center;font-weight:800;border-right:1px solid #111}
+.meta{height:9.5mm;display:grid;grid-template-columns:1fr 1.45fr 1.42fr;border-bottom:1.2px solid #111}
+.meta div{padding:1.8mm 2mm;display:flex;align-items:center;font-weight:900;border-right:1.2px solid #111;font-size:10px}
 .meta div:last-child{border-right:0}
-.freight-type-big{font-size:10px;font-weight:900;margin-left:1mm}
+.freight-type-big{font-size:10px;font-weight:900;margin-left:1mm}.route-big{font-size:11px;font-weight:900;margin-left:1mm}
 
-.info{height:20.5mm;display:grid;grid-template-columns:1fr 1fr 1.22fr;border-bottom:1px solid #111}
+.info{height:21mm;display:grid;grid-template-columns:1fr 1fr 1.22fr;border-bottom:1.2px solid #111}
 .col+.col{border-left:1px solid #111}
-.cell{padding:1.4mm 2mm;border-bottom:1px solid #111;line-height:1.12;min-height:6.75mm}
+.cell{padding:1.8mm 2.2mm;border-bottom:1px solid #111;line-height:1.15;min-height:8mm}
 .cell:last-child{border:0}
-.party{font-weight:900;font-size:9.5px}
+.party{font-weight:900;font-size:10.5px}
 .qty-big{font-size:11px;font-weight:900}
 .invoice-big{font-size:10px;font-weight:900}
 .invoice-value-big{font-size:9px;font-weight:900}
 
-.body{height:27mm;display:grid;grid-template-columns:1fr 48mm;border-bottom:1px solid #111}
+.body{height:25.5mm;display:grid;grid-template-columns:1fr 48mm;border-bottom:1.2px solid #111}
 .goodshead,.goodsrow{display:grid;grid-template-columns:11mm 1.25fr 13mm 1.15fr}
-.goodshead{height:7mm;background:#fff;font-weight:900}
-.goodshead div,.goodsrow div{padding:1.2mm;display:flex;align-items:center;justify-content:center;border-right:1px solid #111}
-.goodsrow{height:20mm}
-.goodsrow div:nth-child(2),.goodsrow div:nth-child(4){justify-content:flex-start;align-items:flex-start}
+.goodshead{height:6.5mm;background:#fff;font-weight:900;font-size:7.5px}
+.goodshead div,.goodsrow div{padding:1.1mm;display:flex;align-items:center;justify-content:center;border-right:1px solid #111}
+.goodsrow{height:8.5mm}
+.goodsrow div:nth-child(2),.goodsrow div:nth-child(4){justify-content:flex-start;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .qty-table-big{font-size:11px;font-weight:900}
 .charges{border-left:1px solid #111;display:grid;grid-template-columns:1fr 18mm;grid-template-rows:repeat(5,5.4mm)}
 .charge{display:contents}
@@ -100,8 +100,8 @@ border-left:1px solid #111;
 .total-amount{font-size:11px!important;font-weight:900!important}
 .charges .charge:last-child div{border-bottom:0}
 
-.footer{height:12.2mm;display:grid;grid-template-columns:1fr 48mm}
-.remark{padding:1.3mm 2mm;font-size:6.2px;line-height:1.25}
+.footer{height:13.7mm;display:grid;grid-template-columns:1fr 48mm}
+.remark{padding:1.5mm 2mm;font-size:7px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sign{border-left:1px solid #111;padding:1.6mm 2mm}
 .signbox{border:0;height:100%;font-weight:900}
 }
@@ -407,8 +407,8 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 </div>
 
 <div class="meta">
-<div>From : <b>${esc(r.from_location)}</b></div>
-<div>To : <b>${esc(r.to_location)}</b></div>
+<div>FROM : <b class="route-big">${esc(r.from_location)}</b></div>
+<div>TO : <b class="route-big">${esc(r.to_location)}</b></div>
 <div>Freight Type : <b class="freight-type-big">${esc(r.freight_type||'TO PAY')}</b></div>
 </div>
 
@@ -437,8 +437,8 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 </div>
 
 <div class="col">
-<div class="cell"><b>Vehicle No :</b> ${esc(r.vehicle_no)}</div>
-<div class="cell"><b>Packages :</b> <span class="qty-big">${esc(r.packages)}</span></div>
+<div class="cell"><b>Vehicle No :</b> <span class="party">${esc(r.vehicle_no)}</span></div>
+<div class="cell"><b>Delivery :</b> Door Delivery / One Day Service</div>
 </div>
 
 </div>
@@ -449,8 +449,8 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 <div class="goodshead">
 <div>S.No.</div>
 <div>Description</div>
-<div>Qty.</div>
-<div>Goods / Remarks</div>
+<div>Qty</div>
+<div>Remarks</div>
 </div>
 
 <div class="goodsrow">
@@ -493,9 +493,7 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 
 <div class="footer">
 <div class="remark">
-<b>Remarks :</b> ${esc(r.remarks)}<br>
-<b>GST Paid By :</b> Not Applicable &nbsp;&nbsp;
-Goods booked at owner's risk and said to contain basis. Non Negotiable
+<b>Remarks :</b> ${esc(r.remarks)} &nbsp;&nbsp; <b>GST Paid By :</b> Not Applicable &nbsp;&nbsp; Goods booked at owner's risk and said to contain basis. Non Negotiable
 </div>
 
 <div class="sign">
