@@ -333,6 +333,33 @@ $('from_location').value='HYDERABAD';
 nextLR().then(x=>$('lr_no').value=x)
 }
 
+async function loadLR(id){
+const {data,error}=await sb.from('lrs').select('*').eq('id',id).single();
+if(error){alert('LR data load failed: '+error.message);return null}
+if(!data){alert('LR record not found');return null}
+return data
+}
+
+function fillForm(r){
+const f={lr_no:r.lr_no||'',lr_date:r.lr_date||'',vehicle_no:r.vehicle_no||'',freight_type:r.freight_type||'TO PAY',from_location:r.from_location||'',to_location:r.to_location||'',consignor_name:r.consignor_name||'',consignor_phone:r.consignor_phone||'',consignee_name:r.consignee_name||'',consignee_phone:r.consignee_phone||'',packages:r.packages||0,weight:r.weight||0,goods:r.goods||'',invoice_no:r.invoice_no||'',invoice_value:r.invoice_value||0,freight:r.freight||0,hamali:r.hamali||0,other_charges:r.other_charges||0,remarks:r.remarks||''};
+Object.keys(f).forEach(k=>{if($(k))$(k).value=f[k]})
+}
+
+function setFormReadOnly(on){
+document.querySelectorAll('#app input,#app select,#app textarea').forEach(e=>e.disabled=on);
+document.querySelectorAll('#app .actions button').forEach(b=>b.style.display=on?'none':'');
+}
+
+async function openRequestedLR(mode,id){
+const r=await loadLR(id);
+if(!r)return;
+$('loginBox').style.display='none';
+$('app').style.display='block';
+fillForm(r);
+editingId=r.id;
+setFormReadOnly(mode==='view');
+}
+
 async function printLR(){
 
 const params=new URLSearchParams(window.location.search);
@@ -342,23 +369,8 @@ let r;
 
 if(printId){
 
-const {data,error}=await sb
-.from('lrs')
-.select('*')
-.eq('id',printId)
-.single();
-
-if(error){
-alert('LR data load failed: '+error.message);
-return
-}
-
-if(!data){
-alert('LR record not found');
-return
-}
-
-r=data;
+r=await loadLR(printId);
+if(!r)return;
 
 }else{
 
@@ -509,13 +521,22 @@ if(!session)return;
 
 const params=new URLSearchParams(window.location.search);
 const printId=params.get('print');
+const viewId=params.get('view');
+const editId=params.get('edit');
 
 if(printId){
 
 $('loginBox').style.display='none';
 $('app').style.display='none';
-
 await printLR();
+
+}else if(viewId){
+
+await openRequestedLR('view',viewId);
+
+}else if(editId){
+
+await openRequestedLR('edit',editId);
 
 }else{
 
