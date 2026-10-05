@@ -45,12 +45,12 @@ html,body{background:#fff!important}
 .wrap{margin:0;padding:0}
 .printarea{display:block!important;width:210mm;height:297mm;overflow:hidden;background:#fff}
 .sheet{width:210mm;height:297mm;padding:3mm;display:flex;flex-direction:column;gap:1.15mm;background:#fff}
-.copy{height:96.1mm;border:1.25px solid #111;padding:0;overflow:hidden;font-size:6.8px;background:#fff!important;color:#111}
-.copyhead{height:27.5mm;display:grid;grid-template-columns:1fr 78mm;border-bottom:1.1px solid #111}
+.copy{height:96.1mm;border:1.35px solid #111;padding:0;overflow:hidden;font-size:7px;background:#fff!important;color:#111}
+.copyhead{height:28.5mm;display:grid;grid-template-columns:1fr 78mm;border-bottom:1.1px solid #111}
 .brand{padding:2mm 2.4mm}
-.company{font-size:15px;font-weight:900;line-height:1.05}
-.address{font-size:9px;font-weight:800;margin-top:1.1mm;line-height:1.15}
-.phone{font-size:8px;font-weight:900;margin-top:1mm}
+.company{font-size:18.5px;font-weight:900;line-height:1.05}
+.address{font-size:12.5px;font-weight:800;margin-top:1.1mm;line-height:1.15}
+.phone{font-size:12.5px;font-weight:900;margin-top:1mm;letter-spacing:.15px}
 .service{font-size:8px;font-weight:900;margin-top:.8mm}
 .side{border-left:1.1px solid #111}
 .sidetop{height:9.3mm;display:grid;grid-template-columns:1fr 31mm;border-bottom:1px solid #111}
@@ -76,22 +76,23 @@ border-left:1px solid #111;
 .meta div:last-child{border-right:0}
 .freight-type-big{font-size:10px;font-weight:900;margin-left:1mm}.route-big{font-size:11px;font-weight:900;margin-left:1mm}
 
-.info{height:21mm;display:grid;grid-template-columns:1fr 1fr 1.22fr;border-bottom:1.2px solid #111}
+.info{height:24mm;display:grid;grid-template-columns:1fr 1fr;border-bottom:1.2px solid #111}
 .col+.col{border-left:1px solid #111}
-.cell{padding:1.8mm 2.2mm;border-bottom:1px solid #111;line-height:1.15;min-height:8mm}
+.cell{padding:2.2mm 2.6mm;border-bottom:1px solid #111;line-height:1.15;min-height:10mm}
 .cell:last-child{border:0}
-.party{font-weight:900;font-size:10.5px}
-.qty-big{font-size:11px;font-weight:900}
-.invoice-big{font-size:10px;font-weight:900}
-.invoice-value-big{font-size:9px;font-weight:900}
+.party{font-weight:900;font-size:12.5px}
+.invoice-big{font-size:11px;font-weight:900}
+.invoice-value-big{font-size:11px;font-weight:900}
+.phone-big{font-size:11.5px;font-weight:900}
 
-.body{height:25.5mm;display:grid;grid-template-columns:1fr 48mm;border-bottom:1.2px solid #111}
-.goodshead,.goodsrow{display:grid;grid-template-columns:11mm 1.25fr 13mm 1.15fr}
-.goodshead{height:6.5mm;background:#fff;font-weight:900;font-size:7.5px}
-.goodshead div,.goodsrow div{padding:1.1mm;display:flex;align-items:center;justify-content:center;border-right:1px solid #111}
-.goodsrow{height:8.5mm}
-.goodsrow div:nth-child(2),.goodsrow div:nth-child(4){justify-content:flex-start;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.qty-table-big{font-size:11px;font-weight:900}
+.body{height:17.2mm;display:grid;grid-template-columns:1fr 48mm;border-bottom:1.2px solid #111}
+.goodshead,.goodsrow{display:grid;grid-template-columns:1fr 18mm 1fr}
+.goodshead{height:5mm;background:#fff;font-weight:900;font-size:7.5px}
+.goodsrow>div{font-weight:900;font-size:9.5px}
+.goodsrow>div:nth-child(2){font-weight:900;text-align:center}
+.goodshead div,.goodsrow div{padding:1mm;display:flex;align-items:center;justify-content:center;border-right:1px solid #111}
+.goodsrow{height:7mm}
+.goodsrow div:nth-child(1),.goodsrow div:nth-child(3){justify-content:flex-start;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.goodsrow div:nth-child(1){font-weight:900;font-size:8.8px}.goodsrow div:nth-child(2){justify-content:center;font-weight:900;font-size:9px}
 .charges{border-left:1px solid #111;display:grid;grid-template-columns:1fr 18mm;grid-template-rows:repeat(5,5.4mm)}
 .charge{display:contents}
 .charge div{padding:1.25mm 1.4mm;border-bottom:1px solid #111;font-weight:800}
@@ -100,7 +101,7 @@ border-left:1px solid #111;
 .total-amount{font-size:11px!important;font-weight:900!important}
 .charges .charge:last-child div{border-bottom:0}
 
-.footer{height:13.7mm;display:grid;grid-template-columns:1fr 48mm}
+.footer{height:14.5mm;display:grid;grid-template-columns:1fr 48mm}
 .remark{padding:1.5mm 2mm;font-size:7px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sign{border-left:1px solid #111;padding:1.6mm 2mm}
 .signbox{border:0;height:100%;font-weight:900}
@@ -156,7 +157,6 @@ border-left:1px solid #111;
 <div><label>Consignee Name</label><input id="consignee_name" list="partyNames"></div>
 <div><label>Consignee Phone</label><input id="consignee_phone"></div>
 
-<div><label>Packages / Qty</label><input id="packages" type="number" min="0" value="0"></div>
 <div><label>Weight</label><input id="weight" type="number" min="0" value="0"></div>
 
 <div class="full"><label>Goods / Description</label><input id="goods"></div>
@@ -287,7 +287,7 @@ consignor_name:$('consignor_name').value,
 consignor_phone:$('consignor_phone').value,
 consignee_name:$('consignee_name').value,
 consignee_phone:$('consignee_phone').value,
-packages:+$('packages').value||0,
+packages:0,
 weight:+$('weight').value||0,
 goods:$('goods').value,
 invoice_no:$('invoice_no').value,
@@ -327,7 +327,7 @@ $('from_location').value='HYDERABAD';
 'consignee_name','consignee_phone','goods','invoice_no','remarks']
 .forEach(id=>$(id).value='');
 
-['packages','weight','invoice_value','freight','hamali','other_charges']
+['weight','invoice_value','freight','hamali','other_charges']
 .forEach(id=>$(id).value=0);
 
 nextLR().then(x=>$('lr_no').value=x)
@@ -360,6 +360,13 @@ editingId=r.id;
 setFormReadOnly(mode==='view');
 }
 
+function formatPrintDate(v){
+  if(!v)return '';
+  const a=String(v).split('-');
+  if(a.length===3 && a[0].length===4) return a[2]+'/'+a[1]+'/'+a[0];
+  return v;
+}
+
 async function printLR(){
 
 const params=new URLSearchParams(window.location.search);
@@ -388,7 +395,7 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 <div class="copyhead">
 <div class="brand">
 <div class="company">NANDHISHWARA ROAD TRANSPORT</div>
-<div class="address">Plot No. 1, Block No. 8, Autonagar, Hyderabad, Telangana - 500070</div>
+<div class="address">Plot No. 1, Block No. 3, Autonagar, Hyderabad, Telangana - 500070</div>
 <div class="phone">Mobile : 9885410410 / 9989581732</div>
 <div class="service">ONE DAY DELIVERY SERVICE</div>
 </div>
@@ -401,7 +408,7 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 
 <div class="lrbox">
 <div>LR No : <b class="lrno-big">${esc(r.lr_no)}</b></div>
-<div>Date : <b class="date-big">${esc(r.lr_date)}</b></div>
+<div>Date : <b class="date-big">${esc(formatPrintDate(r.lr_date))}</b></div>
 </div>
 </div>
 </div>
@@ -417,28 +424,17 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 <div class="col">
 <div class="cell">
 <b>CONSIGNOR :</b> <span class="party">${esc(r.consignor_name)}</span><br>
-<b>Mobile :</b> <span class="party">${esc(r.consignor_phone)}</span>
+<b>Mobile :</b> <span class="party phone-big">${esc(r.consignor_phone)}</span>
 </div>
-<div class="cell">
-<b>Qty :</b> <span class="qty-big">${esc(r.packages)}</span>
-&nbsp; <b>Packing :</b> Bag / Box / Drums
-</div>
+<div class="cell"><b>Invoice No :</b> <b class="invoice-big">${esc(r.invoice_no)}</b></div>
 </div>
 
 <div class="col">
 <div class="cell">
 <b>CONSIGNEE :</b> <span class="party">${esc(r.consignee_name)}</span><br>
-<b>Mobile :</b> <span class="party">${esc(r.consignee_phone)}</span>
+<b>Mobile :</b> <span class="party phone-big">${esc(r.consignee_phone)}</span>
 </div>
-<div class="cell">
-<b>INV :</b> <b class="invoice-big">${esc(r.invoice_no)}</b>
-&nbsp;&nbsp; <b>VALUE :</b> <b class="invoice-value-big">${money(r.invoice_value)}</b>
-</div>
-</div>
-
-<div class="col">
-<div class="cell"><b>Vehicle No :</b> <span class="party">${esc(r.vehicle_no)}</span></div>
-<div class="cell"><b>Delivery :</b> Door Delivery / One Day Service</div>
+<div class="cell"><b>Invoice Value :</b> <b class="invoice-value-big">${money(r.invoice_value)}</b></div>
 </div>
 
 </div>
@@ -447,16 +443,14 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 
 <div>
 <div class="goodshead">
-<div>S.No.</div>
 <div>Description</div>
 <div>Qty</div>
 <div>Remarks</div>
 </div>
 
 <div class="goodsrow">
-<div>1</div>
 <div>${esc(r.goods)}</div>
-<div class="qty-table-big">${esc(r.packages)}</div>
+<div>${esc(r.packages||'')}</div>
 <div>${esc(r.remarks)}</div>
 </div>
 </div>
