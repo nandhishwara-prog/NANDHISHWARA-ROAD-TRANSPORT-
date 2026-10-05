@@ -38,74 +38,66 @@ th,td{padding:7px;border-bottom:1px solid #e2e7ee;text-align:left;white-space:no
 }
 @media(max-width:480px){.grid{grid-template-columns:1fr}}
 
+
 @media print{
 @page{size:A4 portrait;margin:0}
 html,body{background:#fff!important}
 .top,.wrap>*:not(#printArea){display:none!important}
-.wrap{margin:0;padding:0}
+.wrap{margin:0!important;padding:0!important}
 .printarea{display:block!important;width:210mm;height:297mm;overflow:hidden;background:#fff}
-.sheet{width:210mm;height:297mm;padding:3mm;display:flex;flex-direction:column;gap:1.15mm;background:#fff}
-.copy{height:96.1mm;border:1.35px solid #111;padding:0;overflow:hidden;font-size:7px;background:#fff!important;color:#111}
-.copyhead{height:28.5mm;display:grid;grid-template-columns:1fr 78mm;border-bottom:1.1px solid #111}
-.brand{padding:2mm 2.4mm}
-.company{font-size:18.5px;font-weight:900;line-height:1.05}
-.address{font-size:12.5px;font-weight:800;margin-top:1.1mm;line-height:1.15}
-.phone{font-size:12.5px;font-weight:900;margin-top:1mm;letter-spacing:.15px}
-.service{font-size:8px;font-weight:900;margin-top:.8mm}
-.side{border-left:1.1px solid #111}
-.sidetop{height:9.3mm;display:grid;grid-template-columns:1fr 31mm;border-bottom:1px solid #111}
-.gstbox{padding:2.1mm;font-size:8px;font-weight:900}
-.copyname{
-background:#fff!important;
-color:#111!important;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:8.5px;
-font-weight:900;
-border-left:1px solid #111;
-}
-.lrbox{height:18.2mm;display:grid;grid-template-columns:1fr 1fr;font-weight:900}
-.lrbox div{display:flex;align-items:center;padding:2mm;font-size:8px}
+.sheet{width:210mm;height:297mm;padding:3.2mm;display:flex;flex-direction:column;gap:1.3mm;background:#fff}
+.copy{height:96mm;border:1.2px solid #111;overflow:hidden;background:#fff!important;color:#111;font-size:7.5px}
+.copyhead{height:25mm;display:grid;grid-template-columns:1fr 67mm;border-bottom:1.2px solid #111}
+.brand{padding:2.5mm 3mm}
+.company{font-size:18px;font-weight:900;line-height:1.05;letter-spacing:.2px}
+.address{font-size:10.5px;font-weight:800;margin-top:1.5mm;line-height:1.2}
+.phone{font-size:11px;font-weight:900;margin-top:1.2mm}
+.service{font-size:8px;font-weight:900;margin-top:1mm;letter-spacing:.3px}
+.side{border-left:1.2px solid #111}
+.sidetop{height:8mm;display:grid;grid-template-columns:1fr 30mm;border-bottom:1px solid #111}
+.gstbox{padding:2mm;font-size:7.5px;font-weight:900}
+.copyname{display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;border-left:1px solid #111}
+.lrbox{height:17mm;display:grid;grid-template-columns:1fr 1fr}
+.lrbox div{display:flex;align-items:center;padding:2mm;font-size:7.8px;font-weight:900}
 .lrbox div+div{border-left:1px solid #111}
-.lrno-big{font-size:11px;font-weight:900;margin-left:1mm}
+.lrno-big{font-size:10px;font-weight:900;margin-left:1mm}
 .date-big{font-size:9px;font-weight:900;margin-left:1mm}
 
-.meta{height:9.5mm;display:grid;grid-template-columns:1fr 1.45fr 1.42fr;border-bottom:1.2px solid #111}
-.meta div{padding:1.8mm 2mm;display:flex;align-items:center;font-weight:900;border-right:1.2px solid #111;font-size:10px}
+.meta{height:9mm;display:grid;grid-template-columns:1fr 1.35fr 1.15fr;border-bottom:1.2px solid #111}
+.meta div{padding:1.8mm 2.2mm;display:flex;align-items:center;font-size:8.5px;font-weight:900;border-right:1px solid #111}
 .meta div:last-child{border-right:0}
-.freight-type-big{font-size:10px;font-weight:900;margin-left:1mm}.route-big{font-size:11px;font-weight:900;margin-left:1mm}
+.route-big,.freight-type-big{font-size:10.5px;font-weight:900;margin-left:1mm}
 
-.info{height:24mm;display:grid;grid-template-columns:1fr 1fr;border-bottom:1.2px solid #111}
+.info{height:23mm;display:grid;grid-template-columns:1fr 1fr;border-bottom:1.2px solid #111}
 .col+.col{border-left:1px solid #111}
-.cell{padding:2.2mm 2.6mm;border-bottom:1px solid #111;line-height:1.15;min-height:10mm}
-.cell:last-child{border:0}
-.party{font-weight:900;font-size:12.5px}
-.invoice-big{font-size:11px;font-weight:900}
-.invoice-value-big{font-size:11px;font-weight:900}
-.phone-big{font-size:11.5px;font-weight:900}
+.cell{padding:1.8mm 2.5mm;border-bottom:1px solid #111;line-height:1.15;min-height:9.8mm}
+.cell:last-child{border-bottom:0}
+.party{font-weight:900;font-size:11.5px}
+.phone-big{font-size:10.5px;font-weight:900}
+.invoice-big,.invoice-value-big{font-size:10px;font-weight:900}
 
-.body{height:17.2mm;display:grid;grid-template-columns:1fr 48mm;border-bottom:1.2px solid #111}
-.goodshead,.goodsrow{display:grid;grid-template-columns:1fr 18mm 1fr}
-.goodshead{height:5mm;background:#fff;font-weight:900;font-size:7.5px}
-.goodsrow>div{font-weight:900;font-size:9.5px}
-.goodsrow>div:nth-child(2){font-weight:900;text-align:center}
-.goodshead div,.goodsrow div{padding:1mm;display:flex;align-items:center;justify-content:center;border-right:1px solid #111}
-.goodsrow{height:7mm}
-.goodsrow div:nth-child(1),.goodsrow div:nth-child(3){justify-content:flex-start;align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.goodsrow div:nth-child(1){font-weight:900;font-size:8.8px}.goodsrow div:nth-child(2){justify-content:center;font-weight:900;font-size:9px}
-.charges{border-left:1px solid #111;display:grid;grid-template-columns:1fr 18mm;grid-template-rows:repeat(5,5.4mm)}
+.body{height:18.2mm;display:grid;grid-template-columns:1fr 47mm;border-bottom:1.2px solid #111}
+.goodshead,.goodsrow{display:grid;grid-template-columns:1fr 16mm 1fr}
+.goodshead{height:5mm;font-weight:900;font-size:7.5px;border-bottom:1px solid #111}
+.goodsrow{height:12mm}
+.goodshead div,.goodsrow div{padding:1.2mm 1.5mm;display:flex;align-items:center;border-right:1px solid #111}
+.goodshead div{justify-content:center}
+.goodsrow div:nth-child(1),.goodsrow div:nth-child(3){justify-content:flex-start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;font-weight:900}
+.goodsrow div:nth-child(2){justify-content:center;font-size:9px;font-weight:900}
+.charges{border-left:1px solid #111;display:grid;grid-template-columns:1fr 18mm;grid-template-rows:repeat(5,1fr)}
 .charge{display:contents}
-.charge div{padding:1.25mm 1.4mm;border-bottom:1px solid #111;font-weight:800}
+.charge div{padding:1.1mm 1.4mm;border-bottom:1px solid #111;font-weight:800}
 .charge div:first-child{border-right:1px solid #111}
-.total{font-weight:900}
-.total-amount{font-size:11px!important;font-weight:900!important}
 .charges .charge:last-child div{border-bottom:0}
+.total,.total-amount{font-weight:900!important}
+.total-amount{font-size:11px!important}
 
-.footer{height:14.5mm;display:grid;grid-template-columns:1fr 48mm}
-.remark{padding:1.5mm 2mm;font-size:7px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.footer{height:14.8mm;display:grid;grid-template-columns:1fr 47mm}
+.remark{padding:1.6mm 2.2mm;font-size:7px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
 .sign{border-left:1px solid #111;padding:1.6mm 2mm}
-.signbox{border:0;height:100%;font-weight:900}
+.signbox{height:100%;font-weight:900}
 }
+
 </style>
 </head>
 
@@ -443,9 +435,9 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 
 <div>
 <div class="goodshead">
-<div>Description</div>
-<div>Qty</div>
-<div>Remarks</div>
+<div>DESCRIPTION</div>
+<div>QTY</div>
+<div>REMARKS</div>
 </div>
 
 <div class="goodsrow">
