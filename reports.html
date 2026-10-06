@@ -7,8 +7,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="supabase-config.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;font-family:Arial,sans-serif;background:#f3f6fa;color:#111827}
@@ -75,7 +73,6 @@ th:last-child,td:last-child{display:none}
   </div>
 </div>
 
-<div id="pdfCapture"></div>
 <div class="wrap">
   <div class="box filters">
     <h2 class="title">LR Reports</h2>
@@ -202,42 +199,40 @@ function shareText(x){
   ].join('\\n');
 }
 
-async function makeLRPdf(x){
-  const area=document.getElementById('pdfCapture');
-  const total=Number(x.freight||0)+Number(x.hamali||0)+Number(x.other_charges||0);
-  const copies=['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORT COPY'];
-  const escPdf=esc;
-  function copy(c){return `<div class="pdf-copy">
-<div class="pdf-copyhead"><div class="pdf-brand"><div class="pdf-company">NANDHISHWARA ROAD TRANSPORT</div><div class="pdf-address">Plot No. 1, Block No. 3, Autonagar, Hyderabad, Telangana - 500070</div><div class="pdf-phone">Mobile : 9885410410 / 9989581732</div><div class="pdf-service">ONE DAY DELIVERY SERVICE</div></div>
-<div class="pdf-side"><div class="pdf-sidetop"><div class="pdf-gstbox">GST No : 36HSYPK0996J1ZM</div><div class="pdf-copyname">${c}</div></div><div class="pdf-lrbox"><div>LR No : <b class="pdf-lrno">${escPdf(x.lr_no)}</b></div><div>Date : <b class="pdf-date">${escPdf(formatDateForPDF(x.lr_date))}</b></div></div></div></div>
-<div class="pdf-meta"><div>FROM : <b class="pdf-route">${escPdf(x.from_location)}</b></div><div>TO : <b class="pdf-route">${escPdf(x.to_location)}</b></div><div>Freight Type : <b class="pdf-freight-type">${escPdf(x.freight_type||'TO PAY')}</b></div></div>
-<div class="pdf-info"><div class="pdf-col"><div class="pdf-cell"><b>CONSIGNOR :</b> <span class="pdf-party">${escPdf(x.consignor_name)}</span><br><b>Mobile :</b> <span class="pdf-party pdf-phone-big">${escPdf(x.consignor_phone)}</span></div></div><div class="pdf-col"><div class="pdf-cell"><b>CONSIGNEE :</b> <span class="pdf-party">${escPdf(x.consignee_name)}</span><br><b>Mobile :</b> <span class="pdf-party pdf-phone-big">${escPdf(x.consignee_phone)}</span></div></div><div class="pdf-invoice-combined"><div><b>Invoice No :</b> <b class="pdf-invoice">${escPdf(x.invoice_no)}</b></div><div><b>Invoice Value :</b> <b class="pdf-invoice-value">${money(x.invoice_value)}</b></div></div></div>
-<div class="pdf-body"><div><div class="pdf-goodshead"><div>DESCRIPTION</div><div>QTY</div><div>REMARKS</div></div><div class="pdf-goodsrow"><div>${escPdf(x.goods)}</div><div>${escPdf(x.packages||'')}</div><div>${escPdf(x.remarks)}</div></div></div><div class="pdf-charges"><div class="pdf-charge"><div>Freight</div><div>${money(x.freight)}</div></div><div class="pdf-charge"><div>Hamali</div><div>${money(x.hamali)}</div></div><div class="pdf-charge"><div>LR Charge</div><div>${money(x.other_charges)}</div></div><div class="pdf-charge"><div class="pdf-total">Total Amount</div><div class="pdf-total pdf-total-amount">${money(total)}</div></div></div></div>
-<div class="pdf-footer"><div class="pdf-remark"><b>Remarks :</b> ${escPdf(x.remarks)} &nbsp;&nbsp; <b>GST Paid By :</b> Not Applicable &nbsp;&nbsp; Goods booked at owner's risk and said to contain basis. Non Negotiable</div></div></div>`}
-  area.innerHTML='<div class="pdf-sheet">'+copies.map(copy).join('')+'</div>';
-  await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
-  const canvas=await html2canvas(area.firstElementChild,{scale:2,useCORS:true,backgroundColor:'#ffffff',width:794,height:1123,windowWidth:794,windowHeight:1123});
+function makeLRPdf(x){
   const {jsPDF}=window.jspdf;
   const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  doc.addImage(canvas.toDataURL('image/jpeg',0.95),'JPEG',0,0,210,297);
-  area.innerHTML='';
+  const copies=['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORT COPY'];
+  const left=8, boxW=194, copyH=92;
+  const moneyPdf=v=>'Rs. '+Number(v||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+  const text=v=>String(v==null?'':v);
+  function copy(y,label){
+    doc.setLineWidth(.35);doc.rect(left,y,boxW,copyH);
+    doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('NANDHISHWARA ROAD TRANSPORT',left+4,y+7);
+    doc.setFontSize(7);doc.text('ONE DAY DELIVERY SERVICE',left+4,y+11);doc.text('Autonagar, Hyderabad, Telangana - 500070',left+4,y+15);doc.text('Mobile: 9885410410 / 9989581732',left+4,y+19);
+    doc.line(130,y,130,y+22);doc.setFontSize(7);doc.text('GST No: 36HSYPK0996J1ZM',133,y+5);doc.text(label,133,y+10);doc.text('LR No: '+text(x.lr_no),133,y+15);doc.text('Date: '+text(x.lr_date),133,y+20);
+    doc.line(left,y+22,left+boxW,y+22);doc.setFontSize(8);doc.text('FROM: '+text(x.from_location),left+4,y+28);doc.text('TO: '+text(x.to_location),left+72,y+28);doc.text('FREIGHT TYPE: '+text(x.freight_type||'TO PAY'),left+135,y+28);
+    doc.line(left,y+31,left+boxW,y+31);doc.setFontSize(7);doc.text('CONSIGNOR:',left+4,y+37);doc.setFont('helvetica','normal');doc.text(text(x.consignor_name).slice(0,35),left+25,y+37);doc.setFont('helvetica','bold');doc.text('Mobile:',left+4,y+42);doc.setFont('helvetica','normal');doc.text(text(x.consignor_phone),left+25,y+42);
+    doc.setFont('helvetica','bold');doc.text('CONSIGNEE:',left+101,y+37);doc.setFont('helvetica','normal');doc.text(text(x.consignee_name).slice(0,28),left+122,y+37);doc.setFont('helvetica','bold');doc.text('Mobile:',left+101,y+42);doc.setFont('helvetica','normal');doc.text(text(x.consignee_phone),left+122,y+42);
+    doc.line(left,y+46,left+boxW,y+46);doc.setFont('helvetica','bold');doc.text('Invoice No:',left+4,y+52);doc.setFont('helvetica','normal');doc.text(text(x.invoice_no),left+25,y+52);doc.setFont('helvetica','bold');doc.text('Invoice Value:',left+101,y+52);doc.setFont('helvetica','normal');doc.text(moneyPdf(x.invoice_value),left+126,y+52);
+    doc.line(left,y+55,left+boxW,y+55);doc.setFont('helvetica','bold');doc.text('DESCRIPTION',left+4,y+61);doc.text('QTY',left+75,y+61);doc.text('REMARKS',left+105,y+61);doc.text('CHARGES',left+150,y+61);
+    doc.setFont('helvetica','normal');doc.text(text(x.goods).slice(0,38),left+4,y+67);doc.text(text(x.packages||0),left+76,y+67);doc.text(text(x.remarks).slice(0,22),left+105,y+67);doc.text('Freight: '+moneyPdf(x.freight),left+150,y+67);doc.text('Hamali: '+moneyPdf(x.hamali),left+150,y+73);doc.text('LR Charge: '+moneyPdf(x.other_charges),left+150,y+79);
+    doc.setFont('helvetica','bold');doc.text('TOTAL: '+moneyPdf(Number(x.freight||0)+Number(x.hamali||0)+Number(x.other_charges||0)),left+4,y+79);
+  }
+  copies.forEach((label,i)=>copy(6+i*97,label));
   return doc;
 }
-function formatDateForPDF(v){
-  if(!v)return '';
-  const a=String(v).split('-');
-  return a.length===3 && a[0].length===4 ? a[2]+'/'+a[1]+'/'+a[0] : v;
-}
+
 async function sharePDF(i){
   const x=window.reportRows[i];if(!x)return;
   try{
-    const doc=await makeLRPdf(x),blob=doc.output('blob');
+    const doc=makeLRPdf(x),blob=doc.output('blob');
     const file=new File([blob],'NRT_'+(x.lr_no||'LR')+'.pdf',{type:'application/pdf'});
     if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
       await navigator.share({title:'NRT LR '+(x.lr_no||''),text:'NANDHISHWARA ROAD TRANSPORT - '+(x.lr_no||''),files:[file]});
     }else{
-      const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000);
-      setMsg('Exact NRT LR PDF created. Please share the downloaded PDF.',true);
+      const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);
+      setMsg('PDF created. Please share the downloaded PDF.',true);
     }
   }catch(e){if(e&&e.name==='AbortError')return;setMsg('PDF share error: '+(e.message||e),false);}
 }
@@ -390,18 +385,7 @@ function exportExcel(){
   const f=$('fromDate').value, t=$('toDate').value, q=$('allSearch').value.trim();
   const escX=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const moneyX=v=>Number(v||0).toLocaleString('en-IN',{maximumFractionDigits:2});
-  let html='<html><head><meta charset="UTF-8"><style>table{border-collapse:collapse}th,td{border:1px solid #777;padding:6px;font-family:Arial;font-size:10pt}th{background:#d9eaf7;font-weight:bold}.title{text-align:center;font-size:16pt;font-weight:bold}.sub{text-align:center;font-size:12pt;font-weight:bold}
-/* Exact NRT LR layout used for Share PDF */
-#pdfCapture{position:fixed;left:-20000px;top:0;width:210mm;height:297mm;background:#fff;overflow:hidden;z-index:-1}
-.pdf-sheet{width:210mm;height:297mm;padding:2mm;display:flex;flex-direction:column;gap:.5mm;background:#fff;color:#111}
-.pdf-copy{height:97.33mm;border:1.2px solid #111;overflow:hidden;background:#fff;color:#111;font-family:Arial,sans-serif;font-size:7.5px;flex:none}
-.pdf-copyhead{height:25mm;display:grid;grid-template-columns:1fr 67mm;border-bottom:1.2px solid #111}
-.pdf-brand{padding:2.5mm 3mm}.pdf-company{font-size:18px;font-weight:900;line-height:1.05;letter-spacing:.2px}.pdf-address{font-size:10.5px;font-weight:800;margin-top:1.5mm;line-height:1.2}.pdf-phone{font-size:11px;font-weight:900;margin-top:1.2mm}.pdf-service{font-size:8px;font-weight:900;margin-top:1mm;letter-spacing:.3px}
-.pdf-side{border-left:1.2px solid #111}.pdf-sidetop{height:8mm;display:grid;grid-template-columns:1fr 30mm;border-bottom:1px solid #111}.pdf-gstbox{padding:2mm;font-size:7.5px;font-weight:900}.pdf-copyname{display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;border-left:1px solid #111}.pdf-lrbox{height:17mm;display:grid;grid-template-columns:1fr 1fr}.pdf-lrbox div{display:flex;align-items:center;padding:2mm;font-size:7.8px;font-weight:900}.pdf-lrbox div+div{border-left:1px solid #111}.pdf-lrno{font-size:10px;font-weight:900;margin-left:1mm}.pdf-date{font-size:9px;font-weight:900;margin-left:1mm}
-.pdf-meta{height:9mm;display:grid;grid-template-columns:1fr 1.35fr 1.15fr;border-bottom:1.2px solid #111}.pdf-meta>div{padding:1.8mm 2.2mm;display:flex;align-items:center;font-size:8.5px;font-weight:900;border-right:1px solid #111}.pdf-meta>div:last-child{border-right:0}.pdf-route,.pdf-freight-type{font-size:10.5px;font-weight:900;margin-left:1mm}
-.pdf-info{height:23mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:13.2mm 9.8mm;border-bottom:1.2px solid #111}.pdf-col+.pdf-col{border-left:1px solid #111}.pdf-cell{padding:1.8mm 2.5mm;border-bottom:1px solid #111;line-height:1.15;min-height:9.8mm}.pdf-party{font-weight:900;font-size:11.5px}.pdf-phone-big{font-size:10.5px;font-weight:900}.pdf-invoice,.pdf-invoice-value{font-size:10px;font-weight:900}.pdf-invoice-combined{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #111}.pdf-invoice-combined>div{padding:1.7mm 2.5mm;display:flex;align-items:center;font-weight:900}.pdf-invoice-combined>div+div{border-left:1px solid #111}
-.pdf-body{height:18.2mm;display:grid;grid-template-columns:1fr 47mm;border-bottom:1.2px solid #111}.pdf-goodshead,.pdf-goodsrow{display:grid;grid-template-columns:1fr 16mm 1fr}.pdf-goodshead{height:5mm;font-weight:900;font-size:7.5px;border-bottom:1px solid #111}.pdf-goodsrow{height:12mm}.pdf-goodshead div,.pdf-goodsrow div{padding:1.2mm 1.5mm;display:flex;align-items:center;border-right:1px solid #111}.pdf-goodshead div{justify-content:center}.pdf-goodsrow div:nth-child(1),.pdf-goodsrow div:nth-child(3){justify-content:flex-start;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:9px;font-weight:900}.pdf-goodsrow div:nth-child(2){justify-content:center;font-size:9px;font-weight:900}.pdf-charges{border-left:1px solid #111;display:grid;grid-template-columns:1fr 18mm;grid-template-rows:repeat(4,1fr)}.pdf-charge{display:contents}.pdf-charge div{padding:1.1mm 1.4mm;border-bottom:1px solid #111;font-weight:800}.pdf-charge div:first-child{border-right:1px solid #111}.pdf-charges .pdf-charge:last-child div{border-bottom:0}.pdf-total,.pdf-total-amount{font-weight:900!important}.pdf-total-amount{font-size:11px!important}.pdf-footer{height:20.5mm;display:block}.pdf-remark{padding:2mm 2.2mm;font-size:7px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
-</style></head><body>';
+  let html='<html><head><meta charset="UTF-8"><style>table{border-collapse:collapse}th,td{border:1px solid #777;padding:6px;font-family:Arial;font-size:10pt}th{background:#d9eaf7;font-weight:bold}.title{text-align:center;font-size:16pt;font-weight:bold}.sub{text-align:center;font-size:12pt;font-weight:bold}</style></head><body>';
   html+='<div class="title">NANDHISHWARA ROAD TRANSPORT</div><div class="sub">LR REPORT SHEET</div>';
   html+='<p>Period: '+escX(f||'All')+' to '+escX(t||'All')+(q?' | Search: '+escX(q):'')+'</p>';
   html+='<table><tr><th>LR No.</th><th>Date</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>LR Charge</th><th>Hamali</th><th>Total</th></tr>';
