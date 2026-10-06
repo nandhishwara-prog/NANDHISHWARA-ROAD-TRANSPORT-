@@ -35,3 +35,4 @@ FEATURES
 
 NOTE
 GitHub Pages static hosting kosam; permanent LR data Supabase database lo store avutundi.
+Pages deployment trigger test
