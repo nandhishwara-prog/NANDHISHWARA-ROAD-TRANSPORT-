@@ -235,38 +235,91 @@ loadParties()
 }
 
 async function loadParties(){
-let{data}=await sb.from('lrs')
-.select('consignor_name,consignor_phone,consignee_name,consignee_phone')
-.limit(1000);
+  let{data,error}=await sb.from('lrs')
+    .select('consignor_name,consignor_phone,consignee_name,consignee_phone')
+    .limit(5000);
 
-let map={};
-(data||[]).forEach(r=>{
-if(r.consignor_name)map[r.consignor_name]=r.consignor_phone||'';
-if(r.consignee_name)map[r.consignee_name]=r.consignee_phone||''
-});
+  if(error)return;
 
-$('partyNames').innerHTML=Object.keys(map)
-.map(n=>`<option value="${esc(n)}">`).join('');
+  const parties={};
 
-$('consignor_name').onchange=()=>{
-let r=(data||[]).find(x=>
-x.consignor_name===$('consignor_name').value||
-x.consignee_name===$('consignor_name').value
-);
-if(r)$('consignor_phone').value=
-r.consignor_name===$('consignor_name').value?
-r.consignor_phone:r.consignee_phone
-};
+  (data||[]).forEach(r=>{
+    const cn=String(r.consignor_name||'').trim();
+    const cp=String(r.consignor_phone||'').trim();
+    const en=String(r.consignee_name||'').trim();
+    const ep=String(r.consignee_phone||'').trim();
 
-$('consignee_name').onchange=()=>{
-let r=(data||[]).find(x=>
-x.consignee_name===$('consignee_name').value||
-x.consignor_name===$('consignee_name').value
-);
-if(r)$('consignee_phone').value=
-r.consignee_name===$('consignee_name').value?
-r.consignee_phone:r.consignor_phone
-}
+    if(cn)parties[cn]=cp;
+    if(en)parties[en]=ep;
+  });
+
+  // Keep one combined customer/party list for both Consignor and Consignee.
+  $('partyNames').innerHTML=Object.keys(parties)
+    .sort((a,b)=>a.localeCompare(b))
+    .map(n=>`<option value="${esc(n)}">`)
+    .join('');
+
+  function autoPhone(nameId,phoneId){
+    const name=$(nameId).value.trim();
+    if(!name)return;
+
+    // Exact match first.
+    if(parties[name]!==undefined){
+      $(phoneId).value=parties[name]||'';
+      return;
+    }
+
+    // Case-insensitive match as a fallback.
+    const key=Object.keys(parties).find(n=>n.toLowerCase()===name.toLowerCase());
+    if(key)$(phoneId).value=parties[key]||'';
+  }
+
+  // Selecting/typing a previously used name automatically fills its phone.
+  ['input','change'].forEach(ev=>{
+    $('consignor_name').addEventListener(ev,()=>autoPhone('consignor_name','consignor_phone'));
+    $('consignee_name').addEventListener(ev,()=>autoPhone('consignee_name','consignee_phone'));
+  });
+
+  // Also save the phone in the local browser for instant suggestions/autofill
+  // even before a new record has been reloaded from the database.
+  function rememberParty(nameId,phoneId){
+    const name=$(nameId).value.trim();
+    const phone=$(phoneId).value.trim();
+    if(!name)return;
+
+    let saved={};
+    try{saved=JSON.parse(localStorage.getItem('nrt_parties')||'{}')}catch(e){}
+    saved[name]=phone;
+    localStorage.setItem('nrt_parties',JSON.stringify(saved));
+  }
+
+  function autoLocal(nameId,phoneId){
+    const name=$(nameId).value.trim();
+    if(!name)return;
+    let saved={};
+    try{saved=JSON.parse(localStorage.getItem('nrt_parties')||'{}')}catch(e){}
+    if(saved[name] && !$(phoneId).value.trim())$(phoneId).value=saved[name];
+  }
+
+  ['input','change'].forEach(ev=>{
+    $('consignor_name').addEventListener(ev,()=>autoLocal('consignor_name','consignor_phone'));
+    $('consignee_name').addEventListener(ev,()=>autoLocal('consignee_name','consignee_phone'));
+  });
+
+  $('consignor_phone').addEventListener('change',()=>rememberParty('consignor_name','consignor_phone'));
+  $('consignee_phone').addEventListener('change',()=>rememberParty('consignee_name','consignee_phone'));
+
+  // Load locally remembered parties into the datalist too.
+  let local={};
+  try{local=JSON.parse(localStorage.getItem('nrt_parties')||'{}')}catch(e){}
+  Object.keys(local).forEach(n=>{
+    if(!parties[n])parties[n]=local[n];
+  });
+
+  $('partyNames').innerHTML=Object.keys(parties)
+    .sort((a,b)=>a.localeCompare(b))
+    .map(n=>`<option value="${esc(n)}">`)
+    .join('');
 }
 
 function row(){
