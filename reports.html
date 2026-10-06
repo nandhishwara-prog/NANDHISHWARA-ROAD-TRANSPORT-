@@ -1,21 +1,143 @@
 <!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NRT Reports</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f3f6fa;color:#111827}.top{background:#073b8f;color:#fff;padding:14px 18px}.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:9px 13px;border-radius:7px;font-weight:bold;text-decoration:none;border:0}.wrap{max-width:1200px;margin:18px auto;padding:0 12px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:10px;padding:16px;margin-bottom:14px}.title{color:#073b8f}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-weight:bold;font-size:13px;display:block;margin-bottom:5px}input{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}.msg{margin-top:8px;font-weight:bold}.ok{color:#16803c}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center}.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:1050px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}.act{white-space:nowrap}.smallbtn{display:inline-block;padding:5px 8px;font-size:11px;border-radius:4px;margin:1px;text-decoration:none;font-weight:bold;border:0}.smallbtn.blue{color:#fff}.smallbtn.green{color:#fff}.smallbtn.yellow{color:#111}.smallbtn.red{color:#fff}@media(max-width:700px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media print{.top,.filters,.actions{display:none!important}.box{border:0}.table-wrap{overflow:visible}table{min-width:0}}
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f3f6fa;color:#111827}.top{background:#073b8f;color:#fff;padding:14px 18px}.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:9px 13px;border-radius:7px;font-weight:bold;text-decoration:none;border:0}.wrap{max-width:1200px;margin:18px auto;padding:0 12px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:10px;padding:16px;margin-bottom:14px}.title{color:#073b8f}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-weight:bold;font-size:13px;display:block;margin-bottom:5px}input{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}.msg{margin-top:8px;font-weight:bold}.ok{color:#16803c}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center}.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:980px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}.act{white-space:nowrap;position:relative}.smallbtn{display:inline-block;padding:5px 8px;font-size:11px;border-radius:4px;margin:1px;text-decoration:none;font-weight:bold;border:0}.smallbtn.blue{color:#fff}.smallbtn.green{color:#fff}.smallbtn.yellow{color:#111}.smallbtn.red{color:#fff}.share-menu{display:none;position:absolute;right:0;top:100%;z-index:20;background:#fff;border:1px solid #cfd6df;border-radius:7px;padding:6px;box-shadow:0 4px 14px rgba(0,0,0,.18);min-width:125px}.share-menu button{display:block;width:100%;padding:7px 9px;margin:2px 0;text-align:left;background:#fff;color:#111827;font-size:11px}.share-menu button:hover{background:#eef5fb}@media(max-width:700px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media print{.top,.filters,.actions,.share-menu,.yellow,.red{display:none!important}.box{border:0}.table-wrap{overflow:visible}table{min-width:0}}
+
+.print-head,.print-footer{display:none}
+@media print{
+  @page{size:A4 landscape;margin:10mm}
+  body{background:#fff!important;color:#000!important;font-family:Arial,sans-serif}
+  .top,.filters,.actions,.share-menu,.yellow,.red{display:none!important}
+  .wrap{max-width:none;margin:0;padding:0}
+  .box{border:0!important;border-radius:0!important;padding:0!important;margin:0 0 6mm!important}
+  .print-head{display:block;text-align:center;margin:0 0 5mm}
+  .print-company{font-size:18pt;font-weight:700;letter-spacing:.3px}
+  .print-subtitle{font-size:12pt;font-weight:700;margin-top:2mm}
+  .print-period{font-size:9pt;margin-top:2mm}
+  .stats{display:grid!important;grid-template-columns:repeat(5,1fr);gap:2mm;margin-bottom:4mm}
+  .stat{border:1px solid #777!important;border-radius:0!important;padding:2mm!important}
+  .stat b{font-size:12pt!important;color:#000!important}
+  .stat span{font-size:8pt!important}
+  .table-wrap{overflow:visible!important}
+  table{width:100%!important;min-width:0!important;border-collapse:collapse!important;table-layout:auto}
+  th,td{border:1px solid #555!important;padding:4px 5px!important;font-size:8.5pt!important;color:#000!important;white-space:normal}
+  th{background:#eee!important;color:#000!important;font-weight:700}
+  th:last-child,td:last-child{display:none!important}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  .print-footer{display:block;text-align:right;font-size:7.5pt;margin-top:3mm}
+}
 </style></head><body>
 <div class="top"><div class="topin"><b>📊 NRT REPORTS</b><div class="nav"><a href="bilty.html">➕ New Bilty</a><a href="index.html">← Home</a><button onclick="logout()">Logout</button></div></div></div>
-<div class="wrap"><div class="box filters"><h2 class="title">LR Reports</h2><div class="grid"><div><label>From Date</label><input id="fromDate" type="date"></div><div><label>To Date</label><input id="toDate" type="date"></div><div><label>LR Number</label><input id="lrSearch" placeholder="Enter LR Number (optional)"></div></div><div class="actions"><button class="blue" onclick="loadReport()">🔎 Search Report</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="window.print()">🖨️ Print / PDF</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div><div id="msg" class="msg"></div></div>
+<div class="wrap"><div class="box filters"><h2 class="title">LR Reports</h2>
+<div class="grid">
+<div><label>From Date</label><input id="fromDate" type="date"></div>
+<div><label>To Date</label><input id="toDate" type="date"></div>
+<div><label>Search LR / Consignor / Consignee / From / To</label><input id="allSearch" type="search" placeholder="Enter any LR No, Name, From or To" onkeydown="if(event.key==='Enter')loadReport()"></div>
+</div>
+<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="window.print()">🖨️ Print Sheet</button><button class="red" onclick="printPDF()">📄 PDF Print</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div><div id="msg" class="msg"></div></div>
 <div class="box"><div class="stats"><div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="weight">0</b><span>Weight</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div></div></div>
-<div class="box"><div class="table-wrap"><table><thead><tr><th>LR No.</th><th>Date</th><th>Vehicle</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>LR Charge</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div></div>
+<div class="print-head">
+  <div class="print-company">NANDHISHWARA ROAD TRANSPORT</div>
+  <div class="print-subtitle">LR REPORT SHEET</div>
+  <div class="print-period" id="printPeriod"></div>
+</div>
+<div class="box"><div class="table-wrap"><table><thead><tr><th>LR No.</th><th>Date</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>LR Charge</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div><div class="print-footer">NANDHISHWARA ROAD TRANSPORT — LR REPORT</div></div>
 <script>
 var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const $=id=>document.getElementById(id);
 function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
 function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}
 async function logout(){await sb.auth.signOut();location.href='bilty.html'}
-function filtered(a){let f=$('fromDate').value,t=$('toDate').value,lr=$('lrSearch').value.trim().toLowerCase();return(a||[]).filter(x=>(!f||String(x.lr_date||'')>=f)&&(!t||String(x.lr_date||'')<=t)&&(!lr||String(x.lr_no||'').toLowerCase().includes(lr))).sort((a,b)=>String(b.lr_date||'').localeCompare(String(a.lr_date||''))||Number(b.id||0)-Number(a.id||0))}
-async function loadReport(){try{$('msg').textContent='Loading all LR records...';let a=[],from=0;while(1){let{data,error}=await sb.from('lrs').select('*').range(from,from+999);if(error)throw error;a=a.concat(data||[]);if(!data||data.length<1000)break;from+=1000}let r=filtered(a),p=0,w=0,f=0,o=0,h=0;$('rows').innerHTML=r.map(x=>{p+=+x.packages||0;w+=+x.weight||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;let id=encodeURIComponent(x.id),v=Date.now();return '<tr><td><b>'+esc(x.lr_no)+'</b></td><td>'+esc(x.lr_date)+'</td><td>'+esc(x.vehicle_no)+'</td><td>'+esc(x.from_location)+'</td><td>'+esc(x.to_location)+'</td><td>'+esc(x.consignor_name)+'</td><td>'+esc(x.consignee_name)+'</td><td>'+Number(x.packages||0)+'</td><td>'+Number(x.weight||0)+'</td><td class="right">'+money(x.freight)+'</td><td class="right">'+money(x.other_charges)+'</td><td class="act"><a class="blue smallbtn" href="bilty.html?view='+id+'&v='+v+'">View</a><a class="green smallbtn" href="bilty.html?edit='+id+'&v='+v+'">Edit</a><a class="yellow smallbtn" href="bilty.html?print='+id+'&v='+v+'">Print</a><button class="red smallbtn" onclick="deleteLR('+Number(x.id)+',\''+esc(x.lr_no)+'\')">Delete</button></td></tr>'}).join('');$('count').textContent=r.length;$('packages').textContent=p;$('weight').textContent=w;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);$('msg').className='msg ok';$('msg').textContent=r.length+' LR records loaded.'}catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}}
+
+function filtered(a){
+  let f=$('fromDate').value,t=$('toDate').value,q=$('allSearch').value.trim().toLowerCase();
+  return(a||[]).filter(x=>{
+    const all=[x.lr_no,x.consignor_name,x.consignee_name,x.from_location,x.to_location]
+      .map(v=>String(v||'').toLowerCase());
+    return (!f||String(x.lr_date||'')>=f)&&
+           (!t||String(x.lr_date||'')<=t)&&
+           (!q||all.some(v=>v.includes(q)));
+  }).sort((a,b)=>String(b.lr_date||'').localeCompare(String(a.lr_date||''))||Number(b.id||0)-Number(a.id||0))
+}
+
+function shareText(x){
+  return `NANDHISHWARA ROAD TRANSPORT
+LR No: ${x.lr_no||''}
+Date: ${x.lr_date||''}
+From: ${x.from_location||''}
+To: ${x.to_location||''}
+Consignor: ${x.consignor_name||''}
+Consignee: ${x.consignee_name||''}
+Packages: ${x.packages||0}
+Freight: ${money(x.freight)}
+LR Charge: ${money(x.other_charges)}
+Total: ${money((+x.freight||0)+(+x.hamali||0)+(+x.other_charges||0))}`
+}
+
+function shareWhatsApp(x){
+  const text=encodeURIComponent(shareText(x));
+  window.open('https://wa.me/?text='+text,'_blank');
+}
+function shareEmail(x){
+  const subject=encodeURIComponent('NRT LR - '+(x.lr_no||''));
+  const body=encodeURIComponent(shareText(x));
+  location.href='mailto:?subject='+subject+'&body='+body;
+}
+async function shareOther(x){
+  const text=shareText(x);
+  if(navigator.share){
+    try{await navigator.share({title:'NRT LR '+(x.lr_no||''),text});}catch(e){}
+  }else{
+    shareWhatsApp(x);
+  }
+}
+function toggleShare(id){
+  document.querySelectorAll('.share-menu').forEach(m=>{if(m.id!=='share-'+id)m.style.display='none'});
+  const m=$('share-'+id);m.style.display=m.style.display==='block'?'none':'block';
+}
+
+
+
+
+function updatePrintPeriod(){
+  const f=$('fromDate').value, t=$('toDate').value, q=$('allSearch').value.trim();
+  let s='';
+  if(f||t) s='Period: '+(f||'All')+' to '+(t||'All');
+  else s='Period: All Dates';
+  if(q) s+='  |  Search: '+q;
+  $('printPeriod').textContent=s;
+}
+
+function printPDF(){
+  updatePrintPeriod();
+  window.print();
+}
+
+window.addEventListener('beforeprint',updatePrintPeriod);
+
+async function loadReport(){
+  try{
+    $('msg').textContent='Loading all LR records...';
+    let a=[],from=0;
+    while(1){
+      let{data,error}=await sb.from('lrs').select('*').range(from,from+999);
+      if(error)throw error;
+      a=a.concat(data||[]);
+      if(!data||data.length<1000)break;
+      from+=1000
+    }
+    let r=filtered(a),p=0,w=0,f=0,o=0,h=0; window.currentReportRows=r;
+    $('rows').innerHTML=r.map(x=>{
+      p+=+x.packages||0;w+=+x.weight||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;
+      let id=encodeURIComponent(x.id),v=Date.now();
+      return '<tr><td><b>'+esc(x.lr_no)+'</b></td><td>'+esc(x.lr_date)+'</td><td>'+esc(x.from_location)+'</td><td>'+esc(x.to_location)+'</td><td>'+esc(x.consignor_name)+'</td><td>'+esc(x.consignee_name)+'</td><td>'+Number(x.packages||0)+'</td><td>'+Number(x.weight||0)+'</td><td class="right">'+money(x.freight)+'</td><td class="right">'+money(x.other_charges)+'</td><td class="act"><a class="blue smallbtn" href="bilty.html?view='+id+'&v='+v+'">View</a><a class="green smallbtn" href="bilty.html?edit='+id+'&v='+v+'">Edit</a><a class="yellow smallbtn" href="bilty.html?print='+id+'&v='+v+'">Print</a><button class="blue smallbtn" onclick="toggleShare('+Number(x.id)+')">Share</button><div class="share-menu" id="share-'+Number(x.id)+'"><button onclick="shareWhatsApp('+JSON.stringify(x).replace(/"/g,'&quot;')+')">📱 WhatsApp</button><button onclick="shareEmail('+JSON.stringify(x).replace(/"/g,'&quot;')+')">✉️ Email</button><button onclick="shareOther('+JSON.stringify(x).replace(/"/g,'&quot;')+')">📤 Other</button></div><button class="red smallbtn" onclick="deleteLR('+Number(x.id)+',\\''+esc(x.lr_no)+'\\')">Delete</button></td></tr>'
+    }).join('');
+    $('count').textContent=r.length;$('packages').textContent=p;$('weight').textContent=w;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
+    $('msg').className='msg ok';$('msg').textContent=r.length+' LR records loaded.'
+  }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
+}
 async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{let{error}=await sb.from('lrs').delete().eq('id',id);if(error)throw error;loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
-function clearFilters(){$('fromDate').value='';$('toDate').value='';$('lrSearch').value='';loadReport()}
+function clearFilters(){$('fromDate').value='';$('toDate').value='';$('allSearch').value='';loadReport()}
 window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}loadReport()});
+document.addEventListener('click',e=>{if(!e.target.closest('.act'))document.querySelectorAll('.share-menu').forEach(m=>m.style.display='none')});
 </script></body></html>
