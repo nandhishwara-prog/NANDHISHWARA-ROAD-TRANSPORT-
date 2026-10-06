@@ -117,27 +117,116 @@ window.addEventListener('beforeprint',updatePrintPeriod);
 
 async function loadReport(){
   try{
-    $('msg').textContent='Loading all LR records...';
-    let a=[],from=0;
-    while(1){
-      let{data,error}=await sb.from('lrs').select('*').range(from,from+999);
-      if(error)throw error;
-      a=a.concat(data||[]);
-      if(!data||data.length<1000)break;
-      from+=1000
+    $('msg').className='msg';
+    $('msg').textContent='Loading LR records...';
+
+    // Make sure the current authenticated session is available.
+    let sessionResult = await sb.auth.getSession();
+    let session = sessionResult?.data?.session || null;
+
+    if(!session){
+      const refresh = await sb.auth.refreshSession();
+      session = refresh?.data?.session || null;
     }
-    let r=filtered(a),p=0,w=0,f=0,o=0,h=0; window.currentReportRows=r;
+
+    if(!session){
+      $('msg').textContent='Login session not found. Please login again from NRT Bilty.';
+      return;
+    }
+
+    // Fetch all LR rows in safe batches.
+    let a=[];
+    const pageSize=500;
+    for(let from=0;;from+=pageSize){
+      const {data,error}=await sb.from('lrs')
+        .select('*')
+        .range(from,from+pageSize-1);
+
+      if(error) throw error;
+
+      const batch=data||[];
+      a=a.concat(batch);
+
+      if(batch.length<pageSize) break;
+    }
+
+    let r=filtered(a),p=0,w=0,f=0,o=0,h=0;
+    window.currentReportRows=r;
+
     $('rows').innerHTML=r.map(x=>{
-      p+=+x.packages||0;w+=+x.weight||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;
+      p+=Number(x.packages||0);
+      w+=Number(x.weight||0);
+      f+=Number(x.freight||0);
+      o+=Number(x.other_charges||0);
+      h+=Number(x.hamali||0);
+
       let id=encodeURIComponent(x.id),v=Date.now();
-      return '<tr><td><b>'+esc(x.lr_no)+'</b></td><td>'+esc(x.lr_date)+'</td><td>'+esc(x.from_location)+'</td><td>'+esc(x.to_location)+'</td><td>'+esc(x.consignor_name)+'</td><td>'+esc(x.consignee_name)+'</td><td>'+Number(x.packages||0)+'</td><td>'+Number(x.weight||0)+'</td><td class="right">'+money(x.freight)+'</td><td class="right">'+money(x.other_charges)+'</td><td class="act"><a class="blue smallbtn" href="bilty.html?view='+id+'&v='+v+'">View</a><a class="green smallbtn" href="bilty.html?edit='+id+'&v='+v+'">Edit</a><a class="yellow smallbtn" href="bilty.html?print='+id+'&v='+v+'">Print</a><button class="blue smallbtn" onclick="toggleShare('+Number(x.id)+')">Share</button><div class="share-menu" id="share-'+Number(x.id)+'"><button onclick="shareWhatsApp('+JSON.stringify(x).replace(/"/g,'&quot;')+')">📱 WhatsApp</button><button onclick="shareEmail('+JSON.stringify(x).replace(/"/g,'&quot;')+')">✉️ Email</button><button onclick="shareOther('+JSON.stringify(x).replace(/"/g,'&quot;')+')">📤 Other</button></div><button class="red smallbtn" onclick="deleteLR('+Number(x.id)+',\\''+esc(x.lr_no)+'\\')">Delete</button></td></tr>'
+
+      const safeJson=JSON.stringify(x)
+        .replace(/&/g,'&amp;')
+        .replace(/"/g,'&quot;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;');
+
+      return '<tr>'+
+        '<td><b>'+esc(x.lr_no)+'</b></td>'+
+        '<td>'+esc(x.lr_date)+'</td>'+
+        '<td>'+esc(x.from_location)+'</td>'+
+        '<td>'+esc(x.to_location)+'</td>'+
+        '<td>'+esc(x.consignor_name)+'</td>'+
+        '<td>'+esc(x.consignee_name)+'</td>'+
+        '<td>'+Number(x.packages||0)+'</td>'+
+        '<td>'+Number(x.weight||0)+'</td>'+
+        '<td class="right">'+money(x.freight)+'</td>'+
+        '<td class="right">'+money(x.other_charges)+'</td>'+
+        '<td class="act">'+
+          '<a class="blue smallbtn" href="bilty.html?view='+id+'&v='+v+'">View</a>'+
+          '<a class="green smallbtn" href="bilty.html?edit='+id+'&v='+v+'">Edit</a>'+
+          '<a class="yellow smallbtn" href="bilty.html?print='+id+'&v='+v+'">Print</a>'+
+          '<button class="blue smallbtn" onclick="toggleShare('+Number(x.id)+')">Share</button>'+
+          '<div class="share-menu" id="share-'+Number(x.id)+'">'+
+            '<button onclick="shareWhatsApp('+safeJson+')">📱 WhatsApp</button>'+
+            '<button onclick="shareEmail('+safeJson+')">✉️ Email</button>'+
+            '<button onclick="shareOther('+safeJson+')">📤 Other</button>'+
+          '</div>'+
+          '<button class="red smallbtn" onclick="deleteLR('+Number(x.id)+',\\''+esc(x.lr_no)+'\\')">Delete</button>'+
+        '</td>'+
+      '</tr>';
     }).join('');
-    $('count').textContent=r.length;$('packages').textContent=p;$('weight').textContent=w;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
-    $('msg').className='msg ok';$('msg').textContent=r.length+' LR records loaded.'
-  }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
+
+    $('count').textContent=r.length;
+    $('packages').textContent=p;
+    $('weight').textContent=w;
+    $('freight').textContent=money(f);
+    $('total').textContent=money(f+h+o);
+
+    $('msg').className='msg ok';
+    $('msg').textContent=r.length+' LR records loaded. Database total: '+a.length+'.';
+
+  }catch(e){
+    console.error(e);
+    $('msg').className='msg';
+    $('msg').style.color='#b91c1c';
+    $('msg').textContent='Database error: '+(e?.message||String(e));
+  }
 }
 async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{let{error}=await sb.from('lrs').delete().eq('id',id);if(error)throw error;loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
 function clearFilters(){$('fromDate').value='';$('toDate').value='';$('allSearch').value='';loadReport()}
-window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}loadReport()});
+window.addEventListener('load',async()=>{
+  const {data,error}=await sb.auth.getSession();
+  if(error){
+    $('msg').textContent='Login/session error: '+error.message;
+    return;
+  }
+  if(!data.session){
+    const refresh=await sb.auth.refreshSession();
+    if(!refresh?.data?.session){
+      alert('Please login from NRT Online Bilty first.');
+      location.href='bilty.html';
+      return;
+    }
+  }
+  loadReport();
+});
 document.addEventListener('click',e=>{if(!e.target.closest('.act'))document.querySelectorAll('.share-menu').forEach(m=>m.style.display='none')});
 </script></body></html>
