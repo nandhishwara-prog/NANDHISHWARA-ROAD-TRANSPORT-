@@ -57,9 +57,11 @@ html,body{background:#fff!important}
 .sidetop{height:8mm;display:grid;grid-template-columns:1fr 30mm;border-bottom:1px solid #111}
 .gstbox{padding:2mm;font-size:7.5px;font-weight:900}
 .copyname{display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;border-left:1px solid #111}
-.lrbox{height:17mm;display:grid;grid-template-columns:1fr}
-.lrbox div{display:flex;align-items:center;padding:2mm;font-size:8px;font-weight:900}
+.lrbox{height:17mm;display:grid;grid-template-columns:1fr 1fr}
+.lrbox div{display:flex;align-items:center;padding:2mm;font-size:7.8px;font-weight:900}
+.lrbox div+div{border-left:1px solid #111}
 .lrno-big{font-size:10px;font-weight:900;margin-left:1mm}
+.date-big{font-size:9px;font-weight:900;margin-left:1mm}
 
 .meta{height:9mm;display:grid;grid-template-columns:1fr 1.35fr 1.15fr;border-bottom:1.2px solid #111}
 .meta div{padding:1.8mm 2.2mm;display:flex;align-items:center;font-size:8.5px;font-weight:900;border-right:1px solid #111}
@@ -68,17 +70,14 @@ html,body{background:#fff!important}
 
 .info{height:23mm;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:13.2mm 9.8mm;border-bottom:1.2px solid #111}
 .col+.col{border-left:1px solid #111}
-.cell{padding:1.7mm 2.5mm;border-bottom:1px solid #111;line-height:1.15;min-height:9.8mm}
+.cell{padding:1.8mm 2.5mm;border-bottom:1px solid #111;line-height:1.15;min-height:9.8mm}
 .cell:last-child{border-bottom:0}
 .party{font-weight:900;font-size:11.5px}
 .phone-big{font-size:10.5px;font-weight:900}
-.invoice-big,.invoice-value-big,.invoice-date-big{font-size:10px;font-weight:900}
-.invoice-row{display:grid;grid-template-columns:1fr 1fr 1.15fr;height:100%}
-.invoice-row>div{padding:1.7mm 2.5mm;display:flex;align-items:center;font-weight:900;white-space:nowrap}
-.invoice-row>div+div{border-left:1px solid #111}
-.amount-cell{font-size:10px!important}
-.amount-value{font-size:12px!important;font-weight:900!important}
-.invoice-value-cell{font-size:9.5px!important}
+.invoice-big,.invoice-value-big{font-size:10px;font-weight:900}
+.invoice-combined{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #111}
+.invoice-combined>div{padding:1.7mm 2.5mm;display:flex;align-items:center;font-weight:900}
+.invoice-combined>div+div{border-left:1px solid #111}
 
 .body{height:18.2mm;display:grid;grid-template-columns:1fr 47mm;border-bottom:1.2px solid #111}
 .goodshead,.goodsrow{display:grid;grid-template-columns:1fr 16mm 1fr}
@@ -92,16 +91,12 @@ html,body{background:#fff!important}
 .charge{display:contents}
 .charge div{padding:1.1mm 1.4mm;border-bottom:1px solid #111;font-weight:800}
 .charge div:first-child{border-right:1px solid #111}
-.charges .charge:last-child div{border-bottom:0;background:#fafafa}
+.charges .charge:last-child div{border-bottom:0}
 .total,.total-amount{font-weight:900!important}
-.total-amount{font-size:9.5px!important}
+.total-amount{font-size:11px!important}
 
-.footer{height:14.8mm;display:grid;grid-template-columns:1fr 47mm}
+.footer{height:14.8mm;display:block}
 .remark{padding:1.6mm 2.2mm;font-size:7px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:800}
-.sign{border-left:1px solid #111;padding:1.4mm 2mm;background:#fff}
-.signbox{height:100%;font-weight:900;display:flex;flex-direction:column;justify-content:space-between}
-.sign-title{font-size:8px;font-weight:900}
-.sign-line{border-top:1px solid #111;width:90%;margin-left:auto;margin-right:auto;text-align:center;padding-top:1mm;font-size:6.8px;font-weight:700}
 }
 
 </style>
@@ -406,6 +401,7 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 
 <div class="lrbox">
 <div>LR No : <b class="lrno-big">${esc(r.lr_no)}</b></div>
+<div>Date : <b class="date-big">${esc(formatPrintDate(r.lr_date))}</b></div>
 </div>
 </div>
 </div>
@@ -434,7 +430,7 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 
 <div class="invoice-combined">
 <div><b>Invoice No :</b> <b class="invoice-big">${esc(r.invoice_no)}</b></div>
-<div><b>Invoice Value :</b> <b class="amount-value">${money(r.invoice_value)}</b></div>
+<div><b>Invoice Value :</b> <b class="invoice-value-big">${money(r.invoice_value)}</b></div>
 </div>
 
 </div>
@@ -483,13 +479,6 @@ $('printArea').innerHTML='<div class="sheet">'+copies.map(c=>`
 <div class="footer">
 <div class="remark">
 <b>Remarks :</b> ${esc(r.remarks)} &nbsp;&nbsp; <b>GST Paid By :</b> Not Applicable &nbsp;&nbsp; Goods booked at owner's risk and said to contain basis. Non Negotiable
-</div>
-
-<div class="sign">
-<div class="signbox">
-<div class="sign-title">RECEIVER'S SIGNATURE</div>
-<div class="sign-line">Signature</div>
-</div>
 </div>
 </div>
 
