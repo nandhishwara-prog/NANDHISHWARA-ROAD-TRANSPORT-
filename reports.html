@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NRT Reports</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="supabase-config.js"></script>
 <style>
 *{box-sizing:border-box}
@@ -198,26 +199,46 @@ function shareText(x){
   ].join('\\n');
 }
 
-function shareWhatsApp(i){
-  const x=window.reportRows[i];
-  window.open('https://wa.me/?text='+encodeURIComponent(shareText(x)),'_blank');
-}
-
-function shareEmail(i){
-  const x=window.reportRows[i];
-  location.href='mailto:?subject='+encodeURIComponent('NRT LR - '+(x.lr_no||''))+
-    '&body='+encodeURIComponent(shareText(x));
-}
-
-async function shareOther(i){
-  const x=window.reportRows[i];
-  if(navigator.share){
-    try{await navigator.share({title:'NRT LR '+(x.lr_no||''),text:shareText(x)});}
-    catch(e){}
-  }else{
-    shareWhatsApp(i);
+function makeLRPdf(x){
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const copies=['CONSIGNOR COPY','CONSIGNEE COPY','TRANSPORT COPY'];
+  const left=8, boxW=194, copyH=92;
+  const moneyPdf=v=>'Rs. '+Number(v||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+  const text=v=>String(v==null?'':v);
+  function copy(y,label){
+    doc.setLineWidth(.35);doc.rect(left,y,boxW,copyH);
+    doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text('NANDHISHWARA ROAD TRANSPORT',left+4,y+7);
+    doc.setFontSize(7);doc.text('ONE DAY DELIVERY SERVICE',left+4,y+11);doc.text('Autonagar, Hyderabad, Telangana - 500070',left+4,y+15);doc.text('Mobile: 9885410410 / 9989581732',left+4,y+19);
+    doc.line(130,y,130,y+22);doc.setFontSize(7);doc.text('GST No: 36HSYPK0996J1ZM',133,y+5);doc.text(label,133,y+10);doc.text('LR No: '+text(x.lr_no),133,y+15);doc.text('Date: '+text(x.lr_date),133,y+20);
+    doc.line(left,y+22,left+boxW,y+22);doc.setFontSize(8);doc.text('FROM: '+text(x.from_location),left+4,y+28);doc.text('TO: '+text(x.to_location),left+72,y+28);doc.text('FREIGHT TYPE: '+text(x.freight_type||'TO PAY'),left+135,y+28);
+    doc.line(left,y+31,left+boxW,y+31);doc.setFontSize(7);doc.text('CONSIGNOR:',left+4,y+37);doc.setFont('helvetica','normal');doc.text(text(x.consignor_name).slice(0,35),left+25,y+37);doc.setFont('helvetica','bold');doc.text('Mobile:',left+4,y+42);doc.setFont('helvetica','normal');doc.text(text(x.consignor_phone),left+25,y+42);
+    doc.setFont('helvetica','bold');doc.text('CONSIGNEE:',left+101,y+37);doc.setFont('helvetica','normal');doc.text(text(x.consignee_name).slice(0,28),left+122,y+37);doc.setFont('helvetica','bold');doc.text('Mobile:',left+101,y+42);doc.setFont('helvetica','normal');doc.text(text(x.consignee_phone),left+122,y+42);
+    doc.line(left,y+46,left+boxW,y+46);doc.setFont('helvetica','bold');doc.text('Invoice No:',left+4,y+52);doc.setFont('helvetica','normal');doc.text(text(x.invoice_no),left+25,y+52);doc.setFont('helvetica','bold');doc.text('Invoice Value:',left+101,y+52);doc.setFont('helvetica','normal');doc.text(moneyPdf(x.invoice_value),left+126,y+52);
+    doc.line(left,y+55,left+boxW,y+55);doc.setFont('helvetica','bold');doc.text('DESCRIPTION',left+4,y+61);doc.text('QTY',left+75,y+61);doc.text('REMARKS',left+105,y+61);doc.text('CHARGES',left+150,y+61);
+    doc.setFont('helvetica','normal');doc.text(text(x.goods).slice(0,38),left+4,y+67);doc.text(text(x.packages||0),left+76,y+67);doc.text(text(x.remarks).slice(0,22),left+105,y+67);doc.text('Freight: '+moneyPdf(x.freight),left+150,y+67);doc.text('Hamali: '+moneyPdf(x.hamali),left+150,y+73);doc.text('LR Charge: '+moneyPdf(x.other_charges),left+150,y+79);
+    doc.setFont('helvetica','bold');doc.text('TOTAL: '+moneyPdf(Number(x.freight||0)+Number(x.hamali||0)+Number(x.other_charges||0)),left+4,y+79);
   }
+  copies.forEach((label,i)=>copy(6+i*97,label));
+  return doc;
 }
+
+async function sharePDF(i){
+  const x=window.reportRows[i];if(!x)return;
+  try{
+    const doc=makeLRPdf(x),blob=doc.output('blob');
+    const file=new File([blob],'NRT_'+(x.lr_no||'LR')+'.pdf',{type:'application/pdf'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({title:'NRT LR '+(x.lr_no||''),text:'NANDHISHWARA ROAD TRANSPORT - '+(x.lr_no||''),files:[file]});
+    }else{
+      const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=file.name;a.click();setTimeout(()=>URL.revokeObjectURL(url),3000);
+      setMsg('PDF created. Please share the downloaded PDF.',true);
+    }
+  }catch(e){if(e&&e.name==='AbortError')return;setMsg('PDF share error: '+(e.message||e),false);}
+}
+function shareWhatsApp(i){sharePDF(i)}
+function shareEmail(i){sharePDF(i)}
+function shareOther(i){sharePDF(i)}
 
 function toggleShare(i){
   document.querySelectorAll('.share-menu').forEach(function(m){m.style.display='none';});
@@ -256,9 +277,7 @@ function render(rows,totalRows){
         '<a class="small yellow" href="bilty.html?print='+id+'">Print</a>'+
         '<button type="button" class="small blue" onclick="toggleShare('+i+')">Share</button>'+
         '<div class="share-menu" id="share-'+i+'">'+
-          '<button type="button" onclick="shareWhatsApp('+i+')">📱 WhatsApp</button>'+
-          '<button type="button" onclick="shareEmail('+i+')">✉️ Email</button>'+
-          '<button type="button" onclick="shareOther('+i+')">📤 Other</button>'+
+          '<button type="button" onclick="sharePDF('+i+')">📄 Share PDF</button>'+
         '</div>'+
         '<button type="button" class="small red" onclick="deleteLR('+i+')">Delete</button>'+
       '</td>'+
