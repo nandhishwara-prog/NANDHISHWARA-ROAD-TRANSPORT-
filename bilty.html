@@ -150,6 +150,7 @@ html,body{background:#fff!important}
 <div><label>Consignee Name</label><input id="consignee_name" list="partyNames"></div>
 <div><label>Consignee Phone</label><input id="consignee_phone"></div>
 
+<div><label>Quantity</label><input id="packages" type="number" min="0" step="1" value="0" placeholder="Enter quantity"></div>
 <div><label>Weight</label><input id="weight" type="number" min="0" value="0"></div>
 
 <div class="full"><label>Goods / Description</label><input id="goods"></div>
@@ -280,7 +281,7 @@ consignor_name:$('consignor_name').value,
 consignor_phone:$('consignor_phone').value,
 consignee_name:$('consignee_name').value,
 consignee_phone:$('consignee_phone').value,
-packages:0,
+packages:+$('packages').value||0,
 weight:+$('weight').value||0,
 goods:$('goods').value,
 invoice_no:$('invoice_no').value,
@@ -320,7 +321,7 @@ $('from_location').value='HYDERABAD';
 'consignee_name','consignee_phone','goods','invoice_no','remarks']
 .forEach(id=>$(id).value='');
 
-['weight','invoice_value','freight','hamali','other_charges']
+['packages','weight','invoice_value','freight','hamali','other_charges']
 .forEach(id=>$(id).value=0);
 
 nextLR().then(x=>$('lr_no').value=x)
