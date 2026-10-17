@@ -1,38 +1,14 @@
-NRT ONLINE BILTY SYSTEM - SETUP (TELUGU)
+NRT / SHIVA SHAKTHI LR-BILTY RECOVERY PACKAGE
 
-1. Supabase lo free project create cheyyandi.
-2. SQL Editor open chesi supabase-schema.sql lo unna SQL motham paste chesi Run cheyyandi.
-3. Supabase -> Settings -> API Keys / Connect lo:
-   - Project URL
-   - Publishable key (sb_publishable_...)
-   teesukondi.
-4. supabase-config.js lo:
-   SUPABASE_URL = mee Project URL
-   SUPABASE_PUBLISHABLE_KEY = mee Publishable key
-   petti save cheyyandi.
-   IMPORTANT: secret/service_role key ni ikkada pettakandi.
-5. Ee 4 files ni GitHub Pages repository root lo upload cheyyandi:
-   index.html
-   bilty.html
-   supabase-config.js
-   supabase-schema.sql
-   (schema.sql website ki avasaram ledu; Supabase SQL Editor kosam matrame.)
-6. GitHub Pages publish ayyaka:
-   https://nandhishwara-prog.github.io/NANDHISHWARA-ROAD-TRANSPORT-/bilty.html
-   ane page open avutundi.
-7. First time "Create account" tho NRT staff login create chesi, login avvandi.
+Files included:
+- shiva-bilty.html: SST-prefixed LR form, automatic SST/ numbering, Supabase save/edit/view/print, A4 three-copy print layout.
+- shiva-reports.html: SST-only reports, date/search filters, summary totals, View/Edit/Print/Share/Delete, Print/PDF and Excel export.
 
-FEATURES
-- Automatic LR number
-- Cloud database storage
-- Mobile/PC search
-- LR records list
-- A4 3-copy print
-- Consignor / Consignee / Transporter copies
-- Status field
-- Supabase Auth login
-- RLS protected database
+IMPORTANT:
+1. Keep your existing supabase-config.js private. It is intentionally NOT included.
+2. Upload/replace these two HTML files in the same GitHub Pages repository/folder where supabase-config.js and reports.html/bilty.html already exist.
+3. Do not change Supabase table or delete data. The SST pages filter lr_no with SST/ so SST records remain separate from NRT records.
+4. After upload, hard refresh the browser (Ctrl+F5). If the live pages still look old, verify the commit succeeded and the exact filenames are shiva-bilty.html and shiva-reports.html.
+5. Test using one existing SST record: View first, then Print. Do not test Delete on a real record.
 
-NOTE
-GitHub Pages static hosting kosam; permanent LR data Supabase database lo store avutundi.
-Pages deployment trigger test
+Note: This package reuses the saved HTML project files from the user's Library; it does not include or change any live Supabase records or credentials.
