@@ -69,6 +69,15 @@ function toggleShare(id){
   document.querySelectorAll('.share-menu').forEach(m=>{if(m.id!=='share-'+id)m.style.display='none'});
   const m=$('share-'+id);m.style.display=m.style.display==='block'?'none':'block';
 }
+function shareById(id,kind){
+  const x=(window.currentReportRows||[]).find(r=>Number(r.id)===Number(id));
+  if(!x)return;
+  if(kind==='wa')shareWhatsApp(x);else if(kind==='email')shareEmail(x);else shareOther(x);
+}
+function deleteById(id){
+  const x=(window.currentReportRows||[]).find(r=>Number(r.id)===Number(id));
+  if(x)deleteLR(id,x.lr_no);
+}
 
 
 function exportExcel(){
@@ -126,7 +135,8 @@ async function loadReport(){
     $('rows').innerHTML=r.map(x=>{
       p+=+x.packages||0;w+=+x.weight||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;
       let id=encodeURIComponent(x.id),v=Date.now();
-      return '<tr><td><b>'+esc(x.lr_no)+'</b></td><td>'+esc(x.lr_date)+'</td><td>'+esc(x.from_location)+'</td><td>'+esc(x.to_location)+'</td><td>'+esc(x.consignor_name)+'</td><td>'+esc(x.consignee_name)+'</td><td>'+Number(x.packages||0)+'</td><td>'+Number(x.weight||0)+'</td><td class="right">'+money(x.freight)+'</td><td class="right">'+money(x.other_charges)+'</td><td class="act"><a class="blue smallbtn" href="bilty.html?view='+id+'&v='+v+'">View</a><a class="green smallbtn" href="bilty.html?edit='+id+'&v='+v+'">Edit</a><a class="yellow smallbtn" href="bilty.html?print='+id+'&v='+v+'">Print</a><button class="blue smallbtn" onclick="toggleShare('+Number(x.id)+')">Share</button><div class="share-menu" id="share-'+Number(x.id)+'"><button onclick="shareWhatsApp('+JSON.stringify(x).replace(/"/g,'&quot;')+')">📱 WhatsApp</button><button onclick="shareEmail('+JSON.stringify(x).replace(/"/g,'&quot;')+')">✉️ Email</button><button onclick="shareOther('+JSON.stringify(x).replace(/"/g,'&quot;')+')">📤 Other</button></div><button class="red smallbtn" onclick="deleteLR('+Number(x.id)+',\\''+esc(x.lr_no)+'\\')">Delete</button></td></tr>'
+      const safeId=Number(x.id);
+      return `<tr><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${Number(x.packages||0)}</td><td>${Number(x.weight||0)}</td><td class="right">${money(x.freight)}</td><td class="right">${money(x.other_charges)}</td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="green smallbtn" href="bilty.html?edit=${id}&v=${v}">Edit</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a><button class="blue smallbtn" onclick="toggleShare(${safeId})">Share</button><div class="share-menu" id="share-${safeId}"><button onclick="shareById(${safeId},'wa')">📱 WhatsApp</button><button onclick="shareById(${safeId},'email')">✉️ Email</button><button onclick="shareById(${safeId},'other')">📤 Other</button></div><button class="red smallbtn" onclick="deleteById(${safeId})">Delete</button></td></tr>`;
     }).join('');
     $('count').textContent=r.length;$('packages').textContent=p;$('weight').textContent=w;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
     $('msg').className='msg ok';$('msg').textContent=r.length+' NRT LR records loaded. SST records are shown only in SHIVA SHAKTHI Reports.'
