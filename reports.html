@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NRT Reports</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f3f6fa;color:#111827}.top{background:#073b8f;color:#fff;padding:14px 18px}.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:9px 13px;border-radius:7px;font-weight:bold;text-decoration:none;border:0}.wrap{max-width:1200px;margin:18px auto;padding:0 12px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:10px;padding:16px;margin-bottom:14px}.title{color:#073b8f}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-weight:bold;font-size:13px;display:block;margin-bottom:5px}input{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}.msg{margin-top:8px;font-weight:bold}.ok{color:#16803c}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center}.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:980px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}.act{white-space:nowrap;position:relative}.smallbtn{display:inline-block;padding:5px 8px;font-size:11px;border-radius:4px;margin:1px;text-decoration:none;font-weight:bold;border:0}.smallbtn.blue{color:#fff}.smallbtn.green{color:#fff}.smallbtn.yellow{color:#111}.smallbtn.red{color:#fff}.share-menu{display:none;position:absolute;right:0;top:100%;z-index:20;background:#fff;border:1px solid #cfd6df;border-radius:7px;padding:6px;box-shadow:0 4px 14px rgba(0,0,0,.18);min-width:125px}.share-menu button{display:block;width:100%;padding:7px 9px;margin:2px 0;text-align:left;background:#fff;color:#111827;font-size:11px}.share-menu button:hover{background:#eef5fb}@media(max-width:700px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media print{@page{size:A4 landscape;margin:8mm}.top,.filters,.actions,.share-menu,.act,th:last-child,td:last-child{display:none!important}.print-header{display:block!important;text-align:center;border-bottom:2px solid #111;padding-bottom:7px;margin-bottom:8px}.print-header h2{margin:7px 0 3px;font-size:16px}.box{border:0;box-shadow:none;padding:5px;margin-bottom:6px}.table-wrap{overflow:visible}.stats{grid-template-columns:repeat(4,1fr)}.stat{padding:5px}.stat b{font-size:14px}th,td{font-size:8pt;padding:4px}table{min-width:0}tr.cancelled-row{display:none!important}}
+*{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f3f6fa url('shiva-parvathi-background.jpg') center center/cover fixed no-repeat;color:#111827}.top{background:#073b8f;color:#fff;padding:14px 18px}.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:9px 13px;border-radius:7px;font-weight:bold;text-decoration:none;border:0}.wrap{max-width:1200px;margin:18px auto;padding:0 12px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:10px;padding:16px;margin-bottom:14px}.title{color:#073b8f}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-weight:bold;font-size:13px;display:block;margin-bottom:5px}input{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}.msg{margin-top:8px;font-weight:bold}.ok{color:#16803c}.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center}.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:980px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}.act{white-space:nowrap;position:relative}.smallbtn{display:inline-block;padding:5px 8px;font-size:11px;border-radius:4px;margin:1px;text-decoration:none;font-weight:bold;border:0}.smallbtn.blue{color:#fff}.smallbtn.green{color:#fff}.smallbtn.yellow{color:#111}.smallbtn.red{color:#fff}.share-menu{display:none;position:absolute;right:0;top:100%;z-index:20;background:#fff;border:1px solid #cfd6df;border-radius:7px;padding:6px;box-shadow:0 4px 14px rgba(0,0,0,.18);min-width:125px}.share-menu button{display:block;width:100%;padding:7px 9px;margin:2px 0;text-align:left;background:#fff;color:#111827;font-size:11px}.share-menu button:hover{background:#eef5fb}@media(max-width:700px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media print{body{background:#fff!important;background-image:none!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.top,.filters,.actions,.share-menu{display:none!important}.box{border:0}.table-wrap{overflow:visible}table{min-width:0}}
 </style></head><body>
 <div class="top"><div class="topin"><b>📊 NRT REPORTS</b><div class="nav"><a href="bilty.html">➕ New Bilty</a><a href="index.html">← Home</a><button onclick="logout()">Logout</button></div></div></div>
 <div class="wrap"><div class="box filters"><h2 class="title">LR Reports</h2>
@@ -10,9 +10,9 @@
 <div><label>To Date</label><input id="toDate" type="date"></div>
 <div><label>Search LR / Consignor / Consignee / From / To</label><input id="allSearch" type="search" placeholder="Enter any LR No, Name, From or To" onkeydown="if(event.key==='Enter')loadReport()"></div>
 </div>
-<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="printReports()">🖨️ Print / PDF</button><button class="green" onclick="exportExcel()">📊 Excel</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div><div id="msg" class="msg"></div></div>
-<div class="box"><div class="print-header"><div style="font-size:18px;font-weight:900;color:#073b8f">NANDHISHWARA ROAD TRANSPORT</div><div>Plot No. 1, Block No. 3, Autonagar, Hyderabad, Telangana - 500070</div><div>Mobile: 9885410410 / 9989581732 | GST No: 36HSYPK0996J1ZM</div><div style="font-weight:900">ONE DAY DELIVERY SERVICE</div><h2>LR REPORTS</h2><div>Printed on: <span id="printDate"></span></div></div><div class="stats"><div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div></div></div>
-<div class="box"><div class="table-wrap"><table><thead><tr><th>LR No.</th><th>Date</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Freight</th><th>LR Charge</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div></div>
+<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="window.print()">🖨️ Print / PDF</button><button class="green" onclick="exportExcel()">📊 Excel</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div><div id="msg" class="msg"></div></div>
+<div class="box"><div class="stats"><div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="weight">0</b><span>Weight</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div></div></div>
+<div class="box"><div class="table-wrap"><table><thead><tr><th>LR No.</th><th>Date</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Weight</th><th>Freight</th><th>LR Charge</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div></div>
 <script>
 var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const $=id=>document.getElementById(id);
@@ -22,7 +22,6 @@ async function logout(){await sb.auth.signOut();location.href='bilty.html'}
 
 function filtered(a){
   let f=$('fromDate').value,t=$('toDate').value,q=$('allSearch').value.trim().toLowerCase();
-  if(!f&&!t&&!q)return [];
   return(a||[]).filter(x=>{
     // NRT Reports must show only NRT LR numbers; SST records belong in shiva-reports.html.
     const lr=String(x.lr_no||'').trim().toUpperCase();
@@ -82,7 +81,7 @@ function deleteById(id){
 
 
 function exportExcel(){
-  const r=(window.currentReportRows||[]).filter(x=>String(x.status||'').toLowerCase()!=='cancelled');
+  const r=window.currentReportRows||[];
   if(!r.length){alert('No report records found for the selected search/filter.');return;}
 
   const rows=r.map(x=>({
@@ -93,6 +92,7 @@ function exportExcel(){
     "Consignor": x.consignor_name||"",
     "Consignee": x.consignee_name||"",
     "Packages": Number(x.packages||0),
+    "Weight": Number(x.weight||0),
     "Freight": Number(x.freight||0),
     "LR Charge": Number(x.other_charges||0),
     "Hamali": Number(x.hamali||0),
@@ -102,7 +102,7 @@ function exportExcel(){
   const ws=XLSX.utils.json_to_sheet(rows);
   ws["!cols"]=[
     {wch:14},{wch:12},{wch:18},{wch:18},{wch:24},{wch:24},
-    {wch:10},{wch:14},{wch:14},{wch:14},{wch:14}
+    {wch:10},{wch:10},{wch:14},{wch:14},{wch:14},{wch:14}
   ];
 
   const wb=XLSX.utils.book_new();
@@ -131,30 +131,19 @@ async function loadReport(){
       if(!data||data.length<1000)break;
       from+=1000
     }
-    let r=filtered(a),p=0,f=0,o=0,h=0; window.currentReportRows=r;
+    let r=filtered(a),p=0,w=0,f=0,o=0,h=0; window.currentReportRows=r;
     $('rows').innerHTML=r.map(x=>{
-      const cancelled=String(x.status||'').toLowerCase()==='cancelled';
-      if(!cancelled){p+=+x.packages||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;}
+      p+=+x.packages||0;w+=+x.weight||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;
       let id=encodeURIComponent(x.id),v=Date.now();
       const safeId=Number(x.id);
-      return `<tr class="${cancelled?'cancelled-row':''}"><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${cancelled?'—':Number(x.packages||0)}</td><td class="right">${cancelled?'—':money(x.freight)}</td><td class="right">${cancelled?'—':money(x.other_charges)}</td><td><b style="color:${cancelled?'#b91c1c':'#16803c'}">${cancelled?'CANCELLED':'ACTIVE'}</b></td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a></td></tr>`;
+      return `<tr><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${Number(x.packages||0)}</td><td>${Number(x.weight||0)}</td><td class="right">${money(x.freight)}</td><td class="right">${money(x.other_charges)}</td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="green smallbtn" href="bilty.html?edit=${id}&v=${v}">Edit</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a><button class="blue smallbtn" onclick="toggleShare(${safeId})">Share</button><div class="share-menu" id="share-${safeId}"><button onclick="shareById(${safeId},'wa')">📱 WhatsApp</button><button onclick="shareById(${safeId},'email')">✉️ Email</button><button onclick="shareById(${safeId},'other')">📤 Other</button></div><button class="red smallbtn" onclick="deleteById(${safeId})">Delete</button></td></tr>`;
     }).join('');
-    $('count').textContent=r.filter(x=>String(x.status||'').toLowerCase()!=='cancelled').length;$('packages').textContent=p;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
-    $('msg').className='msg ok';$('msg').textContent=r.length+' matching NRT records.'
+    $('count').textContent=r.length;$('packages').textContent=p;$('weight').textContent=w;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
+    $('msg').className='msg ok';$('msg').textContent=r.length+' NRT LR records loaded. SST records are shown only in SHIVA SHAKTHI Reports.'
   }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
-}
-
-function printReports(){
- const active=(window.currentReportRows||[]).filter(x=>String(x.status||'').toLowerCase()!=='cancelled');
- if(!active.length){alert('No active NRT LR reports to print.');return;}
- const old=window.currentReportRows;window.currentReportRows=active;
- document.querySelectorAll('tr.cancelled-row').forEach(r=>r.style.display='none');
- const d=$('printDate');if(d)d.textContent=new Date().toLocaleDateString('en-IN');
- window.print();
- document.querySelectorAll('tr.cancelled-row').forEach(r=>r.style.display='');window.currentReportRows=old;
 }
 async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{let{error}=await sb.from('lrs').delete().eq('id',id);if(error)throw error;loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
 function clearFilters(){$('fromDate').value='';$('toDate').value='';$('allSearch').value='';loadReport()}
-window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}const d=$('printDate');if(d)d.textContent=new Date().toLocaleDateString('en-IN');$('msg').textContent='Enter a date or LR / name detail, then press Search to display reports.'});
+window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}loadReport()});
 document.addEventListener('click',e=>{if(!e.target.closest('.act'))document.querySelectorAll('.share-menu').forEach(m=>m.style.display='none')});
 </script></body></html>
