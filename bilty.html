@@ -462,7 +462,8 @@ let{data:{session}}=await sb.auth.getSession();
 
 const params=new URLSearchParams(window.location.search);
 if(!session)return;
-if(!params.has('print')&&!params.has('view')&&!params.has('edit')){location.href='nrt-home.html';return;}
+// Open the New Bilty form when a logged-in user visits bilty.html directly.
+// Keep print/view/edit routes unchanged.
 const printId=params.get('print');
 const viewId=params.get('view');
 const editId=params.get('edit');
