@@ -122,7 +122,17 @@ function exportExcel(){
 
 async function loadReport(){
   try{
-    $('msg').textContent='Loading all LR records...';
+    const f=$('fromDate').value, t=$('toDate').value, q=$('allSearch').value.trim();
+    if(!f && !t && !q){
+      window.currentReportRows=[];
+      $('rows').innerHTML='';
+      $('count').textContent='0'; $('packages').textContent='0'; $('weight').textContent='0';
+      $('freight').textContent='₹0'; $('total').textContent='₹0';
+      $('msg').className='msg';
+      $('msg').textContent='Please enter LR No., From / To, Party Name, or select a date range, then press Search.';
+      return;
+    }
+    $('msg').textContent='Searching matching LR records...';
     let a=[],from=0;
     while(1){
       let{data,error}=await sb.from('lrs').select('*').range(from,from+999);
@@ -143,7 +153,7 @@ async function loadReport(){
   }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
 }
 async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{let{error}=await sb.from('lrs').delete().eq('id',id);if(error)throw error;loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
-function clearFilters(){$('fromDate').value='';$('toDate').value='';$('allSearch').value='';loadReport()}
-window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}loadReport()});
+function clearFilters(){$('fromDate').value='';$('toDate').value='';$('allSearch').value='';window.currentReportRows=[];$('rows').innerHTML='';$('count').textContent='0';$('packages').textContent='0';$('weight').textContent='0';$('freight').textContent='₹0';$('total').textContent='₹0';$('msg').className='msg';$('msg').textContent='Enter search values to display matching LR records.'}
+window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}window.currentReportRows=[];$('rows').innerHTML='';$('msg').className='msg';$('msg').textContent='Enter LR No., From / To, Party Name, or a date range, then press Search.'});
 document.addEventListener('click',e=>{if(!e.target.closest('.act'))document.querySelectorAll('.share-menu').forEach(m=>m.style.display='none')});
 </script></body></html>
