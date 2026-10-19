@@ -182,17 +182,12 @@ return '₹'+Number(x||0).toLocaleString('en-IN')
 }
 
 async function login(){
- $('loginMsg').textContent='';
- const email=$('email').value.trim();
- const password=$('password').value;
- if(!email || !password){$('loginMsg').textContent='Please enter Email and Password.';return}
- let{error}=await sb.auth.signInWithPassword({email,password});
- if(error){$('loginMsg').textContent=error.message;return}
- // After successful NRT login, open the authenticated menu first.
- location.href='nrt-home.html';
+let{error}=await sb.auth.signInWithPassword({
+email:$('email').value.trim(),
+password:$('password').value
 });
 if(error){$('loginMsg').textContent=error.message;return}
-showApp()
+location.href='nrt-home.html'
 }
 
 async function logout(){
@@ -465,9 +460,9 @@ window.addEventListener('load',async()=>{
 
 let{data:{session}}=await sb.auth.getSession();
 
-if(!session)return;
-
 const params=new URLSearchParams(window.location.search);
+if(!session)return;
+if(!params.has('print')&&!params.has('view')&&!params.has('edit')){location.href='nrt-home.html';return;}
 const printId=params.get('print');
 const viewId=params.get('view');
 const editId=params.get('edit');
