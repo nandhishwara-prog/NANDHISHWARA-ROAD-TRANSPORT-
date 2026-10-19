@@ -6,9 +6,12 @@
 <div class="top"><div class="topin"><b>📊 NRT REPORTS</b><div class="nav"><a href="bilty.html">➕ New Bilty</a><a href="index.html">← Home</a><button onclick="logout()">Logout</button></div></div></div>
 <div class="wrap"><div class="box filters"><h2 class="title">LR Reports</h2>
 <div class="grid">
+<div><label>LR Number</label><input id="lrSearch" type="search" placeholder="Enter LR No."></div>
+<div><label>From Location</label><input id="fromSearch" type="search" placeholder="Enter From location"></div>
+<div><label>To Location</label><input id="toSearch" type="search" placeholder="Enter To location"></div>
+<div><label>Party Name (Consignor / Consignee)</label><input id="partySearch" type="search" placeholder="Enter party name"></div>
 <div><label>From Date</label><input id="fromDate" type="date"></div>
 <div><label>To Date</label><input id="toDate" type="date"></div>
-<div><label>Search LR / Consignor / Consignee / From / To</label><input id="allSearch" type="search" placeholder="Enter any LR No, Name, From or To" onkeydown="if(event.key==='Enter')loadReport()"></div>
 </div>
 <div class="actions"><button class="blue" onclick="loadReport()">🔎 Search</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="window.print()">🖨️ Print / PDF</button><button class="green" onclick="exportExcel()">📊 Excel</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div><div id="msg" class="msg"></div></div>
 <div class="box"><div class="stats"><div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="weight">0</b><span>Weight</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div></div></div>
@@ -21,16 +24,19 @@ function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFract
 async function logout(){await sb.auth.signOut();location.href='bilty.html'}
 
 function filtered(a){
-  let f=$('fromDate').value,t=$('toDate').value,q=$('allSearch').value.trim().toLowerCase();
+  let f=$('fromDate').value,t=$('toDate').value,lrq=$('lrSearch').value.trim().toLowerCase(),fq=$('fromSearch').value.trim().toLowerCase(),tq=$('toSearch').value.trim().toLowerCase(),pq=$('partySearch').value.trim().toLowerCase();
   return(a||[]).filter(x=>{
     // NRT Reports must show only NRT LR numbers; SST records belong in shiva-reports.html.
     const lr=String(x.lr_no||'').trim().toUpperCase();
     if(!lr.startsWith('NRT')) return false;
-    const all=[x.lr_no,x.consignor_name,x.consignee_name,x.from_location,x.to_location]
-      .map(v=>String(v||'').toLowerCase());
-    return (!f||String(x.lr_date||'')>=f)&&
-           (!t||String(x.lr_date||'')<=t)&&
-           (!q||all.some(v=>v.includes(q)));
+    const lr=String(x.lr_no||'').toLowerCase();
+    const from=String(x.from_location||'').toLowerCase();
+    const to=String(x.to_location||'').toLowerCase();
+    const consignor=String(x.consignor_name||'').toLowerCase();
+    const consignee=String(x.consignee_name||'').toLowerCase();
+    return (!f||String(x.lr_date||'')>=f)&&(!t||String(x.lr_date||'')<=t)&&
+      (!lrq||lr.includes(lrq))&&(!fq||from.includes(fq))&&(!tq||to.includes(tq))&&
+      (!pq||consignor.includes(pq)||consignee.includes(pq));
   }).sort((a,b)=>String(b.lr_date||'').localeCompare(String(a.lr_date||''))||Number(b.id||0)-Number(a.id||0))
 }
 
@@ -110,7 +116,7 @@ function exportExcel(){
 
   const from=document.getElementById("fromDate").value;
   const to=document.getElementById("toDate").value;
-  const search=document.getElementById("allSearch").value.trim();
+  const search=["lrSearch","fromSearch","toSearch","partySearch"].map(id=>document.getElementById(id).value.trim()).filter(Boolean).join("_");
 
   let name="NRT_Report";
   if(from||to) name += "_" + (from||"Start") + "_to_" + (to||"End");
@@ -122,7 +128,8 @@ function exportExcel(){
 
 async function loadReport(){
   try{
-    const f=$('fromDate').value, t=$('toDate').value, q=$('allSearch').value.trim();
+    const f=$('fromDate').value, t=$('toDate').value;
+    const q=['lrSearch','fromSearch','toSearch','partySearch'].some(id=>$(id).value.trim());
     if(!f && !t && !q){
       window.currentReportRows=[];
       $('rows').innerHTML='';
@@ -153,7 +160,7 @@ async function loadReport(){
   }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
 }
 async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{let{error}=await sb.from('lrs').delete().eq('id',id);if(error)throw error;loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
-function clearFilters(){$('fromDate').value='';$('toDate').value='';$('allSearch').value='';window.currentReportRows=[];$('rows').innerHTML='';$('count').textContent='0';$('packages').textContent='0';$('weight').textContent='0';$('freight').textContent='₹0';$('total').textContent='₹0';$('msg').className='msg';$('msg').textContent='Enter search values to display matching LR records.'}
-window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}window.currentReportRows=[];$('rows').innerHTML='';$('msg').className='msg';$('msg').textContent='Enter LR No., From / To, Party Name, or a date range, then press Search.'});
+function clearFilters(){$('fromDate').value='';$('toDate').value='';['lrSearch','fromSearch','toSearch','partySearch'].forEach(id=>$(id).value='');window.currentReportRows=[];$('rows').innerHTML='';$('count').textContent='0';$('packages').textContent='0';$('weight').textContent='0';$('freight').textContent='₹0';$('total').textContent='₹0';$('msg').className='msg';$('msg').textContent='Enter search values to display matching LR records.'}
+window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}window.currentReportRows=[];$('rows').innerHTML='';$('msg').className='msg';$('msg').textContent='Enter LR Number, From, To, Party Name, or select a date range, then press Search.'});
 document.addEventListener('click',e=>{if(!e.target.closest('.act'))document.querySelectorAll('.share-menu').forEach(m=>m.style.display='none')});
 </script></body></html>
