@@ -27,8 +27,8 @@ function filtered(a){
   let f=$('fromDate').value,t=$('toDate').value,lrq=$('lrSearch').value.trim().toLowerCase(),fq=$('fromSearch').value.trim().toLowerCase(),tq=$('toSearch').value.trim().toLowerCase(),pq=$('partySearch').value.trim().toLowerCase();
   return(a||[]).filter(x=>{
     // NRT Reports must show only NRT LR numbers; SST records belong in shiva-reports.html.
-    const lr=String(x.lr_no||'').trim().toUpperCase();
-    if(!lr.startsWith('NRT')) return false;
+    const lrUpper=String(x.lr_no||'').trim().toUpperCase();
+    if(!lrUpper.startsWith('NRT/')) return false;
     const lr=String(x.lr_no||'').toLowerCase();
     const from=String(x.from_location||'').toLowerCase();
     const to=String(x.to_location||'').toLowerCase();
