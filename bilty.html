@@ -105,6 +105,7 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
 <div id="loginMsg" class="msg"></div>
 </div>
 
+<div id="detailsView" class="box" style="display:none"></div>
 <div id="app" style="display:none">
 <div class="box">
 <h2 class="title">New / Edit Bilty</h2>
@@ -160,7 +161,7 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
 <div id="printArea" class="printarea"></div>
 
 <script>
-var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY),editingId=null;
+var sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY),editingId=null,currentLR=null;
 
 const $=id=>document.getElementById(id);
 const today=()=>new Date().toISOString().slice(0,10);
@@ -338,7 +339,7 @@ freight:+$('freight').value||0,
 hamali:+$('hamali').value||0,
 other_charges:+$('other_charges').value||0,
 remarks:$('remarks').value,
-status:'Booked'
+status:(currentLR && editingId && currentLR.status ? currentLR.status : 'Booked')
 }
 }
 
@@ -357,7 +358,7 @@ try{
   if(r.consignee_name && r.to_location)savedAddresses[r.consignee_name.trim()]=r.to_location.trim();
   localStorage.setItem('nrt_consignee_addresses',JSON.stringify(savedAddresses));
 }catch(e){}
-editingId=null;
+editingId=null;currentLR=null;
 printLR();
 
 setTimeout(async()=>{
@@ -397,15 +398,24 @@ document.querySelectorAll('#app input,#app select,#app textarea').forEach(e=>e.d
 document.querySelectorAll('#app .actions button').forEach(b=>b.style.display=on?'none':'');
 }
 
-async function openRequestedLR(mode,id){
-const r=await loadLR(id);
-if(!r)return;
-$('loginBox').style.display='none';
-$('app').style.display='block';
-fillForm(r);
-editingId=r.id;
-setFormReadOnly(mode==='view');
+function detailsMarkup(r){
+ const total=(+r.freight||0)+(+r.hamali||0)+(+r.other_charges||0);
+ const fields=[['LR Number',r.lr_no],['Date',formatPrintDate(r.lr_date)],['Status',String(r.status||'Booked').toUpperCase()],['Freight Type',r.freight_type],['From',r.from_location],['To',r.to_location],['Consignor Name',r.consignor_name],['Consignor Phone',r.consignor_phone],['Consignee Name',r.consignee_name],['Consignee Phone',r.consignee_phone],['Quantity / Packages',r.packages],['Weight',r.weight],['Goods / Description',r.goods],['Invoice Number',r.invoice_no],['Invoice Value',money(r.invoice_value)],['Freight',money(r.freight)],['Hamali Charge',money(r.hamali)],['LR Charge',money(r.other_charges)],['Total Amount',money(total)],['Remarks',r.remarks]];
+ return `<h2 class="title">LR Details — ${esc(r.lr_no||'')}</h2><div class="grid">${fields.map(([k,v])=>`<div><label>${esc(k)}</label><div style="padding:9px;border:1px solid #d5dbe3;border-radius:7px;background:#fff;min-height:36px;overflow-wrap:anywhere">${esc(v==null||v===''?'-':v)}</div></div>`).join('')}</div><div class="actions"><button class="yellow" onclick="detailPrint()">Print</button><button class="blue" onclick="detailEdit()">Edit</button><button class="blue" onclick="detailShare()">Share</button><button class="gray" onclick="detailCancel()">Cancel LR</button><button class="red" onclick="detailDelete()">Delete</button><button class="gray" onclick="location.href='reports.html'">Back to Reports</button></div><div id="detailMsg" class="msg"></div>`;
 }
+async function openRequestedLR(mode,id){
+ const r=await loadLR(id);if(!r)return;
+ $('loginBox').style.display='none';$('app').style.display='none';$('detailsView').style.display='none';
+ currentLR=r;editingId=r.id;
+ if(mode==='view'){$('detailsView').innerHTML=detailsMarkup(r);$('detailsView').style.display='block';}
+ else {$('app').style.display='block';fillForm(r);setFormReadOnly(false);}
+}
+function detailPrint(){if(currentLR)location.href='bilty.html?print='+encodeURIComponent(currentLR.id)+'&v='+Date.now()}
+function detailEdit(){if(currentLR)location.href='bilty.html?edit='+encodeURIComponent(currentLR.id)+'&v='+Date.now()}
+async function detailShare(){if(!currentLR)return;const r=currentLR;const text=`NANDHISHWARA ROAD TRANSPORT\nLR No: ${r.lr_no||''}\nDate: ${r.lr_date||''}\nFrom: ${r.from_location||''}\nTo: ${r.to_location||''}\nConsignor: ${r.consignor_name||''}\nConsignee: ${r.consignee_name||''}\nPackages: ${r.packages||0}\nFreight: ${money(r.freight)}\nLR Charge: ${money(r.other_charges)}\nTotal: ${money((+r.freight||0)+(+r.hamali||0)+(+r.other_charges||0))}`;if(navigator.share){try{await navigator.share({title:'LR '+r.lr_no,text})}catch(e){}}else location.href='https://wa.me/?text='+encodeURIComponent(text)}
+async function detailCancel(){if(!currentLR)return;if(!confirm('Cancel LR '+currentLR.lr_no+'? It will remain in Reports.'))return;const {data,error}=await sb.from('lrs').update({status:'Cancelled'}).eq('id',currentLR.id).select('*').single();if(error){alert('Cancel failed: '+error.message);return}currentLR=data;$('detailsView').innerHTML=detailsMarkup(data);$('detailsView').style.display='block';}
+async function detailDelete(){if(!currentLR)return;if(!confirm('Delete LR '+currentLR.lr_no+'? This cannot be undone.'))return;const {error}=await sb.from('lrs').delete().eq('id',currentLR.id);if(error){alert('Delete failed: '+error.message);return}location.href='reports.html';}
+
 
 function formatPrintDate(v){
   if(!v)return '';
