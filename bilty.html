@@ -182,9 +182,14 @@ return '₹'+Number(x||0).toLocaleString('en-IN')
 }
 
 async function login(){
-let{error}=await sb.auth.signInWithPassword({
-email:$('email').value.trim(),
-password:$('password').value
+ $('loginMsg').textContent='';
+ const email=$('email').value.trim();
+ const password=$('password').value;
+ if(!email || !password){$('loginMsg').textContent='Please enter Email and Password.';return}
+ let{error}=await sb.auth.signInWithPassword({email,password});
+ if(error){$('loginMsg').textContent=error.message;return}
+ // After successful NRT login, open the authenticated menu first.
+ location.href='nrt-home.html';
 });
 if(error){$('loginMsg').textContent=error.message;return}
 showApp()
