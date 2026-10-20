@@ -1,27 +1,173 @@
+
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NANDHISHWARA ROAD TRANSPORT | Home</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NANDHISHWARA ROAD TRANSPORT | Home</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;color:#12203a}body{min-height:100vh;background:#f4f7fb url('shiva-parvathi-background.jpg') center center/cover fixed no-repeat}.veil{min-height:100vh;background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,.56));}
-header{background:linear-gradient(110deg,rgba(5,48,119,.97),rgba(12,77,150,.94));color:#fff;padding:12px 16px;box-shadow:0 3px 14px #092b5233}.headin{max-width:1200px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:14px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.mark{width:52px;height:52px;flex:none;border-radius:50%;background:#ffcf22;border:3px solid white;display:grid;place-items:center;color:#0c4d96;font-weight:900;font-size:16px}.brand h1{font-size:clamp(16px,3vw,25px);margin:0;line-height:1.2}.brand p{margin:4px 0 0;color:#ffdf55;font-size:11px;font-weight:900;letter-spacing:1.6px}.nav{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}.nav a,.nav button{display:inline-flex;align-items:center;justify-content:center;padding:11px 15px;border-radius:8px;border:0;text-decoration:none;font-weight:800;font-size:14px;white-space:nowrap;cursor:pointer}.primary{background:#ffcf22;color:#12376c}.secondary{background:#fff;color:#0c4d96}.logout{background:#c62828;color:white}
-main{max-width:1200px;margin:auto;padding:clamp(22px,5vw,60px) 18px}.hero{min-height:58vh;display:flex;align-items:center;justify-content:center;text-align:center}.welcome{width:min(760px,100%);padding:clamp(22px,5vw,44px);background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.8);border-radius:22px;box-shadow:0 14px 40px #12203a20;backdrop-filter:blur(2px)}.welcome .eyebrow{color:#1257a6;font-size:13px;font-weight:900;letter-spacing:2px;margin:0 0 12px}.welcome h2{margin:0;color:#073b8f;font-size:clamp(27px,5vw,44px);line-height:1.15}.welcome p{font-size:clamp(14px,2vw,18px);font-weight:700;margin:14px 0 0;color:#263750}.quick{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:28px}.quick a{min-width:180px;padding:14px 20px;border-radius:10px;text-decoration:none;font-size:16px;font-weight:900;box-shadow:0 5px 14px #092b5220}.new{background:#073b8f;color:#fff}.reports{background:#ffcf22;color:#12376c}.ops{background:#16803c;color:#fff}.menu-cards a{min-width:190px}.hint{margin-top:20px;font-size:12px;color:#35445a;font-weight:700}
-@media(max-width:680px){.headin{align-items:flex-start;flex-direction:column}.nav{width:100%;justify-content:flex-start}.nav a,.nav button{flex:1;padding:10px 8px;font-size:12px}.mark{width:43px;height:43px}.brand p{font-size:9px;letter-spacing:1px}.hero{min-height:62vh}.welcome{border-radius:16px}.quick a{width:100%;max-width:330px}}
-</style></head><body><div class="veil"><header><div class="headin"><div class="brand"><div class="mark">NRT</div><div><h1>NANDHISHWARA ROAD TRANSPORT</h1><p>ONE DAY DELIVERY SERVICE</p></div></div><nav class="nav"><a class="secondary" href="index.html">Public Home</a><button class="logout" onclick="logout()">Logout</button></nav></div></header>
-<main><section class="hero"><div class="welcome"><p class="eyebrow">LOGIN SUCCESSFUL</p><h2>NRT MENU</h2><p>ఒకే Login‌తో New Bilty, Reports, Operations ఉపయోగించండి.</p><div class="quick menu-cards"><a class="new" href="bilty.html">🧾 NEW BILTY</a><a class="reports" href="reports.html">📊 REPORTS</a>
-<a class="reports" href="https://supabase.com/dashboard/project/psfsrzeuriznupvfbosk/auth/users" target="_blank" rel="noopener">
-<a class="ops" href="operations.html">🚚 OPERATIONS</a>
-  👤 ADD NEW USER</a>
-  
-<div class="quick menu-cards">
-<a class="new" href="bilty.html">🧾 NEW BILTY</a>
-<a class="reports" href="reports.html">📊 REPORTS</a>
-<a class="ops" href="operations.html">🚚 OPERATIONS</a>
-<a class="reports" href="https://supabase.com/dashboard/project/psfsrzeuriznupvfbosk/auth/users" target="_blank" rel="noopener">👤 ADD NEW USER</a>
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;color:#12203a}
+body{
+ min-height:100vh;
+ background:#f4f7fb url('shiva-parvathi-background.jpg') center center/cover fixed no-repeat
+}
+.veil{
+ min-height:100vh;
+ background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,.56))
+}
+header{
+ background:linear-gradient(110deg,rgba(5,48,119,.97),rgba(12,77,150,.94));
+ color:#fff;padding:12px 16px;box-shadow:0 3px 14px #092b5233
+}
+.headin{
+ max-width:1200px;margin:auto;display:flex;align-items:center;
+ justify-content:space-between;gap:14px
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{
+ width:52px;height:52px;flex:none;border-radius:50%;
+ background:#ffcf22;border:3px solid white;display:grid;
+ place-items:center;color:#0c4d96;font-weight:900;font-size:16px
+}
+.brand h1{font-size:clamp(16px,3vw,25px);margin:0;line-height:1.2}
+.brand p{
+ margin:4px 0 0;color:#ffdf55;font-size:11px;
+ font-weight:900;letter-spacing:1.6px
+}
+.nav{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
+.nav a,.nav button{
+ display:inline-flex;align-items:center;justify-content:center;
+ padding:11px 15px;border-radius:8px;border:0;text-decoration:none;
+ font-weight:800;font-size:14px;white-space:nowrap;cursor:pointer
+}
+.secondary{background:#fff;color:#0c4d96}
+.logout{background:#c62828;color:white}
+
+main{max-width:1200px;margin:auto;padding:clamp(22px,5vw,60px) 18px}
+.hero{
+ min-height:58vh;display:flex;align-items:center;
+ justify-content:center;text-align:center
+}
+.welcome{
+ width:min(760px,100%);padding:clamp(22px,5vw,44px);
+ background:rgba(255,255,255,.68);
+ border:1px solid rgba(255,255,255,.8);border-radius:22px;
+ box-shadow:0 14px 40px #12203a20;backdrop-filter:blur(2px)
+}
+.welcome .eyebrow{
+ color:#1257a6;font-size:13px;font-weight:900;
+ letter-spacing:2px;margin:0 0 12px
+}
+.welcome h2{
+ margin:0;color:#073b8f;font-size:clamp(27px,5vw,44px);line-height:1.15
+}
+.welcome p{
+ font-size:clamp(14px,2vw,18px);font-weight:700;
+ margin:14px 0 0;color:#263750
+}
+.quick{
+ display:flex;justify-content:center;gap:12px;
+ flex-wrap:wrap;margin-top:28px
+}
+.quick a{
+ min-width:180px;padding:14px 20px;border-radius:10px;
+ text-decoration:none;font-size:16px;font-weight:900;
+ box-shadow:0 5px 14px #092b5220
+}
+.new{background:#073b8f;color:#fff}
+.reports{background:#ffcf22;color:#12376c}
+.ops{background:#16803c;color:#fff}
+.menu-cards a{min-width:190px}
+.hint{margin-top:20px;font-size:12px;color:#35445a;font-weight:700}
+
+@media(max-width:680px){
+ .headin{align-items:flex-start;flex-direction:column}
+ .nav{width:100%;justify-content:flex-start}
+ .nav a,.nav button{flex:1;padding:10px 8px;font-size:12px}
+ .mark{width:43px;height:43px}
+ .brand p{font-size:9px;letter-spacing:1px}
+ .hero{min-height:62vh}
+ .welcome{border-radius:16px}
+ .quick a{width:100%;max-width:330px}
+}
+</style>
+</head>
+
+<body>
+<div class="veil">
+
+<header>
+ <div class="headin">
+  <div class="brand">
+   <div class="mark">NRT</div>
+   <div>
+    <h1>NANDHISHWARA ROAD TRANSPORT</h1>
+    <p>ONE DAY DELIVERY SERVICE</p>
+   </div>
+  </div>
+
+  <nav class="nav">
+   <a class="secondary" href="index.html">Public Home</a>
+   <button class="logout" onclick="logout()">Logout</button>
+  </nav>
+ </div>
+</header>
+
+<main>
+ <section class="hero">
+  <div class="welcome">
+   <p class="eyebrow">LOGIN SUCCESSFUL</p>
+   <h2>NRT MENU</h2>
+   <p>ఒకే Login‌తో New Bilty, Reports, Operations ఉపయోగించండి.</p>
+
+   <div class="quick menu-cards">
+    <a class="new" href="bilty.html">🧾 NEW BILTY</a>
+    <a class="reports" href="reports.html">📊 REPORTS</a>
+    <a class="ops" href="operations.html">🚚 OPERATIONS</a>
+   </div>
+
+   <div class="hint">
+    మీ ప్రస్తుత Login session ఉపయోగించబడుతుంది.
+    వేరే Staff/Driver Login అవసరం లేదు.
+   </div>
+  </div>
+ </section>
+</main>
+
 </div>
-  
-</div><div class="hint">మీ ప్రస్తుత Login session ఉపయోగించబడుతుంది. వేరే Staff/Driver Login అవసరం లేదు.</div></div></section></main></div>
+
 <script>
-const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
-async function logout(){await sb.auth.signOut();location.href='bilty.html'}
-window.addEventListener('load',async()=>{const {data,error}=await sb.auth.getSession();if(error||!data.session){location.href='bilty.html';return;}});
-</script></body></html>
+const sb = window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_PUBLISHABLE_KEY,
+ {
+  auth:{
+   persistSession:true,
+   autoRefreshToken:true,
+   detectSessionInUrl:false
+  }
+ }
+);
+
+async function logout(){
+ await sb.auth.signOut();
+ location.href='bilty.html';
+}
+
+window.addEventListener('load',async()=>{
+ const {data,error}=await sb.auth.getSession();
+
+ if(error || !data.session){
+  location.href='bilty.html';
+  return;
+ }
+});
+</script>
+
+</body>
+</html>
