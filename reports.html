@@ -137,24 +137,50 @@ async function loadReport(){
       if(!cancelled){p+=+x.packages||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;}
       let id=encodeURIComponent(x.id),v=Date.now();
       const safeId=Number(x.id);
-      return `<tr class="${cancelled?'cancelled-row':''}" data-lr-id="${esc(x.id)}"><td class="select-col"><input type="checkbox" class="lr-select" value="${esc(x.id)}" aria-label="Select ${esc(x.lr_no)}"></td><td>${index+1}</td><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${cancelled?'—':Number(x.packages||0)}</td><td class="right">${cancelled?'—':money(x.freight)}</td><td class="right">${cancelled?'—':money(x.other_charges)}</td><td><b style="color:${cancelled?'#b91c1c':'#16803c'}">${cancelled?'CANCELLED':'ACTIVE'}</b></td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a></td></tr>`;
+      return `<tr class="${cancelled?'cancelled-row':''}" data-lr-id="${esc(x.id)}"><td class="select-col"><input type="checkbox" class="lr-select" value="${esc(x.id)}" aria-label="Select ${esc(x.lr_no)}" onchange="syncSelectAll()"></td><td>${index+1}</td><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${cancelled?'—':Number(x.packages||0)}</td><td class="right">${cancelled?'—':money(x.freight)}</td><td class="right">${cancelled?'—':money(x.other_charges)}</td><td><b style="color:${cancelled?'#b91c1c':'#16803c'}">${cancelled?'CANCELLED':'ACTIVE'}</b></td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a></td></tr>`;
     }).join('');
+    const selectAll=$('selectAll');if(selectAll){selectAll.checked=false;selectAll.indeterminate=false;}
     $('count').textContent=r.filter(x=>String(x.status||'').toLowerCase()!=='cancelled').length;$('packages').textContent=p;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
     $('msg').className='msg ok';$('msg').textContent=r.length+' matching NRT records.'
   }catch(e){$('msg').textContent='Database error: '+(e.message||String(e))}
 }
 
+function selectAllRows(checked){
+  document.querySelectorAll('#rows .lr-select').forEach(cb=>{cb.checked=checked;});
+  const all=$('selectAll');
+  if(all){all.checked=checked;all.indeterminate=false;}
+}
+function syncSelectAll(){
+  const boxes=[...document.querySelectorAll('#rows .lr-select')];
+  const checked=boxes.filter(cb=>cb.checked).length;
+  const all=$('selectAll');
+  if(all){all.checked=boxes.length>0&&checked===boxes.length;all.indeterminate=checked>0&&checked<boxes.length;}
+}
 function printReports(){
- const active=(window.currentReportRows||[]).filter(x=>String(x.status||'').toLowerCase()!=='cancelled');
- if(!active.length){alert('No active NRT LR reports to print.');return;}
- const old=window.currentReportRows;window.currentReportRows=active;
- document.querySelectorAll('tr.cancelled-row').forEach(r=>r.style.display='none');
- const d=$('printDate');if(d)d.textContent=new Date().toLocaleDateString('en-IN');
- window.print();
- document.querySelectorAll('tr.cancelled-row').forEach(r=>r.style.display='');window.currentReportRows=old;
+  const allRows=window.currentReportRows||[];
+  const selectedIds=[...document.querySelectorAll('#rows .lr-select:checked')].map(cb=>String(cb.value));
+  const active=allRows.filter(x=>String(x.status||'').toLowerCase()!=='cancelled');
+  // Selected rows only when any checkbox is checked; otherwise print all filtered/search results.
+  const toPrint=selectedIds.length ? active.filter(x=>selectedIds.includes(String(x.id))) : active;
+  if(!toPrint.length){alert(selectedIds.length?'The selected rows contain no active LRs to print.':'No active NRT LR reports to print.');return;}
+
+  const oldStats={count:$('count').textContent,packages:$('packages').textContent,freight:$('freight').textContent,total:$('total').textContent};
+  const sums=toPrint.reduce((a,x)=>{a.packages+=Number(x.packages||0);a.freight+=Number(x.freight||0);a.hamali+=Number(x.hamali||0);a.other+=Number(x.other_charges||0);return a;},{packages:0,freight:0,hamali:0,other:0});
+  $('count').textContent=toPrint.length;$('packages').textContent=sums.packages;$('freight').textContent=money(sums.freight);$('total').textContent=money(sums.freight+sums.hamali+sums.other);
+
+  const excluded=[];
+  document.querySelectorAll('#rows tr').forEach(tr=>{
+    const cb=tr.querySelector('.lr-select');
+    const id=cb?String(cb.value):'';
+    if(!toPrint.some(x=>String(x.id)===id)){tr.classList.add('print-excluded');excluded.push(tr);}
+  });
+  const d=$('printDate');if(d)d.textContent=new Date().toLocaleDateString('en-IN');
+  window.print();
+  excluded.forEach(tr=>tr.classList.remove('print-excluded'));
+  $('count').textContent=oldStats.count;$('packages').textContent=oldStats.packages;$('freight').textContent=oldStats.freight;$('total').textContent=oldStats.total;
 }
 async function deleteLR(id,lr){if(!confirm('Delete LR '+lr+'? This cannot be undone.'))return;try{let{error}=await sb.from('lrs').delete().eq('id',id);if(error)throw error;loadReport()}catch(e){$('msg').textContent=e.message||String(e)}}
 function clearFilters(){$('fromDate').value='';$('toDate').value='';$('allSearch').value='';loadReport()}
-window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}const d=$('printDate');if(d)d.textContent=new Date().toLocaleDateString('en-IN');$('msg').textContent='Enter a date or LR / name detail, then press Search to display reports.'});
+window.addEventListener('load',async()=>{let{data,error}=await sb.auth.getSession();if(error||!data.session){alert('Please login from NRT Online Bilty first.');location.href='bilty.html';return}const now=new Date();const todayLocal=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0');$('fromDate').value=todayLocal;$('toDate').value=todayLocal;const d=$('printDate');if(d)d.textContent=now.toLocaleDateString('en-IN');$('msg').textContent='Today date selected. Press Search to display today’s NRT reports.'});
 document.addEventListener('click',e=>{if(!e.target.closest('.act'))document.querySelectorAll('.share-menu').forEach(m=>m.style.display='none')});
 </script></body></html>
