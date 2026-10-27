@@ -14,7 +14,7 @@ body{margin:0;background-color:#f4f7fb;background-image:linear-gradient(rgba(247
 .topin{max-width:1150px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .top a{color:#fff;text-decoration:none;white-space:nowrap;font-weight:700}
 .brandlockup{display:flex;align-items:center;gap:10px;min-width:0}
-.nrt-logo{width:49px;height:49px;flex:none;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
+.nrt-logo{width:58px;height:58px;flex:none;object-fit:contain;border-radius:50%;background:#ffcf22;filter:drop-shadow(0 2px 2px rgba(0,0,0,.2))}
 .brandtext{min-width:0}
 .brandtext b{display:block;font-size:18px;line-height:1.15;letter-spacing:.35px}
 .brandtext span{display:block;font-size:10px;letter-spacing:1.4px;font-weight:800;color:#ffdf55;margin-top:4px}
@@ -41,7 +41,7 @@ th,td{padding:7px;border-bottom:1px solid #e2e7ee;text-align:left;white-space:no
 @media(max-width:750px){
 .grid{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}.wrap{padding:10px}
 .top{padding:10px}
-.nrt-logo{width:42px;height:42px}
+.nrt-logo{width:46px;height:46px}
 .brandtext b{font-size:15px}
 .brandtext span{font-size:8px;letter-spacing:1px}
 }
@@ -49,7 +49,7 @@ th,td{padding:7px;border-bottom:1px solid #e2e7ee;text-align:left;white-space:no
 .grid{grid-template-columns:1fr}
 .topin{gap:7px}
 .brandlockup{gap:7px}
-.nrt-logo{width:36px;height:36px}
+.nrt-logo{width:38px;height:38px}
 .brandtext b{font-size:12px;letter-spacing:0}
 .brandtext span{font-size:7px;letter-spacing:.75px;margin-top:3px}
 .top a{font-size:11px}
@@ -76,16 +76,8 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
 <div class="top">
 <div class="topin">
   <div class="brandlockup">
-    <svg class="nrt-logo" viewBox="0 0 100 100" role="img" aria-label="NRT Nandi Transport Logo" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="47" fill="#ffcf22" stroke="#ffffff" stroke-width="3"/>
-      <circle cx="50" cy="50" r="40" fill="#ffffff" stroke="#0c4d96" stroke-width="3"/>
-      <path d="M29 30 C19 21 19 15 24 14 C31 20 35 26 36 32 M71 30 C81 21 81 15 76 14 C69 20 65 26 64 32" fill="none" stroke="#0c4d96" stroke-width="5" stroke-linecap="round"/>
-      <path d="M33 35 C35 27 65 27 67 35 L64 54 C62 63 38 63 36 54 Z" fill="#0c4d96"/>
-      <path d="M39 42 L44 42 M56 42 L61 42" stroke="#ffcf22" stroke-width="4" stroke-linecap="round"/>
-      <path d="M43 52 Q50 57 57 52" fill="none" stroke="#ffcf22" stroke-width="3" stroke-linecap="round"/>
-      <text x="50" y="78" text-anchor="middle" font-family="Arial,sans-serif" font-size="16" font-weight="900" fill="#0c4d96">NRT</text>
-    </svg>
-    <div class="brandtext"><b>NRT ONLINE BILTY / LR</b><span>ONE DAY DELIVERY SERVICE</span></div>
+    <img class="nrt-logo" src="nrt-transport-logo.jpg" alt="Nandhishwara Road Transport Logo">
+    <div class="brandtext"><b>NANDHISHWARA ROAD TRANSPORT</b><span>ONE DAY DELIVERY SERVICE</span></div>
   </div>
   <a href="index.html">← Website</a>
 </div>
