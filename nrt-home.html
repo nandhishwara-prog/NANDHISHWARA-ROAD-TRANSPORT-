@@ -61,7 +61,7 @@ main{max-width:1450px;margin:auto;padding:clamp(18px,4vw,48px) clamp(12px,3vw,30
  transition:transform .15s,background .15s;
 }
 .tile:hover{transform:translateY(-3px);background:rgba(255,255,255,.9)}
-.tile-icon{width:64px;height:64px;flex:none;border-radius:15px;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:900}
+.tile-icon{width:64px;height:64px;flex:none;border-radius:15px;display:grid;place-items:center;color:#fff;font-size:23px;font-weight:900;letter-spacing:.2px}
 .blue{background:#2386e8}.green{background:#269b58}.orange{background:#ff8916}.purple{background:#7750ed}
 .pink{background:#f02d72}.teal{background:#078b9d}.gold{background:#b8950c}.slate{background:#596b80}
 .tile h3{margin:0 0 7px;font-size:clamp(15px,1.5vw,20px);color:var(--navy)}
@@ -93,21 +93,21 @@ footer{background:rgba(7,59,143,.88);color:#fff;padding:14px 22px}
   </div>
   <div class="contact">
    <div>Autonagar, Hyderabad - 500070</div>
-   <div>â˜Ž 9885410410 | 9989581732</div>
+   <div>Phone: 9885410410 | 9989581732</div>
   </div>
  </div>
 </header>
 <nav class="navbar" aria-label="Main navigation">
  <div class="navinner">
-  <a class="active" href="nrt-home.html">âŒ‚ Home</a>
-  <a href="bilty.html">â–¤ Booking</a>
-  <a href="operations.html">ðŸšš Load / Unload</a>
-  <a href="operations.html">ðŸ“¦ Delivery</a>
-  <a href="reports.html">âŒ• Enquiries</a>
-  <a href="reports.html">â–¥ Reports</a>
-  <a href="reports.html">âš™ Modification / LR Search</a>
-  <button type="button" onclick="window.location.href='reports.html'">âœ‰ Mail Box / Reports</button>
-  <button class="logout" type="button" onclick="logout()">â‡¥ Logout</button>
+  <a class="active" href="nrt-home.html">HOME</a>
+  <a href="bilty.html">BOOKING</a>
+  <a href="operations.html">LOAD / UNLOAD</a>
+  <a href="operations.html">DELIVERY</a>
+  <a href="reports.html">ENQUIRIES</a>
+  <a href="reports.html">REPORTS</a>
+  <a href="reports.html">MODIFICATION / LR SEARCH</a>
+  <button type="button" onclick="window.location.href='reports.html'">MAIL BOX / REPORTS</button>
+  <button class="logout" type="button" onclick="logout()">LOGOUT</button>
  </div>
 </nav>
 <main>
@@ -115,22 +115,22 @@ footer{background:rgba(7,59,143,.88);color:#fff;padding:14px 22px}
   <div>
    <div class="eyebrow">Login successful</div>
    <h2>NRT Transport Dashboard</h2>
-   <p>Fast &amp; Safe Transport Service â€” One Day Delivery Service</p>
+   <p>Fast &amp; Safe Transport Service - One Day Delivery Service</p>
   </div>
  </section>
  <h2 class="section-title">Quick Access</h2>
  <section class="cards">
-  <a class="tile" href="bilty.html"><span class="tile-icon blue">â–¤</span><span><h3>New Bilty / LR</h3><p>Create and manage transport LR bookings.</p></span></a>
-  <a class="tile" href="operations.html"><span class="tile-icon green">ðŸšš</span><span><h3>Load / Unload</h3><p>Open the operations workflow.</p></span></a>
-  <a class="tile" href="operations.html"><span class="tile-icon orange">ðŸ“¦</span><span><h3>Delivery</h3><p>Manage delivery status and proof workflow.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon purple">âŒ•</span><span><h3>Enquiries</h3><p>Search LR records and details.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon pink">â–¥</span><span><h3>LR Reports</h3><p>Search, print reports and export to Excel.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon teal">âš™</span><span><h3>Modification</h3><p>Open the existing reports/LR lookup page.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon gold">âœ‰</span><span><h3>Mail Box</h3><p>Open the existing report area.</p></span></a>
-  <button class="tile" style="text-align:left;font:inherit;cursor:pointer" onclick="logout()"><span class="tile-icon slate">â‡¥</span><span><h3>Logout</h3><p>Sign out of the NRT account securely.</p></span></button>
+  <a class="tile" href="bilty.html"><span class="tile-icon blue">LR</span><span><h3>New Bilty / LR</h3><p>Create and manage transport LR bookings.</p></span></a>
+  <a class="tile" href="operations.html"><span class="tile-icon green">LU</span><span><h3>Load / Unload</h3><p>Open the operations workflow.</p></span></a>
+  <a class="tile" href="operations.html"><span class="tile-icon orange">D</span><span><h3>Delivery</h3><p>Manage delivery status and proof workflow.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon purple">?</span><span><h3>Enquiries</h3><p>Search LR records and details.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon pink">R</span><span><h3>LR Reports</h3><p>Search, print reports and export to Excel.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon teal">M</span><span><h3>Modification</h3><p>Open the existing reports/LR lookup page.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon gold">MB</span><span><h3>Mail Box</h3><p>Open the existing report area.</p></span></a>
+  <button class="tile" style="text-align:left;font:inherit;cursor:pointer" onclick="logout()"><span class="tile-icon slate">OUT</span><span><h3>Logout</h3><p>Sign out of the NRT account securely.</p></span></button>
  </section>
 </main>
-<footer><div class="foot-inner"><span>Â© 2026 NANDHISHWARA ROAD TRANSPORT. All Rights Reserved.</span><span>ðŸšš Designed for Fast &amp; Safe Transport Service</span></div></footer>
+<footer><div class="foot-inner"><span>Copyright 2026 NANDHISHWARA ROAD TRANSPORT. All Rights Reserved.</span><span>Designed for Fast &amp; Safe Transport Service</span></div></footer>
 </div>
 <script>
 const sb = window.supabase.createClient(
