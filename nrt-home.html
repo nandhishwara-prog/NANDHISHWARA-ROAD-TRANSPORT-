@@ -1,173 +1,151 @@
-
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NANDHISHWARA ROAD TRANSPORT | Home</title>
-
+<title>NANDHISHWARA ROAD TRANSPORT | Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-
 <style>
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;color:#12203a}
+:root{--navy:#073b8f;--yellow:#ffcf22;--ink:#102c54}
+html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;color:var(--ink)}
 body{
  min-height:100vh;
- background:#f4f7fb url('shiva-parvathi-background.jpg') center center/cover fixed no-repeat
+ background:#e9f0fa url('shiva-parvathi-background.jpg') center center/cover fixed no-repeat;
 }
-.veil{
+.page-shade{
  min-height:100vh;
- background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,.56))
+ background:linear-gradient(120deg,rgba(255,255,255,.28),rgba(255,255,255,.42));
 }
-header{
- background:linear-gradient(110deg,rgba(5,48,119,.97),rgba(12,77,150,.94));
- color:#fff;padding:12px 16px;box-shadow:0 3px 14px #092b5233
+.top{
+ background:rgba(255,207,34,.96);color:var(--navy);
+ padding:14px clamp(12px,3vw,32px);
+ box-shadow:0 3px 14px #082a5520;
 }
-.headin{
- max-width:1200px;margin:auto;display:flex;align-items:center;
- justify-content:space-between;gap:14px
+.top-inner{max-width:1450px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:16px;min-width:0}
+.logo{
+ width:76px;height:76px;border-radius:50%;flex:none;display:block;object-fit:cover;
+ border:3px solid var(--navy);background:#ffdf53;box-shadow:0 2px 8px #092b5220;
 }
-.brand{display:flex;align-items:center;gap:12px;min-width:0}
-.mark{
- width:52px;height:52px;flex:none;border-radius:50%;
- background:#ffcf22;border:3px solid white;display:grid;
- place-items:center;color:#0c4d96;font-weight:900;font-size:16px
+.brand h1{margin:0;font-size:clamp(17px,2.6vw,34px);line-height:1.15;font-weight:900}
+.tag{margin:5px 0 0;font-size:clamp(11px,1.4vw,17px);font-weight:800;letter-spacing:.7px}
+.gstin{margin:6px 0 0;font-size:clamp(11px,1.25vw,15px);font-weight:800}
+.contact{text-align:right;font-weight:800;line-height:1.65;font-size:clamp(11px,1.2vw,15px)}
+.navbar{background:rgba(7,59,143,.97);color:#fff}
+.navinner{max-width:1450px;margin:auto;display:flex;align-items:center;gap:3px;padding:7px 12px;overflow-x:auto}
+.navinner a,.navinner button{
+ flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+ border:0;border-radius:8px;background:transparent;color:#fff;text-decoration:none;
+ padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap
 }
-.brand h1{font-size:clamp(16px,3vw,25px);margin:0;line-height:1.2}
-.brand p{
- margin:4px 0 0;color:#ffdf55;font-size:11px;
- font-weight:900;letter-spacing:1.6px
-}
-.nav{display:flex;gap:9px;flex-wrap:wrap;justify-content:flex-end}
-.nav a,.nav button{
- display:inline-flex;align-items:center;justify-content:center;
- padding:11px 15px;border-radius:8px;border:0;text-decoration:none;
- font-weight:800;font-size:14px;white-space:nowrap;cursor:pointer
-}
-.secondary{background:#fff;color:#0c4d96}
-.logout{background:#c62828;color:white}
-
-main{max-width:1200px;margin:auto;padding:clamp(22px,5vw,60px) 18px}
-.hero{
- min-height:58vh;display:flex;align-items:center;
- justify-content:center;text-align:center
-}
+.navinner a:hover,.navinner button:hover{background:rgba(255,255,255,.16)}
+.navinner .active{background:var(--yellow);color:var(--navy)}
+.navinner .logout{margin-left:auto;background:#c62828;color:#fff}
+main{max-width:1450px;margin:auto;padding:clamp(18px,4vw,48px) clamp(12px,3vw,30px) 34px}
 .welcome{
- width:min(760px,100%);padding:clamp(22px,5vw,44px);
- background:rgba(255,255,255,.68);
- border:1px solid rgba(255,255,255,.8);border-radius:22px;
- box-shadow:0 14px 40px #12203a20;backdrop-filter:blur(2px)
+ display:flex;align-items:center;justify-content:space-between;gap:22px;
+ padding:clamp(18px,2.4vw,30px);border-radius:20px;
+ background:rgba(255,255,255,.70);border:1px solid rgba(255,255,255,.82);
+ box-shadow:0 10px 30px #092b5220;backdrop-filter:blur(2px);
 }
-.welcome .eyebrow{
- color:#1257a6;font-size:13px;font-weight:900;
- letter-spacing:2px;margin:0 0 12px
+.welcome h2{margin:4px 0;color:var(--navy);font-size:clamp(24px,3vw,38px)}
+.welcome p{margin:6px 0 0;color:#334155;font-weight:700}
+.eyebrow{font-size:14px;letter-spacing:1px;text-transform:uppercase}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:24px}
+.tile{
+ min-height:142px;display:flex;align-items:center;gap:16px;padding:20px;
+ border-radius:17px;background:rgba(255,255,255,.76);border:1px solid rgba(255,255,255,.92);
+ box-shadow:0 8px 24px #092b521a;text-decoration:none;color:var(--ink);
+ transition:transform .15s,background .15s;
 }
-.welcome h2{
- margin:0;color:#073b8f;font-size:clamp(27px,5vw,44px);line-height:1.15
-}
-.welcome p{
- font-size:clamp(14px,2vw,18px);font-weight:700;
- margin:14px 0 0;color:#263750
-}
-.quick{
- display:flex;justify-content:center;gap:12px;
- flex-wrap:wrap;margin-top:28px
-}
-.quick a{
- min-width:180px;padding:14px 20px;border-radius:10px;
- text-decoration:none;font-size:16px;font-weight:900;
- box-shadow:0 5px 14px #092b5220
-}
-.new{background:#073b8f;color:#fff}
-.reports{background:#ffcf22;color:#12376c}
-.ops{background:#16803c;color:#fff}
-.menu-cards a{min-width:190px}
-.hint{margin-top:20px;font-size:12px;color:#35445a;font-weight:700}
-
-@media(max-width:680px){
- .headin{align-items:flex-start;flex-direction:column}
- .nav{width:100%;justify-content:flex-start}
- .nav a,.nav button{flex:1;padding:10px 8px;font-size:12px}
- .mark{width:43px;height:43px}
- .brand p{font-size:9px;letter-spacing:1px}
- .hero{min-height:62vh}
- .welcome{border-radius:16px}
- .quick a{width:100%;max-width:330px}
+.tile:hover{transform:translateY(-3px);background:rgba(255,255,255,.9)}
+.tile-icon{width:64px;height:64px;flex:none;border-radius:15px;display:grid;place-items:center;color:#fff;font-size:30px;font-weight:900}
+.blue{background:#2386e8}.green{background:#269b58}.orange{background:#ff8916}.purple{background:#7750ed}
+.pink{background:#f02d72}.teal{background:#078b9d}.gold{background:#b8950c}.slate{background:#596b80}
+.tile h3{margin:0 0 7px;font-size:clamp(15px,1.5vw,20px);color:var(--navy)}
+.tile p{margin:0;color:#475569;font-size:13px;font-weight:700;line-height:1.4}
+.section-title{margin:28px 0 0;color:var(--navy);font-size:18px}
+footer{background:rgba(7,59,143,.88);color:#fff;padding:14px 22px}
+.foot-inner{max-width:1450px;margin:auto;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}
+@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.contact{display:none}}
+@media(max-width:560px){
+ .top-inner{align-items:flex-start}.logo{width:52px;height:52px;font-size:15px}.brand{gap:10px}
+ .navinner{padding:6px}.navinner a,.navinner button{padding:10px;font-size:12px}
+ .welcome{align-items:flex-start;flex-direction:column}
+ .cards{grid-template-columns:1fr;gap:12px}.tile{min-height:108px;padding:15px}.tile-icon{width:54px;height:54px}
+ main{padding-top:18px}
 }
 </style>
 </head>
-
 <body>
-<div class="veil">
-
-<header>
- <div class="headin">
+<div class="page-shade">
+<header class="top">
+ <div class="top-inner">
   <div class="brand">
-   <div class="mark">NRT</div>
+   <img class="logo" src="nrt-transport-logo.jpg" alt="Nandhishwara Road Transport logo">
    <div>
     <h1>NANDHISHWARA ROAD TRANSPORT</h1>
-    <p>ONE DAY DELIVERY SERVICE</p>
+    <p class="tag">ONE DAY DELIVERY SERVICE</p>
+    <p class="gstin">GSTIN: 36HSYPK0996J1ZM</p>
    </div>
   </div>
-
-  <nav class="nav">
-   <a class="secondary" href="index.html">Public Home</a>
-   <button class="logout" onclick="logout()">Logout</button>
-  </nav>
+  <div class="contact">
+   <div>Autonagar, Hyderabad - 500070</div>
+   <div>â˜Ž 9885410410 | 9989581732</div>
+  </div>
  </div>
 </header>
-
+<nav class="navbar" aria-label="Main navigation">
+ <div class="navinner">
+  <a class="active" href="nrt-home.html">âŒ‚ Home</a>
+  <a href="bilty.html">â–¤ Booking</a>
+  <a href="operations.html">ðŸšš Load / Unload</a>
+  <a href="operations.html">ðŸ“¦ Delivery</a>
+  <a href="reports.html">âŒ• Enquiries</a>
+  <a href="reports.html">â–¥ Reports</a>
+  <a href="reports.html">âš™ Modification / LR Search</a>
+  <button type="button" onclick="window.location.href='reports.html'">âœ‰ Mail Box / Reports</button>
+  <button class="logout" type="button" onclick="logout()">â‡¥ Logout</button>
+ </div>
+</nav>
 <main>
- <section class="hero">
-  <div class="welcome">
-   <p class="eyebrow">LOGIN SUCCESSFUL</p>
-   <h2>NRT MENU</h2>
-   <p>ఒకే Login‌తో New Bilty, Reports, Operations ఉపయోగించండి.</p>
-
-   <div class="quick menu-cards">
-    <a class="new" href="bilty.html">🧾 NEW BILTY</a>
-    <a class="reports" href="reports.html">📊 REPORTS</a>
-    <a class="ops" href="operations.html">🚚 OPERATIONS</a>
-   </div>
-
-   <div class="hint">
-    మీ ప్రస్తుత Login session ఉపయోగించబడుతుంది.
-    వేరే Staff/Driver Login అవసరం లేదు.
-   </div>
+ <section class="welcome">
+  <div>
+   <div class="eyebrow">Login successful</div>
+   <h2>NRT Transport Dashboard</h2>
+   <p>Fast &amp; Safe Transport Service â€” One Day Delivery Service</p>
   </div>
  </section>
+ <h2 class="section-title">Quick Access</h2>
+ <section class="cards">
+  <a class="tile" href="bilty.html"><span class="tile-icon blue">â–¤</span><span><h3>New Bilty / LR</h3><p>Create and manage transport LR bookings.</p></span></a>
+  <a class="tile" href="operations.html"><span class="tile-icon green">ðŸšš</span><span><h3>Load / Unload</h3><p>Open the operations workflow.</p></span></a>
+  <a class="tile" href="operations.html"><span class="tile-icon orange">ðŸ“¦</span><span><h3>Delivery</h3><p>Manage delivery status and proof workflow.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon purple">âŒ•</span><span><h3>Enquiries</h3><p>Search LR records and details.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon pink">â–¥</span><span><h3>LR Reports</h3><p>Search, print reports and export to Excel.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon teal">âš™</span><span><h3>Modification</h3><p>Open the existing reports/LR lookup page.</p></span></a>
+  <a class="tile" href="reports.html"><span class="tile-icon gold">âœ‰</span><span><h3>Mail Box</h3><p>Open the existing report area.</p></span></a>
+  <button class="tile" style="text-align:left;font:inherit;cursor:pointer" onclick="logout()"><span class="tile-icon slate">â‡¥</span><span><h3>Logout</h3><p>Sign out of the NRT account securely.</p></span></button>
+ </section>
 </main>
-
+<footer><div class="foot-inner"><span>Â© 2026 NANDHISHWARA ROAD TRANSPORT. All Rights Reserved.</span><span>ðŸšš Designed for Fast &amp; Safe Transport Service</span></div></footer>
 </div>
-
 <script>
 const sb = window.supabase.createClient(
  SUPABASE_URL,
  SUPABASE_PUBLISHABLE_KEY,
- {
-  auth:{
-   persistSession:true,
-   autoRefreshToken:true,
-   detectSessionInUrl:false
-  }
- }
+ {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}
 );
-
 async function logout(){
  await sb.auth.signOut();
  location.href='bilty.html';
 }
-
 window.addEventListener('load',async()=>{
  const {data,error}=await sb.auth.getSession();
-
- if(error || !data.session){
-  location.href='bilty.html';
-  return;
- }
+ if(error || !data.session){location.href='bilty.html';}
 });
 </script>
-
 </body>
 </html>
