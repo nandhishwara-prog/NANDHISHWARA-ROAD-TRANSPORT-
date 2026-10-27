@@ -10,7 +10,7 @@
 <div><label>To Date</label><input id="toDate" type="date"></div>
 <div><label>Search LR / Consignor / Consignee / From / To</label><input id="allSearch" type="search" placeholder="Enter any LR No, Name, From or To" onkeydown="if(event.key==='Enter')loadReport()"></div>
 </div>
-<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="printReports()">🖨️ Print / PDF</button><button class="green" onclick="exportExcel()">📊 Excel</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button></div><div id="msg" class="msg"></div></div>
+<div class="actions"><button class="blue" onclick="loadReport()">🔎 Search</button><button class="gray" onclick="clearFilters()">Clear</button><button class="yellow" onclick="printReports()">🖨️ Print / PDF</button><button class="green" onclick="exportExcel()">📊 Excel</button><button class="green" onclick="location.href='bilty.html'">➕ New Bilty</button><button class="blue" id="deliveryBtn" onclick="markSelectedDelivered()">🚚 Delivery</button></div><div id="msg" class="msg"></div></div>
 <div class="box"><div class="print-header"><div class="print-brand"><img src="nrt-transport-logo.jpg" alt="Nandhishwara Road Transport Logo"><div class="print-brand-text"><div style="font-size:18px;font-weight:900;color:#073b8f">NANDHISHWARA ROAD TRANSPORT</div><div>Plot No. 1, Block No. 3, Autonagar, Hyderabad, Telangana - 500070</div><div>Mobile: 9885410410 / 9989581732 | GST No: 36HSYPK0996J1ZM</div><div style="font-weight:900">ONE DAY DELIVERY SERVICE</div></div></div><h2>LR REPORTS</h2><div>Printed on: <span id="printDate"></span></div></div><div class="stats"><div class="stat"><b id="count">0</b><span>Total LRs</span></div><div class="stat"><b id="packages">0</b><span>Packages</span></div><div class="stat"><b id="freight">₹0</b><span>Freight</span></div><div class="stat"><b id="total">₹0</b><span>Total</span></div></div></div>
 <div class="box"><div class="table-wrap"><table><thead><tr><th class="select-col"><input type="checkbox" id="selectAll" aria-label="Select all" onchange="selectAllRows(this.checked)"></th><th>Sl. No.</th><th>LR No.</th><th>Date</th><th>From</th><th>To</th><th>Consignor</th><th>Consignee</th><th>Packages</th><th>Freight</th><th>LR Charge</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></div></div></div>
 <script>
@@ -133,11 +133,12 @@ async function loadReport(){
     }
     let r=filtered(a),p=0,f=0,o=0,h=0; window.currentReportRows=r;
     $('rows').innerHTML=r.map((x,index)=>{
-      const cancelled=String(x.status||'').toLowerCase()==='cancelled';
+      const status=String(x.status||'ACTIVE').toUpperCase();
+      const cancelled=status==='CANCELLED';
+      const delivered=status==='DELIVERED';
       if(!cancelled){p+=+x.packages||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;}
       let id=encodeURIComponent(x.id),v=Date.now();
-      const safeId=Number(x.id);
-      return `<tr class="${cancelled?'cancelled-row':''}" data-lr-id="${esc(x.id)}"><td class="select-col"><input type="checkbox" class="lr-select" value="${esc(x.id)}" aria-label="Select ${esc(x.lr_no)}" onchange="syncSelectAll()"></td><td>${index+1}</td><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${cancelled?'—':Number(x.packages||0)}</td><td class="right">${cancelled?'—':money(x.freight)}</td><td class="right">${cancelled?'—':money(x.other_charges)}</td><td><b style="color:${cancelled?'#b91c1c':'#16803c'}">${cancelled?'CANCELLED':'ACTIVE'}</b></td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a></td></tr>`;
+      return `<tr class="${cancelled?'cancelled-row':''}" data-lr-id="${esc(x.id)}"><td class="select-col"><input type="checkbox" class="lr-select" value="${esc(x.id)}" aria-label="Select ${esc(x.lr_no)}" onchange="syncSelectAll()"></td><td>${index+1}</td><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${cancelled?'—':Number(x.packages||0)}</td><td class="right">${cancelled?'—':money(x.freight)}</td><td class="right">${cancelled?'—':money(x.other_charges)}</td><td><b style="color:${cancelled?'#b91c1c':delivered?'#073b8f':'#16803c'}">${esc(status)}</b></td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a></td></tr>`;
     }).join('');
     const selectAll=$('selectAll');if(selectAll){selectAll.checked=false;selectAll.indeterminate=false;}
     $('count').textContent=r.filter(x=>String(x.status||'').toLowerCase()!=='cancelled').length;$('packages').textContent=p;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
@@ -155,6 +156,39 @@ function syncSelectAll(){
   const checked=boxes.filter(cb=>cb.checked).length;
   const all=$('selectAll');
   if(all){all.checked=boxes.length>0&&checked===boxes.length;all.indeterminate=checked>0&&checked<boxes.length;}
+}
+
+async function markSelectedDelivered(){
+  const selectedIds=[...document.querySelectorAll('#rows .lr-select:checked')].map(cb=>String(cb.value));
+  if(!selectedIds.length){
+    alert('Please select one or more LRs first. Select All will select all displayed LRs.');
+    return;
+  }
+  const selected=(window.currentReportRows||[]).filter(x=>selectedIds.includes(String(x.id)));
+  const eligible=selected.filter(x=>String(x.status||'ACTIVE').toUpperCase()!=='CANCELLED' && String(x.status||'ACTIVE').toUpperCase()!=='DELIVERED');
+  if(!eligible.length){
+    alert('Selected LRs are already DELIVERED or CANCELLED.');
+    return;
+  }
+  const names=eligible.map(x=>x.lr_no).join(', ');
+  if(!confirm('Mark '+eligible.length+' selected LR(s) as DELIVERED?\n'+names)) return;
+  try{
+    $('deliveryBtn').disabled=true;
+    $('msg').className='msg';
+    $('msg').textContent='Updating delivery status...';
+    const ids=eligible.map(x=>x.id);
+    const {error}=await sb.from('lrs').update({status:'DELIVERED'}).in('id',ids);
+    if(error) throw error;
+    $('msg').className='msg ok';
+    $('msg').textContent=eligible.length+' LR(s) marked DELIVERED.';
+    await loadReport();
+  }catch(e){
+    $('msg').className='msg';
+    $('msg').textContent='Could not update delivery status: '+(e.message||String(e));
+    alert('Delivery status update failed. Check Supabase permissions/RLS. '+(e.message||String(e)));
+  }finally{
+    $('deliveryBtn').disabled=false;
+  }
 }
 function printReports(){
   const allRows=window.currentReportRows||[];
