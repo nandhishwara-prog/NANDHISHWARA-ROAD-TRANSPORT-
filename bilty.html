@@ -23,17 +23,17 @@ body{margin:0;background-color:#f4f7fb;background-image:linear-gradient(rgba(247
 .title{color:#1257a6}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
 .full{grid-column:1/-1}
-label{font-size:12px;font-weight:800;display:block;margin-bottom:5px;color:#1257a6}
-input,select,textarea{color:#f07818}
+label{font-size:12px;font-weight:900;display:block;margin-bottom:5px;color:#1257a6;text-transform:uppercase;letter-spacing:.2px}
+input,select,textarea{color:#f07818;font-weight:800}
 input[readonly]{color:#f07818}
 #goods{height:34px;padding:7px}
 #remarks{height:38px;min-height:38px;padding:7px;resize:vertical}
-input,select,textarea{width:100%;padding:10px;border:1px solid #cbd4df;border-radius:7px;font-size:14px}
-textarea{min-height:55px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #cbd4df;border-radius:7px;font-size:14px;font-weight:800}
+textarea{min-height:38px;height:38px;resize:vertical}
 .actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
 button{border:0;border-radius:7px;padding:10px 15px;font-weight:800;cursor:pointer}
 .blue{background:#1257a6;color:#fff}.yellow{background:#ffd21c;color:#15396b}
-.gray{background:#6b7280;color:#fff}.red{background:#c62828;color:#fff}
+.gray{background:#6b7280;color:#fff}.green{background:#0f9f83;color:#fff;box-shadow:0 2px 5px rgba(15,159,131,.22)}.green:hover{background:#0b806b}.red{background:#c62828;color:#fff}
 .msg{margin-top:8px;font-weight:700}
 .search{display:flex;gap:8px}.search input{flex:1}
 .tablewrap{overflow:auto}
@@ -136,20 +136,20 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
 <div class="full"><label>Goods / Description</label><input id="goods"></div>
 
 <div><label>Invoice Number</label><input id="invoice_no"></div>
-<div><label>E-Waybill Number</label><input id="ewaybill_no" placeholder="Enter E-Waybill number"></div>
 <div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" value="0"></div>
 <div><label>Freight</label><input id="freight" type="number" min="0" value="0"></div>
 <div><label>Hamali Charge</label><input id="hamali" type="number" min="0" value="0"></div>
 <div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" value="20"></div>
 
 <div class="full"><label>Remarks</label><textarea id="remarks"></textarea></div>
+<div class="full"><label>E-Waybill Number</label><input id="ewaybill_no" autocomplete="off"></div>
 </div>
 
 <div class="actions">
 <button class="blue" onclick="saveLR()">💾 Save Bilty</button>
 <button class="yellow" onclick="printLR()">🖨️ Print / PDF</button>
 <button class="gray" onclick="clearForm()">Clear</button>
-<button class="green" onclick="location.href='reports.html'">📊 Reports</button>
+<button class="green" onclick="location.href='reports.html'">📊 REPORTS</button>
 <button class="red" onclick="logout()">Logout</button>
 </div>
 <div id="msg" class="msg"></div>
