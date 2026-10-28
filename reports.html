@@ -1,5 +1,5 @@
 <!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NRT Reports</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script><script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;font-family:Arial;background:#f3f6fa url('shiva-parvathi-background.jpg') center center / cover fixed no-repeat;color:#111827}.box{background:rgba(255,255,255,.94)}.top{background:#073b8f;color:#fff;padding:14px 18px}.topin{max-width:1200px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}.brandlockup{display:flex;align-items:center;gap:12px;min-width:0}.nrt-logo{width:54px;height:54px;object-fit:contain;border-radius:50%;background:#ffcf22;flex:none}.brandtext b{display:block;font-size:18px;line-height:1.2}.brandtext span{display:block;color:#ffdf55;font-size:11px;font-weight:900;letter-spacing:1px;margin-top:4px}.print-brand{display:flex;align-items:center;justify-content:center;gap:12px}.print-brand img{width:62px;height:62px;object-fit:contain;border-radius:50%;background:#ffcf22}.print-brand-text{text-align:left}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav a,.nav button{background:#fff;color:#073b8f;padding:9px 13px;border-radius:7px;font-weight:bold;text-decoration:none;border:0}.wrap{max-width:1200px;margin:18px auto;padding:0 12px}.box{background:#fff;border:1px solid #d5dbe3;border-radius:10px;padding:16px;margin-bottom:14px}.title{color:#073b8f}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}label{font-weight:bold;font-size:13px;display:block;margin-bottom:5px}input{width:100%;padding:9px;border:1px solid #b9c2ce;border-radius:6px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}button{border:0;border-radius:6px;padding:10px 16px;font-weight:bold}.blue{background:#073b8f;color:#fff}.yellow{background:#ffd21f;color:#111}.gray{background:#6b7280;color:#fff}.green{background:#16803c;color:#fff}.red{background:#b91c1c;color:#fff}.msg{margin-top:8px;font-weight:bold}.ok{color:#16803c}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.stat{border:1px solid #d5dbe3;border-radius:8px;padding:10px;text-align:center}.stat b{display:block;font-size:20px;color:#073b8f}.stat span{font-size:12px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:980px}th,td{border:1px solid #d5dbe3;padding:7px;font-size:12px;text-align:left}th{background:#eef5fb;color:#073b8f}.right{text-align:right}.act{white-space:nowrap;position:relative}.smallbtn{display:inline-block;padding:5px 8px;font-size:11px;border-radius:4px;margin:1px;text-decoration:none;font-weight:bold;border:0}.smallbtn.blue{color:#fff}.smallbtn.green{color:#fff}.smallbtn.yellow{color:#111}.smallbtn.red{color:#fff}.share-menu{display:none;position:absolute;right:0;top:100%;z-index:20;background:#fff;border:1px solid #cfd6df;border-radius:7px;padding:6px;box-shadow:0 4px 14px rgba(0,0,0,.18);min-width:125px}.share-menu button{display:block;width:100%;padding:7px 9px;margin:2px 0;text-align:left;background:#fff;color:#111827;font-size:11px}.share-menu button:hover{background:#eef5fb}@media(max-width:700px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.nrt-logo{width:42px;height:42px}.brandtext b{font-size:14px}.brandtext span{font-size:9px}.nav a,.nav button{padding:8px;font-size:12px}}@media print{@page{size:A4 landscape;margin:8mm}.top,.filters,.actions,.share-menu,.act,th.select-col,td.select-col,th:last-child,td:last-child{display:none!important}.print-excluded{display:none!important}body{background:#fff!important}.print-header{display:block!important;text-align:center;border-bottom:2px solid #111;padding-bottom:7px;margin-bottom:8px}.print-brand{gap:10px}.print-brand img{width:54px;height:54px}.print-brand-text div{font-size:9px!important}.print-brand-text div:first-child{font-size:15px!important}.print-header h2{margin:7px 0 3px;font-size:16px}.box{border:0;box-shadow:none;padding:5px;margin-bottom:6px}.table-wrap{overflow:visible}.stats{grid-template-columns:repeat(4,1fr)}.stat{padding:5px}.stat b{font-size:14px}th,td{font-size:8pt;padding:4px}table{min-width:0}tr.cancelled-row{display:none!important}}
 </style></head><body>
@@ -75,6 +75,103 @@ function shareById(id,kind){
   if(!x)return;
   if(kind==='wa')shareWhatsApp(x);else if(kind==='email')shareEmail(x);else shareOther(x);
 }
+
+function pdfEscape(v){return esc(v==null||v===''?'-':v)}
+function buildConsignorCopyHtml(x){
+  const total=Number(x.freight||0)+Number(x.hamali||0)+Number(x.other_charges||0);
+  const amount=v=>money(v);
+  return `<div style="width:190mm;background:#fff;color:#111;font-family:Arial,sans-serif;border:1px solid #111;font-size:10px;box-sizing:border-box">
+  <div style="display:grid;grid-template-columns:68% 32%;min-height:25mm;border-bottom:1px solid #111">
+    <div style="padding:3mm 2mm">
+      <div style="font-size:19px;font-weight:900">NANDHISHWARA ROAD TRANSPORT</div>
+      <div style="font-size:10px;font-weight:bold;margin-top:3px">Plot No. 1, Block No. 3, Autonagar, Hyderabad, Telangana - 500070</div>
+      <div style="font-size:10px;font-weight:bold;margin-top:3px">Mobile: 9885410410 / 9989581732</div>
+      <div style="font-size:10px;font-weight:bold;margin-top:3px">ONE DAY DELIVERY SERVICE</div>
+    </div>
+    <div style="border-left:1px solid #111">
+      <div style="display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid #111;min-height:9mm">
+        <div style="padding:2mm;text-align:center;font-weight:bold">GST No:<br>36HSYPK0996J1ZM</div>
+        <div style="border-left:1px solid #111;display:flex;align-items:center;justify-content:center;text-align:center;font-weight:900">CONSIGNOR COPY</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;min-height:15mm;font-weight:bold;text-align:center">
+        <div style="display:flex;align-items:center;justify-content:center">LR No: ${pdfEscape(x.lr_no)}</div>
+        <div style="border-left:1px solid #111;display:flex;align-items:center;justify-content:center">Date: ${pdfEscape(x.lr_date)}</div>
+      </div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:28% 39% 33%;border-bottom:1px solid #111;min-height:10mm;font-weight:bold">
+    <div style="padding:3mm;border-right:1px solid #111">From: ${pdfEscape(x.from_location)}</div>
+    <div style="padding:3mm;border-right:1px solid #111">To: ${pdfEscape(x.to_location)}</div>
+    <div style="padding:3mm">Freight Type: ${pdfEscape(x.freight_type||'TO PAY')}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;min-height:18mm;border-bottom:1px solid #111;font-weight:bold">
+    <div style="padding:3mm;border-right:1px solid #111">Consignor: ${pdfEscape(x.consignor_name)}<br>Mobile: ${pdfEscape(x.consignor_phone)}</div>
+    <div style="padding:3mm">Consignee: ${pdfEscape(x.consignee_name)}<br>Mobile: ${pdfEscape(x.consignee_phone)}</div>
+  </div>
+  <div style="display:grid;grid-template-columns:72% 28%;border-bottom:1px solid #111">
+    <div>
+      <div style="display:grid;grid-template-columns:22% 38% 40%;text-align:center;font-weight:900;background:#eef5fb;border-bottom:1px solid #111">
+        <div style="padding:3mm;border-right:1px solid #111">QUANTITY</div><div style="padding:3mm;border-right:1px solid #111">DESCRIPTION</div><div style="padding:3mm">REMARKS</div>
+      </div>
+      <div style="display:grid;grid-template-columns:22% 38% 40%;min-height:12mm;border-bottom:1px solid #111">
+        <div style="padding:3mm;text-align:center;border-right:1px solid #111">${pdfEscape(x.packages||0)}</div><div style="padding:3mm;border-right:1px solid #111">${pdfEscape(x.goods)}</div><div style="padding:3mm">${pdfEscape(x.remarks)}</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;min-height:12mm;font-weight:bold">
+        <div style="padding:3mm;border-right:1px solid #111">Invoice Number: ${pdfEscape(x.invoice_no)}</div><div style="padding:3mm">Invoice Value: ${money(x.invoice_value)}</div>
+      </div>
+    </div>
+    <div style="border-left:1px solid #111;font-weight:bold">
+      <div style="display:grid;grid-template-columns:60% 40%;border-bottom:1px solid #111"><div style="padding:3mm;border-right:1px solid #111">Freight</div><div style="padding:3mm;text-align:right">${amount(x.freight)}</div></div>
+      <div style="display:grid;grid-template-columns:60% 40%;border-bottom:1px solid #111"><div style="padding:3mm;border-right:1px solid #111">Hamali</div><div style="padding:3mm;text-align:right">${amount(x.hamali)}</div></div>
+      <div style="display:grid;grid-template-columns:60% 40%;border-bottom:1px solid #111"><div style="padding:3mm;border-right:1px solid #111">LR Charge</div><div style="padding:3mm;text-align:right">${amount(x.other_charges)}</div></div>
+      <div style="display:grid;grid-template-columns:60% 40%;font-size:11px"><div style="padding:3mm;border-right:1px solid #111">Total Amount</div><div style="padding:3mm;text-align:right">${amount(total)}</div></div>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:65% 35%;min-height:17mm">
+    <div><div style="padding:3mm;border-bottom:1px solid #111;font-weight:bold">E-Waybill No(s): ${pdfEscape(x.ewaybill_no)}</div><div style="padding:3mm;font-size:9px">Goods booked at owner's risk and said to contain basis. Non Negotiable</div></div>
+    <div style="border-left:1px solid #111;padding:3mm"><div style="height:12mm;border:1px solid #111;padding:2mm;font-weight:bold">Receiver's Sign:</div></div>
+  </div>
+</div>`;
+}
+async function sharePdfById(id){
+  const x=(window.currentReportRows||[]).find(r=>String(r.id)===String(id));
+  if(!x){alert('LR details not found. Please search again.');return;}
+  if(String(x.status||'').toUpperCase()==='CANCELLED'&&!confirm('This LR is CANCELLED. Share its Consignor Copy PDF anyway?'))return;
+  if(typeof html2pdf==='undefined'){alert('PDF library could not load. Please check internet and try again.');return;}
+  const btn=[...document.querySelectorAll('#rows button')].find(b=>b.getAttribute('onclick')===`sharePdfById('${String(id).replace(/'/g,"\\'")}')`);
+  const old=btn?btn.textContent:'';
+  if(btn){btn.disabled=true;btn.textContent='Preparing PDF...';}
+  let holder;
+  try{
+    holder=document.createElement('div');
+    holder.style.cssText='position:fixed;left:-10000px;top:0;width:190mm;background:#fff;z-index:-1';
+    holder.innerHTML=buildConsignorCopyHtml(x);
+    document.body.appendChild(holder);
+    const filename=`NRT_${String(x.lr_no||'LR').replace(/[^A-Za-z0-9_-]/g,'_')}_CONSIGNOR_COPY.pdf`;
+    const blob=await html2pdf().set({
+      margin:[8,10,8,10],filename,
+      image:{type:'jpeg',quality:0.98},
+      html2canvas:{scale:2,useCORS:true,backgroundColor:'#ffffff',scrollX:0,scrollY:0},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},
+      pagebreak:{mode:['avoid-all']}
+    }).from(holder.firstElementChild).outputPdf('blob');
+    const file=new File([blob],filename,{type:'application/pdf'});
+    if(navigator.canShare&&navigator.canShare({files:[file]})&&navigator.share){
+      await navigator.share({files:[file],title:`NRT LR ${x.lr_no} - Consignor Copy`,text:`NANDHISHWARA ROAD TRANSPORT | ${x.lr_no} | Consignor Copy PDF`});
+    }else{
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),60000);
+      alert('Consignor Copy PDF download అయింది. WhatsApp తెరిచి ఈ PDF file ను attach చేసి పంపండి.');
+    }
+  }catch(e){
+    if(e&&e.name==='AbortError')return;
+    alert('PDF తయారు/షేర్ చేయలేకపోయాం: '+(e.message||String(e)));
+  }finally{
+    if(holder)holder.remove();
+    if(btn){btn.disabled=false;btn.textContent=old||'📄 LR Share PDF';}
+  }
+}
 function deleteById(id){
   const x=(window.currentReportRows||[]).find(r=>Number(r.id)===Number(id));
   if(x)deleteLR(id,x.lr_no);
@@ -138,7 +235,7 @@ async function loadReport(){
       const delivered=status==='DELIVERED';
       if(!cancelled){p+=+x.packages||0;f+=+x.freight||0;o+=+x.other_charges||0;h+=+x.hamali||0;}
       let id=encodeURIComponent(x.id),v=Date.now();
-      return `<tr class="${cancelled?'cancelled-row':''}" data-lr-id="${esc(x.id)}"><td class="select-col"><input type="checkbox" class="lr-select" value="${esc(x.id)}" aria-label="Select ${esc(x.lr_no)}" onchange="syncSelectAll()"></td><td>${index+1}</td><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${cancelled?'—':Number(x.packages||0)}</td><td class="right">${cancelled?'—':money(x.freight)}</td><td class="right">${cancelled?'—':money(x.other_charges)}</td><td><b style="color:${cancelled?'#b91c1c':delivered?'#073b8f':'#16803c'}">${esc(status)}</b></td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a></td></tr>`;
+      return `<tr class="${cancelled?'cancelled-row':''}" data-lr-id="${esc(x.id)}"><td class="select-col"><input type="checkbox" class="lr-select" value="${esc(x.id)}" aria-label="Select ${esc(x.lr_no)}" onchange="syncSelectAll()"></td><td>${index+1}</td><td><b>${esc(x.lr_no)}</b></td><td>${esc(x.lr_date)}</td><td>${esc(x.from_location)}</td><td>${esc(x.to_location)}</td><td>${esc(x.consignor_name)}</td><td>${esc(x.consignee_name)}</td><td>${cancelled?'—':Number(x.packages||0)}</td><td class="right">${cancelled?'—':money(x.freight)}</td><td class="right">${cancelled?'—':money(x.other_charges)}</td><td><b style="color:${cancelled?'#b91c1c':delivered?'#073b8f':'#16803c'}">${esc(status)}</b></td><td class="act"><a class="blue smallbtn" href="bilty.html?view=${id}&v=${v}">View</a><a class="yellow smallbtn" href="bilty.html?print=${id}&v=${v}">Print</a><button class="green smallbtn" type="button" onclick="sharePdfById('${esc(x.id)}')">📄 LR Share PDF</button></td></tr>`;
     }).join('');
     const selectAll=$('selectAll');if(selectAll){selectAll.checked=false;selectAll.indeterminate=false;}
     $('count').textContent=r.filter(x=>String(x.status||'').toLowerCase()!=='cancelled').length;$('packages').textContent=p;$('freight').textContent=money(f);$('total').textContent=money(f+h+o);
