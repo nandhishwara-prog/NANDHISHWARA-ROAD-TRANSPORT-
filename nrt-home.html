@@ -31,29 +31,34 @@ footer{background:#073b8fe8;color:white;padding:14px 3%;font-size:12px}.foot{max
 </style></head>
 <body><div class="shade">
 <header><div class="head"><div class="brand"><img class="logo" src="nrt-transport-logo.jpg" alt="NRT Logo"><div><h1>NANDHISHWARA ROAD TRANSPORT</h1><p class="tag">ONE DAY DELIVERY SERVICE</p><p class="gst">GSTIN: 36HSYPK0996J1ZM</p></div></div><div class="contact">Autonagar, Hyderabad - 500070<br>Phone: 9885410410 | 9989581732</div></div></header>
-<nav><div class="nav"><a class="active" href="nrt-home.html">HOME</a><a href="bilty.html">BOOKING</a><a href="operations.html">LOAD / UNLOAD</a><a href="trip-management.html">TRIP MEMO</a><a href="operations.html">DELIVERY</a><a href="reports.html">ENQUIRIES</a><a href="reports.html">REPORTS</a><a href="reports.html">MODIFICATION / LR SEARCH</a><button onclick="location.href='reports.html'">MAIL BOX / REPORTS</button><button class="logout" onclick="logout()">LOGOUT</button></div></nav>
+<nav><div class="nav">
+<a class="active" href="nrt-home.html" onclick="showDashboard()">HOME</a>
+<a href="bilty.html">BOOKING</a>
+<a href="trip-management.html">TRIP MEMO</a>
+<a href="reports.html">REPORTS</a>
+<button type="button" id="expensesNavBtn" onclick="showExpenses()">EXPENSES</button>
+<button class="logout" onclick="logout()">LOGOUT</button>
+</div></nav>
 <main>
 <section class="welcome"><div><div class="eyebrow">NRT MANAGEMENT OVERVIEW</div><h2>Professional Dashboard</h2><p>Bookings, collections and delivery performance at a glance.</p></div><div class="date" id="todayLabel">Loading date…</div></section>
 <div id="loadMsg">Loading NRT records…</div>
+<div id="dashboardView">
 <h2 class="section">Business Overview</h2>
 <section class="stats">
-<div class="stat"><i class="ico">LR</i><label>Today's Bookings</label><strong id="todayCount">—</strong><small>LRs booked today</small></div>
+<div class="stat"><i class="ico">₹</i><label>Today's Total Amount</label><strong id="todayAmount">—</strong><small>Freight + Hamali + LR Charge today</small></div>
 <div class="stat"><i class="ico green">M</i><label>This Month Bookings</label><strong id="monthCount">—</strong><small>LRs booked this month</small></div>
 <div class="stat"><i class="ico purple">Σ</i><label>Total NRT Bookings</label><strong id="allCount">—</strong><small>Records available to this login</small></div>
 <div class="stat"><i class="ico orange">PK</i><label>Packages This Month</label><strong id="packages">—</strong><small>Total packages booked</small></div>
-<div class="stat"><i class="ico teal">₹</i><label>Freight This Month</label><strong id="freight">—</strong><small>Freight amount booked</small></div>
 <div class="stat"><i class="ico gold">₹</i><label>Total Charges This Month</label><strong id="revenue">—</strong><small>Freight + Hamali + LR charge</small></div>
 <div class="stat"><i class="ico red">!</i><label>Pending LRs</label><strong id="pending">—</strong><small>Not marked Delivered / Cancelled</small></div>
 <div class="stat"><i class="ico green">✓</i><label>Delivered LRs</label><strong id="delivered">—</strong><small>Marked Delivered</small></div>
 </section>
-<h2 class="section">Quick Access</h2>
-<section class="quick">
-<a class="tile" href="bilty.html"><i>LR</i><span><b>New Bilty / LR</b>Create a new transport booking</span></a>
-<a class="tile" href="operations.html"><i class="green">LU</i><span><b>Load / Unload</b>Open operations workflow</span></a>
-<a class="tile" href="operations.html"><i class="orange">D</i><span><b>Delivery</b>Manage delivery updates</span></a>
-<a class="tile" href="reports.html"><i class="purple">R</i><span><b>LR Reports</b>Search, print and export records</span></a>
+<section class="panels">
+<div class="panel"><h3>Recent NRT Bookings</h3><div class="tablewrap"><table><thead><tr><th>LR Number</th><th>Date</th><th>From</th><th>To</th><th>Consignee</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentRows"><tr><td colspan="7">Loading…</td></tr></tbody></table></div><a class="btn" href="reports.html">Open Full Reports</a><a class="btn" href="bilty.html">+ New Booking</a></div>
+<div class="panel"><h3>Top Routes This Month</h3><div id="routes"><div class="route">Loading route summary…</div></div><p style="font-size:11px;color:#64748b;margin-top:12px">Based on From and To locations in this month's NRT LR records.</p></div>
 </section>
-
+</div>
+<div id="expensesView" style="display:none">
 <h2 class="section">Office & Transport Expenses</h2>
 <section class="expense-summary">
  <div class="stat"><label>This Month Expenses</label><strong id="expTotal">₹0</strong><small>All expense categories</small></div>
@@ -79,11 +84,8 @@ footer{background:#073b8fe8;color:white;padding:14px 3%;font-size:12px}.foot{max
  <div class="tablewrap"><table style="min-width:650px"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Delete</th></tr></thead><tbody id="expenseRows"><tr><td colspan="5">Loading expenses…</td></tr></tbody></table></div>
  <div class="expense-actions"><button onclick="exportExpenses()">Export Expenses CSV</button><button onclick="loadExpenses()">Refresh Expenses</button></div>
 </section>
-
-<section class="panels">
-<div class="panel"><h3>Recent NRT Bookings</h3><div class="tablewrap"><table><thead><tr><th>LR Number</th><th>Date</th><th>From</th><th>To</th><th>Consignee</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentRows"><tr><td colspan="7">Loading…</td></tr></tbody></table></div><a class="btn" href="reports.html">Open Full Reports</a><a class="btn" href="bilty.html">+ New Booking</a></div>
-<div class="panel"><h3>Top Routes This Month</h3><div id="routes"><div class="route">Loading route summary…</div></div><p style="font-size:11px;color:#64748b;margin-top:12px">Based on From and To locations in this month's NRT LR records.</p></div>
-</section></main>
+</div>
+</main>
 <footer><div class="foot"><span>Copyright 2026 NANDHISHWARA ROAD TRANSPORT. All Rights Reserved.</span><span>Fast &amp; Safe Transport Service</span></div></footer>
 </div>
 <script>
@@ -111,12 +113,11 @@ async function loadDashboard(){
  const todayRows=active.filter(x=>dayKey(x.lr_date)===today),monthRows=active.filter(x=>dayKey(x.lr_date).slice(0,7)===month);
  const delivered=active.filter(x=>String(x.status||'').toLowerCase()==='delivered');
  const pending=active.filter(x=>String(x.status||'').toLowerCase()!=='delivered');
- $('todayCount').textContent=todayRows.length.toLocaleString('en-IN');
+ $('todayAmount').textContent=money(todayRows.reduce((n,x)=>n+total(x),0));
  $('monthCount').textContent=monthRows.length.toLocaleString('en-IN');
  $('allCount').textContent=all.length.toLocaleString('en-IN');
  $('packages').textContent=monthRows.reduce((n,x)=>n+(+x.packages||0),0).toLocaleString('en-IN');
- $('freight').textContent=money(monthRows.reduce((n,x)=>n+(+x.freight||0),0));
- $('revenue').textContent=money(monthRows.reduce((n,x)=>n+total(x),0));
+  $('revenue').textContent=money(monthRows.reduce((n,x)=>n+total(x),0));
  $('pending').textContent=pending.length.toLocaleString('en-IN');
  $('delivered').textContent=delivered.length.toLocaleString('en-IN');
  $('loadMsg').textContent='Last updated: '+now.toLocaleTimeString('en-IN')+' · '+all.length.toLocaleString('en-IN')+' NRT LR records loaded.';
@@ -125,6 +126,19 @@ async function loadDashboard(){
  $('routes').innerHTML=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([name,n])=>'<div class="route"><b>'+esc(name)+'</b><span>'+n+' LR'+(n===1?'':'s')+'</span></div>').join('')||'<div class="route">No bookings this month.</div>';
 }
 
+function showDashboard(){
+ $('dashboardView').style.display='block';
+ $('expensesView').style.display='none';
+ $('expensesNavBtn').classList.remove('active');
+ document.querySelector('.nav a[href="nrt-home.html"]').classList.add('active');
+}
+function showExpenses(){
+ $('dashboardView').style.display='none';
+ $('expensesView').style.display='block';
+ document.querySelector('.nav a[href="nrt-home.html"]').classList.remove('active');
+ $('expensesNavBtn').classList.add('active');
+ loadExpenses();
+}
 // EXPENSE MANAGEMENT - Supabase table: public.nrt_expenses
 let expenseRecords=[];
 async function loadExpenses(){
