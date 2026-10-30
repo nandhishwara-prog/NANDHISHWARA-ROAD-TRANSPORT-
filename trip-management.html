@@ -73,6 +73,7 @@ function dateText(v){if(!v)return '—';const d=new Date(v);return isNaN(d)?esc(
 function localDateValue(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
 function setDefaultDate(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());$('departureAt').value=d.toISOString().slice(0,16);const today=localDateValue();$('lrDateFrom').value=today;$('lrDateTo').value=today;$('lrRangeInfo').value=today+' to '+today}
 function lrDateOf(v){return String(v||'').slice(0,10)}
+function formatDateDMY(v){const d=lrDateOf(v);if(!/^\d{4}-\d{2}-\d{2}$/.test(d))return '—';const [y,m,day]=d.split('-');return day+'/'+m+'/'+y}
 function dateRangeValid(){const a=$('lrDateFrom').value,b=$('lrDateTo').value;if(!a||!b){$('lrRangeInfo').value='Select both dates';return false}if(a>b){$('lrRangeInfo').value='From date must be before To date';return false}$('lrRangeInfo').value=a+' to '+b;return true}
 async function init(){
  const {data,error}=await sb.auth.getSession();
@@ -86,7 +87,7 @@ async function init(){
 async function loadData(){
  $('lrMsg').textContent='Loading existing LR records…';$('tripMsg').textContent='';
  const [lrRes,tripRes,linkRes]=await Promise.all([
-  sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,status').order('lr_date',{ascending:false}).limit(1000),
+  sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,status,freight,hamali,other_charges').order('lr_date',{ascending:false}).limit(1000),
   sb.from('nrt_trips').select('*').order('created_at',{ascending:false}).limit(500),
   sb.from('nrt_trip_lrs').select('lr_no,trip_id')
  ]);
@@ -139,8 +140,21 @@ async function saveTrip(){
  // Open a blank tab immediately from the button click to avoid popup blocking after async save.
  const printWindow=window.open('about:blank','_blank');
  $('formMsg').textContent='Saving trip memo…';
- const tripNo='NRT-TR-'+Date.now().toString().slice(-8);
- const row={trip_no:tripNo,vehicle_type:vehicleType,vehicle_no:vehicleNo,driver_name:driverName,driver_phone:$('driverPhone').value.trim()||null,from_location:from,to_location:to,departure_at:new Date(departure).toISOString(),starting_km:$('startingKm').value===''?null:Number($('startingKm').value),hire_amount:$('hireAmount').value===''?0:Number($('hireAmount').value),lr_date_from:lrFrom,lr_date_to:lrTo,notes:$('notes').value.trim()||null,status:'Planned',created_by:currentUser.id};
+ const memoDate=localDateValue();
+ const memoYearMonth=memoDate.slice(0,7).replace('-','');
+ // Monthly sequence: NRT/YYYYMM01, NRT/YYYYMM02 ... (serial resets to 01 each month)
+ const tripPrefix='NRT/'+memoYearMonth;
+ const {data:existingTrips,error:seqError}=await sb.from('nrt_trips').select('trip_no').like('trip_no',tripPrefix+'%');
+ if(seqError){if(printWindow)printWindow.close();$('formMsg').textContent='Could not generate Trip Number: '+seqError.message;return}
+ const nextSerial=(existingTrips||[]).reduce((max,x)=>{
+   const suffix=String(x.trip_no||'').slice(tripPrefix.length);
+   // Count only the new compact numeric suffix; old date-based formats are ignored.
+   if(!/^\d{2,}$/.test(suffix))return max;
+   const n=Number(suffix);
+   return Number.isFinite(n)?Math.max(max,n):max;
+ },0)+1;
+ const tripNo=tripPrefix+String(nextSerial).padStart(2,'0');
+ const row={trip_no:tripNo,vehicle_type:vehicleType,vehicle_no:vehicleNo,driver_name:driverName,driver_phone:$('driverPhone').value.trim()||null,from_location:from,to_location:to,departure_at:new Date(departure).toISOString(),starting_km:$('startingKm').value===''?null:Number($('startingKm').value),hire_amount:$('hireAmount').value===''?0:Number($('hireAmount').value),lr_date_from:lrFrom,lr_date_to:lrTo,notes:$('notes').value.trim()||null,status:'Loaded',created_by:currentUser.id};
  const {data,error}=await sb.from('nrt_trips').insert(row).select('id,trip_no').single();
  if(error){if(printWindow)printWindow.close();$('formMsg').textContent='Trip save failed: '+error.message;return}
  const links=selected.map(lr_no=>({trip_id:data.id,lr_no,created_by:currentUser.id}));
@@ -159,15 +173,18 @@ async function saveTrip(){
 }
 function renderTrips(){
  $('tripRows').innerHTML=trips.map(t=>{
-  const lrCount='';return `<tr><td><b>${esc(t.trip_no)}</b></td><td>${dateText(t.departure_at)}</td><td>${esc(t.vehicle_no)}<br><span class="muted">${esc(t.vehicle_type)}</span></td><td>${esc(t.driver_name)}<br><span class="muted">${esc(t.driver_phone||'')}</span></td><td>${esc(t.from_location)} → ${esc(t.to_location)}</td><td><button class="secondary" onclick="showTripLRs(${Number(t.id)})">View LRs</button></td><td><select id="status-${Number(t.id)}"><option ${t.status==='Planned'?'selected':''}>Planned</option><option ${t.status==='Dispatched'?'selected':''}>Dispatched</option><option ${t.status==='Arrived'?'selected':''}>Arrived</option><option ${t.status==='Closed'?'selected':''}>Closed</option></select></td><td><div class="actions" style="margin:0"><button onclick="updateStatus(${Number(t.id)})">Update</button><button class="secondary" onclick="printTrip(${Number(t.id)})">Print</button><button class="danger" onclick="deleteTrip(${Number(t.id)})">Delete</button></div></td></tr>`
+  const lrCount='';return `<tr><td><b>${esc(t.trip_no)}</b></td><td>${dateText(t.departure_at)}</td><td>${esc(t.vehicle_no)}<br><span class="muted">${esc(t.vehicle_type)}</span></td><td>${esc(t.driver_name)}<br><span class="muted">${esc(t.driver_phone||'')}</span></td><td>${esc(t.from_location)} → ${esc(t.to_location)}</td><td><button class="secondary" onclick="showTripLRs(${Number(t.id)})">View LRs</button></td><td><select id="status-${Number(t.id)}"><option ${t.status==='Loaded'?'selected':''}>Loaded</option><option ${t.status==='Planned'?'selected':''}>Planned</option><option ${t.status==='Dispatched'?'selected':''}>Dispatched</option><option ${t.status==='Arrived'?'selected':''}>Arrived</option><option ${t.status==='Closed'?'selected':''}>Closed</option></select></td><td><div class="actions" style="margin:0"><button onclick="updateStatus(${Number(t.id)})">Update</button><button class="secondary" onclick="printTrip(${Number(t.id)})">Print</button><button class="danger" onclick="deleteTrip(${Number(t.id)})">Delete</button></div></td></tr>`
  }).join('')||'<tr><td colspan="8">No trip memos created yet.</td></tr>';
 }
 function printDocHtml(trip,lrRows){
  const address='Autonagar, Hyderabad - 500070';
  const phone='9885410410 | 9989581732';
  const gst='36HSYPK0996J1ZM';
- const rows=lrRows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.lr_no)}</td><td>${esc(lrDateOf(x.lr_date)||'—')}</td><td>${esc(x.from_location||'—')} → ${esc(x.to_location||'—')}</td><td>${esc(x.consignee_name||'—')}</td><td>${esc(x.packages??'—')}</td></tr>`).join('');
+ const money=v=>'₹'+(Number(v)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
+ const lrAmount=x=>(Number(x.freight)||0)+(Number(x.hamali)||0)+(Number(x.other_charges)||0);
+ const rows=lrRows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.lr_no)}</td><td>${esc(formatDateDMY(x.lr_date))}</td><td>${esc(x.to_location||'—')}</td><td>${esc(x.consignee_name||'—')}</td><td>${esc(x.packages??'—')}</td><td class="amount">${money(lrAmount(x))}</td></tr>`).join('');
  const totalPackages=lrRows.reduce((n,x)=>n+(Number(x.packages)||0),0);
+ const totalLRAmount=lrRows.reduce((n,x)=>n+lrAmount(x),0);
  return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(trip.trip_no)} - NRT Trip Memo</title>
  <style>
  *{box-sizing:border-box}body{font-family:Arial,sans-serif;color:#172033;margin:0;padding:22px}
@@ -176,7 +193,8 @@ function printDocHtml(trip,lrRows){
  .head h1{margin:0;color:#123f85;font-size:24px}.tag{font-weight:bold;color:#b38a00;letter-spacing:1px;margin:5px}
  .address{font-size:12px;line-height:1.5}.title{text-align:center;background:#eef3fb;padding:10px;margin:15px 0;font-size:19px;font-weight:bold;color:#123f85}
  .meta{display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;margin:12px 0}.meta div{padding:7px;border-bottom:1px solid #cbd5e1;font-size:13px}
- table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #94a3b8;padding:8px;text-align:left;font-size:11px}th{background:#eaf0fa}
+ table{width:100%;border-collapse:collapse;margin-top:12px}th,td{border:1px solid #94a3b8;padding:7px;text-align:left;font-size:10px}th{background:#eaf0fa}
+ td.amount,th.amount{text-align:right;white-space:nowrap}tfoot th{font-size:11px;background:#f4f7fc}
  .notes{margin-top:14px;font-size:12px;min-height:35px}.sign{display:flex;justify-content:space-between;margin-top:55px;font-size:12px}
  .actions{margin:16px auto;max-width:900px;text-align:right}.actions button{padding:10px 18px;background:#123f85;color:white;border:0;border-radius:5px}
  @media print{body{padding:0}.sheet{border:1px solid #123f85;max-width:none}.actions{display:none}@page{size:A4 portrait;margin:12mm}}
@@ -185,21 +203,22 @@ function printDocHtml(trip,lrRows){
  <div class="address">${address}<br>Phone: ${phone}<br>GSTIN: ${gst}</div></div>
  <div class="title">TRIP / VEHICLE MEMO</div>
  <div class="meta">
- <div><b>Trip No:</b> ${esc(trip.trip_no)}</div><div><b>Trip Status:</b> ${esc(trip.status||'Planned')}</div>
+ <div><b>Trip No:</b> ${esc(trip.trip_no)}</div><div><b>Trip Status:</b> ${esc(trip.status||'Loaded')}</div>
  <div><b>Vehicle Type:</b> ${esc(trip.vehicle_type)}</div><div><b>Vehicle Number:</b> ${esc(trip.vehicle_no)}</div>
  <div><b>Driver Name:</b> ${esc(trip.driver_name)}</div><div><b>Driver Phone:</b> ${esc(trip.driver_phone||'—')}</div>
  <div><b>From:</b> ${esc(trip.from_location)}</div><div><b>To:</b> ${esc(trip.to_location)}</div>
  <div><b>Departure:</b> ${dateText(trip.departure_at)}</div><div><b>Starting KM:</b> ${esc(trip.starting_km??'—')}</div>
- <div><b>LR Date Range:</b> ${esc(trip.lr_date_from||'—')} to ${esc(trip.lr_date_to||'—')}</div><div><b>Market Hire Amount:</b> ₹${Number(trip.hire_amount||0).toLocaleString('en-IN')}</div>
+ <div><b>LR Date Range:</b> ${esc(formatDateDMY(trip.lr_date_from))} to ${esc(formatDateDMY(trip.lr_date_to))}</div><div><b>Market Hire Amount:</b> ${money(trip.hire_amount)}</div>
  </div>
  <b>Attached LR Details (${lrRows.length})</b>
- <table><thead><tr><th>S.No.</th><th>LR Number</th><th>LR Date</th><th>Route</th><th>Consignee</th><th>Packages</th></tr></thead><tbody>${rows}</tbody>
- <tfoot><tr><th colspan="5" style="text-align:right">Total Packages</th><th>${totalPackages}</th></tr></tfoot></table>
+ <table><thead><tr><th>S.No.</th><th>LR Number</th><th>LR Date</th><th>To</th><th>Consignee</th><th>Packages</th><th class="amount">LR Amount</th></tr></thead><tbody>${rows}</tbody>
+ <tfoot><tr><th colspan="5" style="text-align:right">Total</th><th>${totalPackages} pkgs</th><th class="amount">${money(totalLRAmount)}</th></tr></tfoot></table>
  <div class="notes"><b>Trip Notes:</b> ${esc(trip.notes||'—')}</div>
  <div class="sign"><div>Driver Signature: __________________</div><div>Authorized Signature: __________________</div></div>
  </div><div class="actions"><button onclick="window.print()">Print / Save as PDF</button></div>
  <script>window.onload=()=>setTimeout(()=>window.print(),500);<\/script></body></html>`;
 }
+
 async function fillTripPrint(win,id,autoPrint){
  if(!win)return;
  win.document.open();win.document.write('<!doctype html><title>Preparing NRT Trip Memo…</title><p style="font-family:Arial;padding:24px">Preparing Trip Memo…</p>');win.document.close();
@@ -209,7 +228,7 @@ async function fillTripPrint(win,id,autoPrint){
  ]);
  if(tripRes.error||linkRes.error){win.document.body.innerHTML='<p>Could not load Trip Memo: '+esc((tripRes.error||linkRes.error).message)+'</p>';return}
  const lrNos=(linkRes.data||[]).map(x=>x.lr_no);
- const lrRes=lrNos.length?await sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages').in('lr_no',lrNos):{data:[],error:null};
+ const lrRes=lrNos.length?await sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,freight,hamali,other_charges').in('lr_no',lrNos):{data:[],error:null};
  if(lrRes.error){win.document.body.innerHTML='<p>Could not load LR details: '+esc(lrRes.error.message)+'</p>';return}
  win.document.open();win.document.write(printDocHtml(tripRes.data,lrRes.data||[]));win.document.close();
 }
