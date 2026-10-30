@@ -4,379 +4,249 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>NRT - Party Master</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
-
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#f1f5fb;
- font-family:Arial,sans-serif;color:#183153
-}
-header{
- background:#073b8c;color:white;padding:18px;
- display:flex;align-items:center;gap:14px
-}
+body{margin:0;background:#f1f5fb;font-family:Arial,sans-serif;color:#183153}
+header{background:#073b8c;color:white;padding:16px 20px;display:flex;align-items:center;gap:14px}
 header img{width:48px;height:48px;object-fit:contain}
 header h2{margin:0;font-size:21px}
-nav{
- background:#ffcf22;padding:12px 20px;
- display:flex;gap:22px;flex-wrap:wrap
-}
+nav{background:#ffcf22;padding:12px 20px;display:flex;gap:22px;flex-wrap:wrap}
 nav a{color:#073b8c;text-decoration:none;font-weight:bold}
-.container{max-width:1200px;margin:22px auto;padding:12px}
-.card{
- background:white;padding:20px;border-radius:12px;
- box-shadow:0 3px 12px #0001;margin-bottom:18px
-}
+.container{max-width:1250px;margin:22px auto;padding:12px}
+.card{background:white;padding:20px;border-radius:12px;box-shadow:0 3px 12px #0001;margin-bottom:18px}
 h3{margin-top:0;color:#073b8c}
-.formgrid{
- display:grid;grid-template-columns:repeat(2,1fr);gap:13px
-}
-input,textarea{
- width:100%;padding:12px;border:1px solid #ccd5e2;
- border-radius:7px;font-size:15px
-}
-textarea{min-height:65px}
-button{
- border:0;border-radius:7px;padding:11px 16px;
- cursor:pointer;font-weight:bold;margin:3px
-}
-.primary{background:#073b8c;color:white}
-.secondary{background:#e6edf8;color:#173b70}
-.danger{background:#ffe1e1;color:#a00000}
-.success{background:#d9f7e6;color:#08753b}
-.search{margin-bottom:12px}
-.tablewrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;min-width:750px}
-th,td{padding:12px;border-bottom:1px solid #e1e7ef;text-align:left}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+label{display:block;font-size:13px;font-weight:bold;margin-bottom:6px}
+input,textarea{width:100%;padding:12px;border:1px solid #ccd5e2;border-radius:7px;font-size:15px}
+textarea{min-height:65px;resize:vertical}
+button{border:0;border-radius:7px;padding:11px 16px;cursor:pointer;font-weight:bold;margin:3px}
+button:disabled{opacity:.55;cursor:wait}
+.primary{background:#073b8c;color:white}.secondary{background:#e6edf8;color:#173b70}
+.danger{background:#ffe1e1;color:#a00000}.success{background:#d9f7e6;color:#08753b}
+.search{margin:10px 0}.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+th,td{padding:11px;border-bottom:1px solid #e1e7ef;text-align:left;font-size:13px}
 th{background:#eaf1fc;color:#073b8c}
+#message{padding:10px;margin:8px 0;border-radius:6px;display:none;white-space:pre-wrap}
 .status{font-size:12px;font-weight:bold}
-#message{padding:10px;margin:8px 0;border-radius:6px}
-.hidden{display:none}
-@media(max-width:650px){
- .formgrid{grid-template-columns:1fr}
- header h2{font-size:17px}
- .container{padding:8px}
-}
+@media(max-width:650px){.formgrid{grid-template-columns:1fr}header h2{font-size:17px}.container{padding:8px}.card{padding:14px}}
 </style>
 </head>
-
 <body>
-
 <header>
- <img src="nrt-transport-logo.jpg" alt="NRT">
- <div>
-  <h2>NANDHISHWARA ROAD TRANSPORT</h2>
-  <small>ONE DAY DELIVERY SERVICE</small>
- </div>
+ <img src="nrt-transport-logo.jpg" alt="NRT Logo" onerror="this.style.display='none'">
+ <div><h2>NANDHISHWARA ROAD TRANSPORT</h2><small>ONE DAY DELIVERY SERVICE</small></div>
 </header>
-
 <nav>
  <a href="nrt-home.html">DASHBOARD</a>
  <a href="bilty.html">NEW LR BOOKING</a>
+ <a href="trip-management.html">TRIP MEMO</a>
  <a href="party-master.html">PARTY MASTER</a>
 </nav>
-
-<div class="container">
-
-<div class="card">
- <h3>Party Master</h3>
- <p>Add, edit, search and manage your NRT parties.</p>
- <div id="message"></div>
-
- <form id="partyForm">
-  <input type="hidden" id="partyId">
-
-  <div class="formgrid">
-   <div>
-    <label>Party Name *</label>
-    <input id="partyName" required placeholder="Enter party name">
+<main class="container">
+ <section class="card">
+  <h3>Party Master</h3>
+  <p>Add, edit, search and manage NRT parties. Deleted parties can be restored.</p>
+  <div id="message" role="status"></div>
+  <form id="partyForm">
+   <input type="hidden" id="partyId">
+   <div class="formgrid">
+    <div><label for="partyName">Party Name *</label><input id="partyName" required maxlength="200" placeholder="Enter party name"></div>
+    <div><label for="phone">Mobile Number</label><input id="phone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div>
+    <div><label for="gstin">GSTIN</label><input id="gstin" maxlength="15" autocapitalize="characters" placeholder="Enter GSTIN"></div>
+    <div><label for="address">Address</label><textarea id="address" placeholder="Enter full address"></textarea></div>
    </div>
-
-   <div>
-    <label>Mobile Number</label>
-    <input id="phone" maxlength="10" placeholder="10 digit mobile number">
-   </div>
-
-   <div>
-    <label>GSTIN</label>
-    <input id="gstin" maxlength="15" placeholder="Enter GSTIN">
-   </div>
-
-   <div>
-    <label>Address</label>
-    <textarea id="address" placeholder="Enter full address"></textarea>
-   </div>
+   <br>
+   <button class="primary" type="submit" id="saveBtn">+ Save Party</button>
+   <button class="secondary" type="button" id="clearBtn">Clear</button>
+  </form>
+ </section>
+ <section class="card">
+  <h3>Party List</h3>
+  <input class="search" id="search" placeholder="Search Party Name / Mobile / GSTIN / Address">
+  <div>
+   <button class="secondary" type="button" id="activeBtn">Active Parties</button>
+   <button class="secondary" type="button" id="deletedBtn">Deleted Parties</button>
+   <button class="secondary" type="button" id="exportBtn">Export CSV</button>
+   <button class="secondary" type="button" id="refreshBtn">Refresh</button>
   </div>
-
-  <br>
-  <button class="primary" type="submit" id="saveBtn">+ Save Party</button>
-  <button class="secondary" type="button" onclick="resetForm()">Clear</button>
- </form>
-</div>
-
-<div class="card">
- <h3>Party List</h3>
-
- <input class="search" id="search"
- placeholder="Search Party Name / Mobile / GSTIN"
- oninput="renderParties()">
-
- <button class="secondary" onclick="showActive()">Active Parties</button>
- <button class="secondary" onclick="showDeleted()">Deleted Parties</button>
- <button class="secondary" onclick="exportCSV()">Export CSV</button>
- <button class="secondary" onclick="loadParties()">Refresh</button>
-
- <p id="count"></p>
-
- <div class="tablewrap">
- <table>
-  <thead>
-   <tr>
-    <th>S.No</th>
-    <th>Party Name</th>
-    <th>Mobile</th>
-    <th>GSTIN</th>
-    <th>Address</th>
-    <th>Status</th>
-    <th>Action</th>
-   </tr>
-  </thead>
-  <tbody id="partyRows">
-   <tr><td colspan="7">Loading...</td></tr>
-  </tbody>
- </table>
- </div>
-</div>
-
-</div>
-
+  <p id="count">Connecting to Supabase...</p>
+  <div class="tablewrap">
+   <table>
+    <thead><tr><th>S.No</th><th>Party Name</th><th>Mobile</th><th>GSTIN</th><th>Address</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody id="partyRows"><tr><td colspan="7">Loading...</td></tr></tbody>
+   </table>
+  </div>
+ </section>
+</main>
 <script>
-const db = window.supabase.createClient(
- window.SUPABASE_URL,
- window.SUPABASE_PUBLISHABLE_KEY
-);
+(function(){
+"use strict";
+const msg=document.getElementById("message");
+const form=document.getElementById("partyForm");
+const rows=document.getElementById("partyRows");
+let parties=[];
+let currentView="active";
+let db=null;
+let loading=false;
 
-let parties = [];
-let currentView = "active";
-
-function message(text, error=false){
- const box=document.getElementById("message");
- box.textContent=text;
- box.style.background=error?"#ffe3e3":"#ddf7e7";
- box.style.color=error?"#a00000":"#08753b";
+function showMessage(message,isError){
+ msg.textContent=message;
+ msg.style.display="block";
+ msg.style.background=isError?"#ffe3e3":"#ddf7e7";
+ msg.style.color=isError?"#a00000":"#08753b";
 }
-
+function esc(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
 function resetForm(){
- document.getElementById("partyForm").reset();
+ form.reset();
  document.getElementById("partyId").value="";
  document.getElementById("saveBtn").textContent="+ Save Party";
 }
-
 async function loadParties(){
- const {data,error}=await db
-  .from("nrt_parties")
-  .select("id,party_name,phone,gstin,address,is_active")
-  .order("party_name");
-
- if(error){
-  message("Party loading error: "+error.message,true);
+ if(loading)return;
+ loading=true;
+ if(!db){
+  loading=false;
+  document.getElementById("count").textContent="Supabase not connected";
+  showMessage("Supabase config not found. Check supabase-config.js variable names.",true);
   return;
  }
-
- parties=data||[];
- renderParties();
+ rows.innerHTML='<tr><td colspan="7">Loading...</td></tr>';
+ document.getElementById("count").textContent="Loading party records...";
+ try{
+  const {data,error}=await db.from("nrt_parties")
+   .select("id,party_name,phone,gstin,address,is_active")
+   .order("party_name",{ascending:true})
+   .range(0,4999);
+  if(error){
+   rows.innerHTML='<tr><td colspan="7">Unable to load parties.</td></tr>';
+   document.getElementById("count").textContent="Party loading failed";
+   showMessage("Supabase read error: "+error.message+" (Code: "+(error.code||"none")+")",true);
+   return;
+  }
+  parties=data||[];
+  renderParties();
+  if(parties.length===0){
+   showMessage("Supabase returned 0 rows. Confirm this page uses the same Supabase project as SQL Editor.",true);
+  }else{
+   msg.style.display="none";
+  }
+ }catch(error){
+  document.getElementById("count").textContent="Connection failed";
+  showMessage("Connection error: "+error.message,true);
+ }finally{
+  loading=false;
+ }
 }
-
-function showActive(){
- currentView="active";
- renderParties();
-}
-
-function showDeleted(){
- currentView="deleted";
- renderParties();
-}
-
 function renderParties(){
- const search=document.getElementById("search").value.toLowerCase();
-
+ const query=document.getElementById("search").value.trim().toLowerCase();
  const filtered=parties.filter(p=>{
-  const active=p.is_active!==false;
-  const viewMatch=currentView==="active"?active:!active;
-
-  const text=[
-   p.party_name,p.phone,p.gstin,p.address
-  ].join(" ").toLowerCase();
-
-  return viewMatch && text.includes(search);
+  const isActive=p.is_active!==false;
+  const viewOk=currentView==="active"?isActive:!isActive;
+  const hay=[p.party_name,p.phone,p.gstin,p.address].join(" ").toLowerCase();
+  return viewOk&&hay.includes(query);
  });
-
  document.getElementById("count").textContent=
-  "Total "+filtered.length+" parties";
-
- const tbody=document.getElementById("partyRows");
-
+  "Total "+parties.length+" records | Showing "+filtered.length+" "+(currentView==="active"?"active":"deleted")+" parties";
  if(!filtered.length){
-  tbody.innerHTML='<tr><td colspan="7">No parties found.</td></tr>';
+  rows.innerHTML='<tr><td colspan="7">No parties found.</td></tr>';
   return;
  }
-
- tbody.innerHTML=filtered.map((p,i)=>`
- <tr>
-  <td>${i+1}</td>
-  <td>${escapeHTML(p.party_name||"")}</td>
-  <td>${escapeHTML(p.phone||"")}</td>
-  <td>${escapeHTML(p.gstin||"")}</td>
-  <td>${escapeHTML(p.address||"")}</td>
+ rows.innerHTML=filtered.map((p,index)=>`<tr>
+  <td>${index+1}</td><td>${esc(p.party_name)}</td><td>${esc(p.phone)}</td>
+  <td>${esc(p.gstin)}</td><td>${esc(p.address)}</td>
   <td class="status">${p.is_active===false?"Deleted":"Active"}</td>
-  <td>
-   ${p.is_active===false
-    ? `<button class="success" onclick="restoreParty(${p.id})">Restore</button>`
-    : `<button class="secondary" onclick="editParty(${p.id})">Edit</button>
-       <button class="danger" onclick="deleteParty(${p.id})">Delete</button>`
-   }
-  </td>
- </tr>`).join("");
+  <td>${p.is_active===false
+   ?`<button class="success" type="button" data-action="restore" data-id="${esc(p.id)}">Restore</button>`
+   :`<button class="secondary" type="button" data-action="edit" data-id="${esc(p.id)}">Edit</button><button class="danger" type="button" data-action="delete" data-id="${esc(p.id)}">Delete</button>`}
+  </td></tr>`).join("");
 }
-
-function escapeHTML(value){
- return String(value).replace(/[&<>"']/g,c=>({
-  "&":"&amp;","<":"&lt;",">":"&gt;",
-  '"':"&quot;","'":"&#39;"
- }[c]));
-}
-
-document.getElementById("partyForm").addEventListener("submit",async e=>{
- e.preventDefault();
-
+form.addEventListener("submit",async event=>{
+ event.preventDefault();
+ if(!db){showMessage("Supabase is not connected.",true);return;}
  const id=document.getElementById("partyId").value;
  const party_name=document.getElementById("partyName").value.trim();
  const phone=document.getElementById("phone").value.trim();
  const gstin=document.getElementById("gstin").value.trim().toUpperCase();
  const address=document.getElementById("address").value.trim();
-
- if(!party_name){
-  message("Party name is required.",true);
-  return;
+ if(!party_name){showMessage("Party name is required.",true);return;}
+ if(phone&&!/^[0-9]{10}$/.test(phone)){showMessage("Enter a valid 10 digit mobile number.",true);return;}
+ if(gstin&&!/^[0-9A-Z]{15}$/.test(gstin)){showMessage("GSTIN must be 15 letters/numbers.",true);return;}
+ const duplicate=parties.find(p=>p.is_active!==false&&p.party_name.toLowerCase()===party_name.toLowerCase()&&String(p.id)!==String(id));
+ if(duplicate&&!confirm("A party with this name already exists. Save anyway?"))return;
+ const payload={party_name,phone:phone||null,gstin:gstin||null,address:address||null};
+ const button=document.getElementById("saveBtn");
+ button.disabled=true;
+ try{
+  const result=id
+   ?await db.from("nrt_parties").update(payload).eq("id",id)
+   :await db.from("nrt_parties").insert({...payload,is_active:true});
+  if(result.error){showMessage("Save error: "+result.error.message,true);return;}
+  showMessage(id?"Party updated successfully.":"New party added successfully.",false);
+  resetForm();
+  await loadParties();
+ }catch(error){
+  showMessage("Save failed: "+error.message,true);
+ }finally{
+  button.disabled=false;
  }
-
- if(phone && !/^[0-9]{10}$/.test(phone)){
-  message("Enter a valid 10 digit mobile number.",true);
-  return;
- }
-
- if(gstin && !/^[0-9A-Z]{15}$/.test(gstin)){
-  message("GSTIN must contain 15 characters.",true);
-  return;
- }
-
- const duplicate=parties.find(p=>
-  p.party_name.toLowerCase()===party_name.toLowerCase() &&
-  String(p.id)!==String(id) &&
-  p.is_active!==false
- );
-
- if(duplicate && !confirm("Similar party already exists. Save anyway?")){
-  return;
- }
-
- const values={party_name,phone,gstin,address};
-
- let result;
-
- if(id){
-  result=await db.from("nrt_parties")
-   .update(values).eq("id",id);
- }else{
-  result=await db.from("nrt_parties")
-   .insert({...values,is_active:true});
- }
-
- if(result.error){
-  message("Save error: "+result.error.message,true);
-  return;
- }
-
- message(id?"Party updated successfully.":"New party added successfully.");
- resetForm();
- await loadParties();
 });
-
-function editParty(id){
- const p=parties.find(x=>String(x.id)===String(id));
- if(!p)return;
-
- document.getElementById("partyId").value=p.id;
- document.getElementById("partyName").value=p.party_name||"";
- document.getElementById("phone").value=p.phone||"";
- document.getElementById("gstin").value=p.gstin||"";
- document.getElementById("address").value=p.address||"";
-
- document.getElementById("saveBtn").textContent="Update Party";
- window.scrollTo({top:0,behavior:"smooth"});
-}
-
-async function deleteParty(id){
- if(!confirm(
-  "Delete this party from active list? Old LR records will remain unchanged."
- ))return;
-
- const {error}=await db.from("nrt_parties")
-  .update({is_active:false}).eq("id",id);
-
- if(error){
-  message("Delete error: "+error.message,true);
-  return;
+rows.addEventListener("click",async event=>{
+ const button=event.target.closest("button[data-action]");
+ if(!button)return;
+ const id=button.dataset.id;
+ const action=button.dataset.action;
+ const party=parties.find(p=>String(p.id)===String(id));
+ if(!party)return;
+ if(action==="edit"){
+  document.getElementById("partyId").value=party.id;
+  document.getElementById("partyName").value=party.party_name||"";
+  document.getElementById("phone").value=party.phone||"";
+  document.getElementById("gstin").value=party.gstin||"";
+  document.getElementById("address").value=party.address||"";
+  document.getElementById("saveBtn").textContent="Update Party";
+  window.scrollTo({top:0,behavior:"smooth"});
+ }else if(action==="delete"||action==="restore"){
+  if(action==="delete"&&!confirm("Move this party to Deleted list? Old LR records will not be deleted."))return;
+  const {error}=await db.from("nrt_parties").update({is_active:action==="restore"}).eq("id",id);
+  if(error){showMessage("Update error: "+error.message,true);return;}
+  showMessage(action==="restore"?"Party restored successfully.":"Party moved to Deleted list. Old LR records are unchanged.",false);
+  await loadParties();
  }
-
- message("Party moved to Deleted list. Old LR records are unchanged.");
- await loadParties();
-}
-
-async function restoreParty(id){
- const {error}=await db.from("nrt_parties")
-  .update({is_active:true}).eq("id",id);
-
- if(error){
-  message("Restore error: "+error.message,true);
-  return;
- }
-
- message("Party restored successfully.");
- await loadParties();
-}
-
+});
 function exportCSV(){
- const rows=parties.filter(p=>
-  currentView==="active"?p.is_active!==false:p.is_active===false
- );
-
- const csv=[
-  ["Party Name","Mobile","GSTIN","Address","Status"],
-  ...rows.map(p=>[
-   p.party_name,p.phone,p.gstin,p.address,
-   p.is_active===false?"Deleted":"Active"
-  ])
- ];
-
- const content=csv.map(row=>
-  row.map(v=>'"'+String(v||"").replace(/"/g,'""')+'"').join(",")
- ).join("\n");
-
- const blob=new Blob(["\uFEFF"+content],{type:"text/csv;charset=utf-8"});
+ const list=parties.filter(p=>currentView==="active"?p.is_active!==false:p.is_active===false);
+ const data=[["Party Name","Mobile","GSTIN","Address","Status"],...list.map(p=>[p.party_name,p.phone,p.gstin,p.address,p.is_active===false?"Deleted":"Active"])];
+ const csv=data.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
+ const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
  const url=URL.createObjectURL(blob);
- const a=document.createElement("a");
- a.href=url;
- a.download="NRT-Party-Master.csv";
- a.click();
+ const a=document.createElement("a");a.href=url;a.download="NRT-Party-Master.csv";a.click();
  URL.revokeObjectURL(url);
 }
+document.getElementById("clearBtn").addEventListener("click",resetForm);
+document.getElementById("search").addEventListener("input",renderParties);
+document.getElementById("activeBtn").addEventListener("click",()=>{currentView="active";renderParties();});
+document.getElementById("deletedBtn").addEventListener("click",()=>{currentView="deleted";renderParties();});
+document.getElementById("exportBtn").addEventListener("click",exportCSV);
+document.getElementById("refreshBtn").addEventListener("click",loadParties);
 
+try{
+ const projectUrl=window.SUPABASE_URL;
+ const publishableKey=window.SUPABASE_PUBLISHABLE_KEY;
+ if(projectUrl&&publishableKey&&window.supabase){
+  db=window.supabase.createClient(projectUrl,publishableKey);
+ }else{
+  showMessage("Supabase config values not detected. Check supabase-config.js defines SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY.",true);
+ }
+}catch(error){
+ showMessage("Supabase initialization error: "+error.message,true);
+}
 loadParties();
+})();
 </script>
-
 </body>
 </html>
