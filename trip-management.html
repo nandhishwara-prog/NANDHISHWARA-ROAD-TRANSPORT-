@@ -54,6 +54,7 @@ button.secondary{background:#e8eef8;color:#073b8f}button.danger{background:#b423
 </section>
 <section class="panel">
 <div class="hero"><div><h3 style="margin:0">Select LRs for this Trip</h3><div class="muted">Only unassigned LRs within the selected LR date range are shown.</div></div><input id="lrSearch" style="max-width:260px" placeholder="Search LR / party / route" oninput="renderLRs()"></div>
+<div class="actions" style="margin:10px 0"><button type="button" class="secondary" onclick="selectAllVisibleLRs()">Select All Visible LRs</button><button type="button" class="secondary" onclick="clearSelectedLRs()">Clear Selection</button><span class="muted" id="selectedLRCount">0 LRs selected</span></div>
 <div id="lrList" class="lrlist"><div class="muted">Loading LR records…</div></div>
 <div class="msg" id="lrMsg"></div>
 </section>
@@ -66,7 +67,7 @@ button.secondary{background:#e8eef8;color:#073b8f}button.danger{background:#b423
 <script>
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const $=id=>document.getElementById(id);
-let currentUser=null, lrRecords=[], assignedLRs=new Set(), trips=[];
+let currentUser=null, lrRecords=[], assignedLRs=new Set(), trips=[], selectedLRNos=new Set();
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function dateText(v){if(!v)return '—';const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}
 function localDateValue(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
@@ -99,13 +100,34 @@ async function loadData(){
 }
 function renderLRs(){
  const q=$('lrSearch').value.trim().toLowerCase();
- if(!dateRangeValid()){$('lrList').innerHTML='<div class="muted">Please select a valid LR From Date and To Date.</div>';return}
+ if(!dateRangeValid()){$('lrList').innerHTML='<div class="muted">Please select a valid LR From Date and To Date.</div>';updateSelectedLRCount();return}
  const fromDate=$('lrDateFrom').value,toDate=$('lrDateTo').value;
  const available=lrRecords.filter(x=>{const d=lrDateOf(x.lr_date);return d>=fromDate&&d<=toDate&&!assignedLRs.has(String(x.lr_no))&&[x.lr_no,x.consignee_name,x.from_location,x.to_location].join(' ').toLowerCase().includes(q)});
- $('lrList').innerHTML=available.map(x=>`<label class="lr"><input type="checkbox" name="tripLR" value="${esc(x.lr_no)}"><span><b>${esc(x.lr_no)}</b><br>${esc(x.from_location||'—')} → ${esc(x.to_location||'—')}<br><span class="muted">${esc(x.consignee_name||'')} · ${esc(x.packages??'')} pkgs · ${esc(x.lr_date||'')}</span></span></label>`).join('')||'<div class="muted">No unassigned LRs match this search.</div>';
+ $('lrList').innerHTML=available.map(x=>`<label class="lr"><input type="checkbox" name="tripLR" value="${esc(x.lr_no)}" ${selectedLRNos.has(String(x.lr_no))?'checked':''} onchange="toggleLRSelection(this)"><span><b>${esc(x.lr_no)}</b><br>${esc(x.from_location||'—')} → ${esc(x.to_location||'—')}<br><span class="muted">${esc(x.consignee_name||'')} · ${esc(x.packages??'')} pkgs · ${esc(x.lr_date||'')}</span></span></label>`).join('')||'<div class="muted">No unassigned LRs match this date range/search.</div>';
+ updateSelectedLRCount();
+}
+function toggleLRSelection(box){
+ const lr=String(box.value);
+ if(box.checked)selectedLRNos.add(lr);else selectedLRNos.delete(lr);
+ updateSelectedLRCount();
+}
+function updateSelectedLRCount(){
+ const el=$('selectedLRCount');
+ if(el)el.textContent=selectedLRNos.size+' LRs selected';
+}
+function selectAllVisibleLRs(){
+ const visible=[...document.querySelectorAll('input[name="tripLR"]')];
+ if(!visible.length){alert('No available LRs are currently displayed. Please check the date range.');return}
+ visible.forEach(box=>{box.checked=true;selectedLRNos.add(String(box.value))});
+ updateSelectedLRCount();
+}
+function clearSelectedLRs(){
+ selectedLRNos.clear();
+ document.querySelectorAll('input[name="tripLR"]').forEach(box=>box.checked=false);
+ updateSelectedLRCount();
 }
 async function saveTrip(){
- const selected=[...document.querySelectorAll('input[name="tripLR"]:checked')].map(x=>x.value);
+ const selected=[...selectedLRNos];
  const vehicleType=$('vehicleType').value,vehicleNo=$('vehicleNo').value.trim().toUpperCase(),driverName=$('driverName').value.trim();
  const from=$('fromLocation').value.trim(),to=$('toLocation').value.trim(),departure=$('departureAt').value;
  const lrFrom=$('lrDateFrom').value,lrTo=$('lrDateTo').value;
@@ -132,7 +154,7 @@ async function saveTrip(){
  if(printWindow)await fillTripPrint(printWindow,data.id,true);
  else alert('Trip saved. Popup was blocked. Use the Print button in Trip Memo Register.');
  ['vehicleNo','driverName','driverPhone','fromLocation','toLocation','startingKm','hireAmount','notes'].forEach(id=>$(id).value='');
- document.querySelectorAll('input[name="tripLR"]:checked').forEach(x=>x.checked=false);
+ selectedLRNos.clear();
  setDefaultDate();await loadData();
 }
 function renderTrips(){
