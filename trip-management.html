@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NRT Trip / Vehicle Memo</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f5fa;color:#172033;font:15px Arial,sans-serif}
+header{background:#073b8f;color:#fff;padding:16px}header .wrap,main{max-width:1150px;margin:auto}
+.brand{display:flex;align-items:center;gap:12px}.brand img{width:58px;height:58px;object-fit:contain;background:#fff;border-radius:10px;padding:4px}
+h1{font-size:21px;margin:0 0 5px}.tag{margin:0;color:#ffcf22;font-weight:bold;font-size:12px;letter-spacing:1px}
+nav{background:#ffcf22;padding:10px 16px}nav .wrap{max-width:1150px;margin:auto;display:flex;gap:10px;flex-wrap:wrap}
+nav a{color:#073b8f;font-weight:bold;text-decoration:none;padding:7px 10px;border-radius:6px}
+main{padding:20px 14px 40px}.hero{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+h2{margin:0 0 6px;color:#073b8f}.muted{color:#64748b;font-size:13px}.panel{background:#fff;border-radius:13px;padding:18px;margin:16px 0;box-shadow:0 3px 14px #142b4d12}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.field label{display:block;font-size:12px;font-weight:bold;color:#475569;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:#fff;color:#172033}
+textarea{min-height:70px;resize:vertical}.wide{grid-column:1/-1}
+button,.btn{border:0;border-radius:8px;padding:11px 15px;background:#073b8f;color:#fff;font-weight:bold;cursor:pointer;text-decoration:none;display:inline-block}
+button.secondary{background:#e8eef8;color:#073b8f}button.danger{background:#b42318}
+.actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}.msg{font-size:13px;margin-top:10px;color:#475569;white-space:pre-wrap}
+.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:720px}th,td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:13px}th{background:#f5f8fc;color:#334155}
+.lrlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;max-height:330px;overflow:auto;padding:5px}
+.lr{border:1px solid #dbe3ee;border-radius:8px;padding:9px;display:flex;gap:8px;align-items:flex-start;font-size:13px}.lr input{width:auto;margin-top:2px}
+.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e9f1ff;color:#073b8f;font-size:11px;font-weight:bold}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.lrlist{grid-template-columns:1fr}.panel{padding:13px}header{padding:13px}h1{font-size:17px}}
+</style>
+</head>
+<body>
+<header><div class="wrap brand"><img src="nrt-transport-logo.jpg" alt="NRT"><div><h1>NANDHISHWARA ROAD TRANSPORT</h1><p class="tag">ONE DAY DELIVERY SERVICE</p></div></div></header>
+<nav><div class="wrap"><a href="nrt-home.html">Dashboard</a><a href="bilty.html">New LR Booking</a><a href="operations.html">Load / Unload</a><a href="reports.html">LR Reports</a></div></nav>
+<main>
+<div class="hero"><div><h2>Trip / Vehicle Memo</h2><div class="muted">Own vehicles + Market (hired) vehicles · Link multiple existing LRs to one trip</div></div><span class="pill" id="loginState">Checking login…</span></div>
+<section class="panel">
+<h3 style="margin:0 0 14px">Create New Trip Memo</h3>
+<div class="grid">
+<div class="field"><label>Vehicle Type *</label><select id="vehicleType"><option value="Own">Own Vehicle</option><option value="Market">Market / Hired Vehicle</option></select></div>
+<div class="field"><label>Vehicle Number *</label><input id="vehicleNo" placeholder="e.g. TS 00 AB 1234"></div>
+<div class="field"><label>Driver Name *</label><input id="driverName" placeholder="Driver name"></div>
+<div class="field"><label>Driver Phone</label><input id="driverPhone" inputmode="tel" placeholder="10 digit mobile number"></div>
+<div class="field"><label>From Location *</label><input id="fromLocation" placeholder="Loading location"></div>
+<div class="field"><label>To Location *</label><input id="toLocation" placeholder="Unloading location"></div>
+<div class="field"><label>Departure Date & Time *</label><input id="departureAt" type="datetime-local"></div>
+<div class="field"><label>Starting KM (optional)</label><input id="startingKm" type="number" min="0" step="0.1" placeholder="Odometer reading"></div>
+<div class="field"><label>Market Vehicle Hire Amount (₹)</label><input id="hireAmount" type="number" min="0" step="0.01" placeholder="Optional"></div>
+<div class="field wide"><label>Trip Notes</label><textarea id="notes" placeholder="Loading details, driver instructions, etc."></textarea></div>
+</div>
+<div class="actions"><button onclick="saveTrip()">Create Trip Memo</button><button class="secondary" onclick="loadData()">Refresh LR List</button></div>
+<div class="msg" id="formMsg">Select the LRs below before creating the trip.</div>
+</section>
+<section class="panel">
+<div class="hero"><div><h3 style="margin:0">Select LRs for this Trip</h3><div class="muted">Only LRs not already assigned to another trip are shown.</div></div><input id="lrSearch" style="max-width:260px" placeholder="Search LR / party / route" oninput="renderLRs()"></div>
+<div id="lrList" class="lrlist"><div class="muted">Loading LR records…</div></div>
+<div class="msg" id="lrMsg"></div>
+</section>
+<section class="panel">
+<div class="hero"><div><h3 style="margin:0">Trip Memo Register</h3><div class="muted">Update trip status and review attached LR numbers.</div></div><button class="secondary" onclick="loadData()">Refresh Trips</button></div>
+<div class="tablewrap"><table><thead><tr><th>Trip No.</th><th>Date</th><th>Vehicle</th><th>Driver</th><th>Route</th><th>LRs</th><th>Status</th><th>Action</th></tr></thead><tbody id="tripRows"><tr><td colspan="8">Loading…</td></tr></tbody></table></div>
+<div class="msg" id="tripMsg"></div>
+</section>
+</main>
+<script>
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+const $=id=>document.getElementById(id);
+let currentUser=null, lrRecords=[], assignedLRs=new Set(), trips=[];
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function dateText(v){if(!v)return '—';const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}
+function setDefaultDate(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());$('departureAt').value=d.toISOString().slice(0,16)}
+async function init(){
+ const {data,error}=await sb.auth.getSession();
+ if(error||!data.session){location.href='bilty.html';return}
+ currentUser=data.session.user;$('loginState').textContent='Logged in';
+ setDefaultDate();await loadData();
+}
+async function loadData(){
+ $('lrMsg').textContent='Loading existing LR records…';$('tripMsg').textContent='';
+ const [lrRes,tripRes,linkRes]=await Promise.all([
+  sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,status').order('lr_date',{ascending:false}).limit(1000),
+  sb.from('nrt_trips').select('*').order('created_at',{ascending:false}).limit(500),
+  sb.from('nrt_trip_lrs').select('lr_no,trip_id')
+ ]);
+ if(lrRes.error){$('lrMsg').textContent='LR load error: '+lrRes.error.message;return}
+ if(tripRes.error){$('tripMsg').textContent='Trip table error: '+tripRes.error.message+' — Please run the SQL setup file.';return}
+ if(linkRes.error){$('lrMsg').textContent='Trip-LR link table error: '+linkRes.error.message+' — Please run the SQL setup file.';return}
+ lrRecords=(lrRes.data||[]).filter(x=>String(x.status||'').toLowerCase()!=='cancelled');
+ trips=tripRes.data||[];assignedLRs=new Set((linkRes.data||[]).map(x=>String(x.lr_no)));
+ renderLRs();renderTrips();
+ $('lrMsg').textContent=lrRecords.length+' active LR records loaded. Assigned LRs are hidden from selection.';
+}
+function renderLRs(){
+ const q=$('lrSearch').value.trim().toLowerCase();
+ const available=lrRecords.filter(x=>!assignedLRs.has(String(x.lr_no)) && [x.lr_no,x.consignee_name,x.from_location,x.to_location].join(' ').toLowerCase().includes(q));
+ $('lrList').innerHTML=available.map(x=>`<label class="lr"><input type="checkbox" name="tripLR" value="${esc(x.lr_no)}"><span><b>${esc(x.lr_no)}</b><br>${esc(x.from_location||'—')} → ${esc(x.to_location||'—')}<br><span class="muted">${esc(x.consignee_name||'')} · ${esc(x.packages??'')} pkgs · ${esc(x.lr_date||'')}</span></span></label>`).join('')||'<div class="muted">No unassigned LRs match this search.</div>';
+}
+async function saveTrip(){
+ const selected=[...document.querySelectorAll('input[name="tripLR"]:checked')].map(x=>x.value);
+ const vehicleType=$('vehicleType').value,vehicleNo=$('vehicleNo').value.trim().toUpperCase(),driverName=$('driverName').value.trim();
+ const from=$('fromLocation').value.trim(),to=$('toLocation').value.trim(),departure=$('departureAt').value;
+ if(!vehicleNo||!driverName||!from||!to||!departure){alert('Please fill Vehicle Number, Driver Name, From, To and Departure Date/Time.');return}
+ if(!selected.length){alert('Please select at least one LR for this trip.');return}
+ $('formMsg').textContent='Saving trip memo…';
+ const tripNo='NRT-TR-'+Date.now().toString().slice(-8);
+ const row={trip_no:tripNo,vehicle_type:vehicleType,vehicle_no:vehicleNo,driver_name:driverName,driver_phone:$('driverPhone').value.trim()||null,from_location:from,to_location:to,departure_at:new Date(departure).toISOString(),starting_km:$('startingKm').value===''?null:Number($('startingKm').value),hire_amount:$('hireAmount').value===''?0:Number($('hireAmount').value),notes:$('notes').value.trim()||null,status:'Planned',created_by:currentUser.id};
+ const {data,error}=await sb.from('nrt_trips').insert(row).select('id,trip_no').single();
+ if(error){$('formMsg').textContent='Trip save failed: '+error.message;return}
+ const links=selected.map(lr_no=>({trip_id:data.id,lr_no,created_by:currentUser.id}));
+ const {error:linkError}=await sb.from('nrt_trip_lrs').insert(links);
+ if(linkError){
+  await sb.from('nrt_trips').delete().eq('id',data.id);
+  $('formMsg').textContent='LR linking failed; trip record rolled back. '+linkError.message;return;
+ }
+ $('formMsg').textContent='Trip memo '+data.trip_no+' created successfully with '+selected.length+' LR(s).';
+ ['vehicleNo','driverName','driverPhone','fromLocation','toLocation','startingKm','hireAmount','notes'].forEach(id=>$(id).value='');
+ document.querySelectorAll('input[name="tripLR"]:checked').forEach(x=>x.checked=false);
+ setDefaultDate();await loadData();
+}
+function renderTrips(){
+ $('tripRows').innerHTML=trips.map(t=>{
+  const lrCount='';return `<tr><td><b>${esc(t.trip_no)}</b></td><td>${dateText(t.departure_at)}</td><td>${esc(t.vehicle_no)}<br><span class="muted">${esc(t.vehicle_type)}</span></td><td>${esc(t.driver_name)}<br><span class="muted">${esc(t.driver_phone||'')}</span></td><td>${esc(t.from_location)} → ${esc(t.to_location)}</td><td><button class="secondary" onclick="showTripLRs(${Number(t.id)})">View LRs</button></td><td><select id="status-${Number(t.id)}"><option ${t.status==='Planned'?'selected':''}>Planned</option><option ${t.status==='Dispatched'?'selected':''}>Dispatched</option><option ${t.status==='Arrived'?'selected':''}>Arrived</option><option ${t.status==='Closed'?'selected':''}>Closed</option></select></td><td><button onclick="updateStatus(${Number(t.id)})">Update</button></td></tr>`
+ }).join('')||'<tr><td colspan="8">No trip memos created yet.</td></tr>';
+}
+async function showTripLRs(id){
+ const {data,error}=await sb.from('nrt_trip_lrs').select('lr_no').eq('trip_id',id);
+ if(error){alert(error.message);return}alert('LRs in this trip:\n'+(data||[]).map(x=>x.lr_no).join('\n'));
+}
+async function updateStatus(id){
+ const status=$('status-'+id).value;
+ const {error}=await sb.from('nrt_trips').update({status}).eq('id',id).eq('created_by',currentUser.id);
+ $('tripMsg').textContent=error?'Status update failed: '+error.message:'Trip status updated to '+status+'.';
+ if(!error)await loadData();
+}
+async function logout(){await sb.auth.signOut();location.href='bilty.html'}
+window.addEventListener('load',init);
+</script>
+</body></html>
