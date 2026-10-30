@@ -87,7 +87,7 @@ async function init(){
 async function loadData(){
  $('lrMsg').textContent='Loading existing LR records…';$('tripMsg').textContent='';
  const [lrRes,tripRes,linkRes]=await Promise.all([
-  sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,status,freight,hamali,other_charges').order('lr_date',{ascending:false}).limit(1000),
+  sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,status,freight,stationary,hamali,door_pickup,door_delivery,insurance,other_charges').order('lr_date',{ascending:false}).limit(1000),
   sb.from('nrt_trips').select('*').order('created_at',{ascending:false}).limit(500),
   sb.from('nrt_trip_lrs').select('lr_no,trip_id')
  ]);
@@ -181,7 +181,7 @@ function printDocHtml(trip,lrRows){
  const phone='9885410410 | 9989581732';
  const gst='36HSYPK0996J1ZM';
  const money=v=>'₹'+(Number(v)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
- const lrAmount=x=>(Number(x.freight)||0)+(Number(x.hamali)||0)+(Number(x.other_charges)||0);
+ const lrAmount=x=>['freight','stationary','hamali','door_pickup','door_delivery','insurance','other_charges'].reduce((sum,key)=>sum+(Number(x[key])||0),0);
  const rows=lrRows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.lr_no)}</td><td>${esc(formatDateDMY(x.lr_date))}</td><td>${esc(x.to_location||'—')}</td><td>${esc(x.consignee_name||'—')}</td><td>${esc(x.packages??'—')}</td><td class="amount">${money(lrAmount(x))}</td></tr>`).join('');
  const totalPackages=lrRows.reduce((n,x)=>n+(Number(x.packages)||0),0);
  const totalLRAmount=lrRows.reduce((n,x)=>n+lrAmount(x),0);
@@ -228,7 +228,7 @@ async function fillTripPrint(win,id,autoPrint){
  ]);
  if(tripRes.error||linkRes.error){win.document.body.innerHTML='<p>Could not load Trip Memo: '+esc((tripRes.error||linkRes.error).message)+'</p>';return}
  const lrNos=(linkRes.data||[]).map(x=>x.lr_no);
- const lrRes=lrNos.length?await sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,freight,hamali,other_charges').in('lr_no',lrNos):{data:[],error:null};
+ const lrRes=lrNos.length?await sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,freight,stationary,hamali,door_pickup,door_delivery,insurance,other_charges').in('lr_no',lrNos):{data:[],error:null};
  if(lrRes.error){win.document.body.innerHTML='<p>Could not load LR details: '+esc(lrRes.error.message)+'</p>';return}
  win.document.open();win.document.write(printDocHtml(tripRes.data,lrRes.data||[]));win.document.close();
 }
