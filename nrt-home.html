@@ -1,151 +1,94 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NANDHISHWARA ROAD TRANSPORT | Dashboard</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NRT Professional Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-config.js"></script>
 <style>
-*{box-sizing:border-box}
-:root{--navy:#073b8f;--yellow:#ffcf22;--ink:#102c54}
-html,body{margin:0;min-height:100%;font-family:Arial,sans-serif;color:var(--ink)}
-body{
- min-height:100vh;
- background:#e9f0fa url('shiva-parvathi-background.jpg') center center/cover fixed no-repeat;
-}
-.page-shade{
- min-height:100vh;
- background:linear-gradient(120deg,rgba(255,255,255,.28),rgba(255,255,255,.42));
-}
-.top{
- background:rgba(255,207,34,.96);color:var(--navy);
- padding:14px clamp(12px,3vw,32px);
- box-shadow:0 3px 14px #082a5520;
-}
-.top-inner{max-width:1450px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
-.brand{display:flex;align-items:center;gap:16px;min-width:0}
-.logo{
- width:76px;height:76px;border-radius:50%;flex:none;display:block;object-fit:cover;
- border:3px solid var(--navy);background:#ffdf53;box-shadow:0 2px 8px #092b5220;
-}
-.brand h1{margin:0;font-size:clamp(17px,2.6vw,34px);line-height:1.15;font-weight:900}
-.tag{margin:5px 0 0;font-size:clamp(11px,1.4vw,17px);font-weight:800;letter-spacing:.7px}
-.gstin{margin:6px 0 0;font-size:clamp(11px,1.25vw,15px);font-weight:800}
-.contact{text-align:right;font-weight:800;line-height:1.65;font-size:clamp(11px,1.2vw,15px)}
-.navbar{background:rgba(7,59,143,.97);color:#fff}
-.navinner{max-width:1450px;margin:auto;display:flex;align-items:center;gap:3px;padding:7px 12px;overflow-x:auto}
-.navinner a,.navinner button{
- flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;
- border:0;border-radius:8px;background:transparent;color:#fff;text-decoration:none;
- padding:12px 14px;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap
-}
-.navinner a:hover,.navinner button:hover{background:rgba(255,255,255,.16)}
-.navinner .active{background:var(--yellow);color:var(--navy)}
-.navinner .logout{margin-left:auto;background:#c62828;color:#fff}
-main{max-width:1450px;margin:auto;padding:clamp(18px,4vw,48px) clamp(12px,3vw,30px) 34px}
-.welcome{
- display:flex;align-items:center;justify-content:space-between;gap:22px;
- padding:clamp(18px,2.4vw,30px);border-radius:20px;
- background:rgba(255,255,255,.70);border:1px solid rgba(255,255,255,.82);
- box-shadow:0 10px 30px #092b5220;backdrop-filter:blur(2px);
-}
-.welcome h2{margin:4px 0;color:var(--navy);font-size:clamp(24px,3vw,38px)}
-.welcome p{margin:6px 0 0;color:#334155;font-weight:700}
-.eyebrow{font-size:14px;letter-spacing:1px;text-transform:uppercase}
-.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:24px}
-.tile{
- min-height:142px;display:flex;align-items:center;gap:16px;padding:20px;
- border-radius:17px;background:rgba(255,255,255,.76);border:1px solid rgba(255,255,255,.92);
- box-shadow:0 8px 24px #092b521a;text-decoration:none;color:var(--ink);
- transition:transform .15s,background .15s;
-}
-.tile:hover{transform:translateY(-3px);background:rgba(255,255,255,.9)}
-.tile-icon{width:64px;height:64px;flex:none;border-radius:15px;display:grid;place-items:center;color:#fff;font-size:23px;font-weight:900;letter-spacing:.2px}
-.blue{background:#2386e8}.green{background:#269b58}.orange{background:#ff8916}.purple{background:#7750ed}
-.pink{background:#f02d72}.teal{background:#078b9d}.gold{background:#b8950c}.slate{background:#596b80}
-.tile h3{margin:0 0 7px;font-size:clamp(15px,1.5vw,20px);color:var(--navy)}
-.tile p{margin:0;color:#475569;font-size:13px;font-weight:700;line-height:1.4}
-.section-title{margin:28px 0 0;color:var(--navy);font-size:18px}
-footer{background:rgba(7,59,143,.88);color:#fff;padding:14px 22px}
-.foot-inner{max-width:1450px;margin:auto;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px}
-@media(max-width:1000px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.contact{display:none}}
-@media(max-width:560px){
- .top-inner{align-items:flex-start}.logo{width:52px;height:52px;font-size:15px}.brand{gap:10px}
- .navinner{padding:6px}.navinner a,.navinner button{padding:10px;font-size:12px}
- .welcome{align-items:flex-start;flex-direction:column}
- .cards{grid-template-columns:1fr;gap:12px}.tile{min-height:108px;padding:15px}.tile-icon{width:54px;height:54px}
- main{padding-top:18px}
-}
-</style>
-</head>
-<body>
-<div class="page-shade">
-<header class="top">
- <div class="top-inner">
-  <div class="brand">
-   <img class="logo" src="nrt-transport-logo.jpg" alt="Nandhishwara Road Transport logo">
-   <div>
-    <h1>NANDHISHWARA ROAD TRANSPORT</h1>
-    <p class="tag">ONE DAY DELIVERY SERVICE</p>
-    <p class="gstin">GSTIN: 36HSYPK0996J1ZM</p>
-   </div>
-  </div>
-  <div class="contact">
-   <div>Autonagar, Hyderabad - 500070</div>
-   <div>Phone: 9885410410 | 9989581732</div>
-  </div>
- </div>
-</header>
-<nav class="navbar" aria-label="Main navigation">
- <div class="navinner">
-  <a class="active" href="nrt-home.html">HOME</a>
-  <a href="bilty.html">BOOKING</a>
-  <a href="operations.html">LOAD / UNLOAD</a>
-  <a href="operations.html">DELIVERY</a>
-  <a href="reports.html">ENQUIRIES</a>
-  <a href="reports.html">REPORTS</a>
-  <a href="reports.html">MODIFICATION / LR SEARCH</a>
-  <button type="button" onclick="window.location.href='reports.html'">MAIL BOX / REPORTS</button>
-  <button class="logout" type="button" onclick="logout()">LOGOUT</button>
- </div>
-</nav>
+*{box-sizing:border-box}:root{--navy:#073b8f;--yellow:#ffcf22;--ink:#102c54}
+body{margin:0;min-height:100vh;font-family:Arial,sans-serif;color:var(--ink);background:#e9f0fa url('shiva-parvathi-background.jpg') center/cover fixed no-repeat}
+.shade{min-height:100vh;background:linear-gradient(120deg,#ffffff55,#ffffff88)}
+header{background:#ffcf22f5;padding:12px 3%;box-shadow:0 3px 14px #082a5520}.head{max-width:1450px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{display:flex;align-items:center;gap:12px}.logo{width:64px;height:64px;object-fit:cover;border-radius:50%;border:3px solid var(--navy)}
+h1{font-size:clamp(16px,2.5vw,29px);margin:0;color:var(--navy)}.tag,.gst{font-size:11px;font-weight:900;margin:4px 0;color:var(--navy);letter-spacing:.7px}.contact{text-align:right;font-size:12px;font-weight:bold;line-height:1.6;color:var(--navy)}
+nav{background:#073b8f;color:white}.nav{max-width:1450px;margin:auto;display:flex;gap:4px;padding:7px 12px;overflow-x:auto}nav a,nav button{flex:none;color:white;text-decoration:none;border:0;background:transparent;padding:11px 13px;border-radius:8px;font-weight:800;white-space:nowrap;cursor:pointer}nav .active{background:#ffcf22;color:#073b8f}nav .logout{margin-left:auto;background:#c62828}
+main{max-width:1450px;margin:auto;padding:22px 3% 35px}.welcome,.stat,.tile,.panel{background:#fffffff0;border:1px solid white;border-radius:15px;box-shadow:0 5px 20px #092b5218}
+.welcome{padding:20px 23px;display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap}.welcome h2{margin:5px 0;color:var(--navy);font-size:clamp(23px,3vw,34px)}.welcome p{margin:5px 0;color:#475569;font-weight:bold}.eyebrow{font-size:12px;font-weight:900;color:#64748b;letter-spacing:1px}.date{background:#eaf2ff;color:var(--navy);padding:9px 13px;border-radius:20px;font-weight:bold;font-size:13px}
+h2.section{margin:22px 0 10px;color:var(--navy);font-size:18px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.stat{padding:15px;min-width:0}.stat label{font-size:12px;color:#526174;font-weight:800}.stat strong{display:block;font-size:clamp(22px,2.5vw,30px);color:var(--navy);margin-top:8px}.stat small{font-size:11px;color:#64748b}.ico{float:right;border-radius:9px;padding:9px;color:white;font-weight:900;background:#2386e8}.green{background:#269b58}.orange{background:#ff8916}.purple{background:#7750ed}.teal{background:#078b9d}.gold{background:#b8950c}.red{background:#c62828}
+.quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.tile{display:flex;align-items:center;gap:13px;padding:15px;text-decoration:none;color:var(--ink)}.tile:hover{background:white;transform:translateY(-2px)}.tile i{width:46px;height:46px;flex:none;border-radius:11px;display:grid;place-items:center;color:white;font-weight:900;font-style:normal;background:#2386e8}.tile b{display:block;color:var(--navy);font-size:14px}.tile span{font-size:11px;color:#64748b;line-height:1.4}
+.panels{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:14px}.panel{padding:16px;min-width:0}.panel h3{margin:0 0 12px;color:var(--navy)}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:560px}th,td{padding:9px 8px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:12px;white-space:nowrap}th{background:#eef5ff;color:var(--navy)}.status{padding:4px 8px;border-radius:20px;background:#eaf2ff;color:#174b88;font-size:10px;font-weight:900}.delivered{background:#e5f7eb;color:#16713a}.cancelled{background:#fee2e2;color:#991b1b}.route{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:12px}.route b{color:var(--navy)}.btn{display:inline-block;padding:10px 14px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:900;background:var(--navy);color:white;margin:10px 5px 0 0}
+#loadMsg{font-size:12px;color:#9a3412;font-weight:bold;margin-top:10px;white-space:pre-wrap}footer{background:#073b8fe8;color:white;padding:14px 3%;font-size:12px}.foot{max-width:1450px;margin:auto;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media(max-width:950px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.quick{grid-template-columns:repeat(2,minmax(0,1fr))}.panels{grid-template-columns:1fr}.contact{display:none}}
+@media(max-width:560px){.logo{width:47px;height:47px}.tag,.gst{font-size:9px}.nav{padding:6px}.nav a,.nav button{font-size:11px;padding:10px}.welcome{padding:15px}.stats{gap:8px}.stat{padding:11px}.quick{grid-template-columns:1fr;gap:9px}.tile{padding:12px}main{padding:14px 9px 25px}}
+</style></head>
+<body><div class="shade">
+<header><div class="head"><div class="brand"><img class="logo" src="nrt-transport-logo.jpg" alt="NRT Logo"><div><h1>NANDHISHWARA ROAD TRANSPORT</h1><p class="tag">ONE DAY DELIVERY SERVICE</p><p class="gst">GSTIN: 36HSYPK0996J1ZM</p></div></div><div class="contact">Autonagar, Hyderabad - 500070<br>Phone: 9885410410 | 9989581732</div></div></header>
+<nav><div class="nav"><a class="active" href="nrt-home.html">HOME</a><a href="bilty.html">BOOKING</a><a href="operations.html">LOAD / UNLOAD</a><a href="operations.html">DELIVERY</a><a href="reports.html">ENQUIRIES</a><a href="reports.html">REPORTS</a><a href="reports.html">MODIFICATION / LR SEARCH</a><button onclick="location.href='reports.html'">MAIL BOX / REPORTS</button><button class="logout" onclick="logout()">LOGOUT</button></div></nav>
 <main>
- <section class="welcome">
-  <div>
-   <div class="eyebrow">Login successful</div>
-   <h2>NRT Transport Dashboard</h2>
-   <p>Fast &amp; Safe Transport Service - One Day Delivery Service</p>
-  </div>
- </section>
- <h2 class="section-title">Quick Access</h2>
- <section class="cards">
-  <a class="tile" href="bilty.html"><span class="tile-icon blue">LR</span><span><h3>New Bilty / LR</h3><p>Create and manage transport LR bookings.</p></span></a>
-  <a class="tile" href="operations.html"><span class="tile-icon green">LU</span><span><h3>Load / Unload</h3><p>Open the operations workflow.</p></span></a>
-  <a class="tile" href="operations.html"><span class="tile-icon orange">D</span><span><h3>Delivery</h3><p>Manage delivery status and proof workflow.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon purple">?</span><span><h3>Enquiries</h3><p>Search LR records and details.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon pink">R</span><span><h3>LR Reports</h3><p>Search, print reports and export to Excel.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon teal">M</span><span><h3>Modification</h3><p>Open the existing reports/LR lookup page.</p></span></a>
-  <a class="tile" href="reports.html"><span class="tile-icon gold">MB</span><span><h3>Mail Box</h3><p>Open the existing report area.</p></span></a>
-  <button class="tile" style="text-align:left;font:inherit;cursor:pointer" onclick="logout()"><span class="tile-icon slate">OUT</span><span><h3>Logout</h3><p>Sign out of the NRT account securely.</p></span></button>
- </section>
-</main>
-<footer><div class="foot-inner"><span>Copyright 2026 NANDHISHWARA ROAD TRANSPORT. All Rights Reserved.</span><span>Designed for Fast &amp; Safe Transport Service</span></div></footer>
+<section class="welcome"><div><div class="eyebrow">NRT MANAGEMENT OVERVIEW</div><h2>Professional Dashboard</h2><p>Bookings, collections and delivery performance at a glance.</p></div><div class="date" id="todayLabel">Loading date…</div></section>
+<div id="loadMsg">Loading NRT records…</div>
+<h2 class="section">Business Overview</h2>
+<section class="stats">
+<div class="stat"><i class="ico">LR</i><label>Today's Bookings</label><strong id="todayCount">—</strong><small>LRs booked today</small></div>
+<div class="stat"><i class="ico green">M</i><label>This Month Bookings</label><strong id="monthCount">—</strong><small>LRs booked this month</small></div>
+<div class="stat"><i class="ico purple">Σ</i><label>Total NRT Bookings</label><strong id="allCount">—</strong><small>Records available to this login</small></div>
+<div class="stat"><i class="ico orange">PK</i><label>Packages This Month</label><strong id="packages">—</strong><small>Total packages booked</small></div>
+<div class="stat"><i class="ico teal">₹</i><label>Freight This Month</label><strong id="freight">—</strong><small>Freight amount booked</small></div>
+<div class="stat"><i class="ico gold">₹</i><label>Total Charges This Month</label><strong id="revenue">—</strong><small>Freight + Hamali + LR charge</small></div>
+<div class="stat"><i class="ico red">!</i><label>Pending LRs</label><strong id="pending">—</strong><small>Not marked Delivered / Cancelled</small></div>
+<div class="stat"><i class="ico green">✓</i><label>Delivered LRs</label><strong id="delivered">—</strong><small>Marked Delivered</small></div>
+</section>
+<h2 class="section">Quick Access</h2>
+<section class="quick">
+<a class="tile" href="bilty.html"><i>LR</i><span><b>New Bilty / LR</b>Create a new transport booking</span></a>
+<a class="tile" href="operations.html"><i class="green">LU</i><span><b>Load / Unload</b>Open operations workflow</span></a>
+<a class="tile" href="operations.html"><i class="orange">D</i><span><b>Delivery</b>Manage delivery updates</span></a>
+<a class="tile" href="reports.html"><i class="purple">R</i><span><b>LR Reports</b>Search, print and export records</span></a>
+</section>
+<section class="panels">
+<div class="panel"><h3>Recent NRT Bookings</h3><div class="tablewrap"><table><thead><tr><th>LR Number</th><th>Date</th><th>From</th><th>To</th><th>Consignee</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentRows"><tr><td colspan="7">Loading…</td></tr></tbody></table></div><a class="btn" href="reports.html">Open Full Reports</a><a class="btn" href="bilty.html">+ New Booking</a></div>
+<div class="panel"><h3>Top Routes This Month</h3><div id="routes"><div class="route">Loading route summary…</div></div><p style="font-size:11px;color:#64748b;margin-top:12px">Based on From and To locations in this month's NRT LR records.</p></div>
+</section></main>
+<footer><div class="foot"><span>Copyright 2026 NANDHISHWARA ROAD TRANSPORT. All Rights Reserved.</span><span>Fast &amp; Safe Transport Service</span></div></footer>
 </div>
 <script>
-const sb = window.supabase.createClient(
- SUPABASE_URL,
- SUPABASE_PUBLISHABLE_KEY,
- {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}}
-);
-async function logout(){
- await sb.auth.signOut();
- location.href='bilty.html';
+const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
+const $=id=>document.getElementById(id);
+function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:0})}
+function esc(v){return String(v??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+function dayKey(d){return String(d||'').slice(0,10)}
+function total(x){return (+x.freight||0)+(+x.hamali||0)+(+x.other_charges||0)}
+function statusText(x){return String(x.status||'Booked').trim()}
+function statusClass(s){s=s.toLowerCase();return s==='delivered'?'delivered':s==='cancelled'?'cancelled':''}
+async function logout(){await sb.auth.signOut();location.href='bilty.html'}
+async function loadDashboard(){
+ const {data:{session},error:authError}=await sb.auth.getSession();
+ if(authError||!session){location.href='bilty.html';return}
+ const now=new Date(),today=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-'+String(now.getDate()).padStart(2,'0'),month=today.slice(0,7);
+ $('todayLabel').textContent=now.toLocaleDateString('en-IN',{weekday:'long',day:'2-digit',month:'long',year:'numeric'});
+ let all=[],offset=0,page=1000;
+ while(true){
+  const {data,error}=await sb.from('lrs').select('id,lr_no,lr_date,from_location,to_location,consignee_name,packages,freight,hamali,other_charges,status').like('lr_no','NRT/%').order('lr_date',{ascending:false}).range(offset,offset+page-1);
+  if(error){$('loadMsg').textContent='Dashboard data load failed: '+error.message+'\nPlease check existing Supabase login and lrs table access.';return}
+  all=all.concat(data||[]);if(!data||data.length<page)break;offset+=page;
+ }
+ const active=all.filter(x=>String(x.status||'').toLowerCase()!=='cancelled');
+ const todayRows=active.filter(x=>dayKey(x.lr_date)===today),monthRows=active.filter(x=>dayKey(x.lr_date).slice(0,7)===month);
+ const delivered=active.filter(x=>String(x.status||'').toLowerCase()==='delivered');
+ const pending=active.filter(x=>String(x.status||'').toLowerCase()!=='delivered');
+ $('todayCount').textContent=todayRows.length.toLocaleString('en-IN');
+ $('monthCount').textContent=monthRows.length.toLocaleString('en-IN');
+ $('allCount').textContent=all.length.toLocaleString('en-IN');
+ $('packages').textContent=monthRows.reduce((n,x)=>n+(+x.packages||0),0).toLocaleString('en-IN');
+ $('freight').textContent=money(monthRows.reduce((n,x)=>n+(+x.freight||0),0));
+ $('revenue').textContent=money(monthRows.reduce((n,x)=>n+total(x),0));
+ $('pending').textContent=pending.length.toLocaleString('en-IN');
+ $('delivered').textContent=delivered.length.toLocaleString('en-IN');
+ $('loadMsg').textContent='Last updated: '+now.toLocaleTimeString('en-IN')+' · '+all.length.toLocaleString('en-IN')+' NRT LR records loaded.';
+ $('recentRows').innerHTML=all.slice(0,10).map(x=>{const st=statusText(x);return '<tr><td><b>'+esc(x.lr_no)+'</b></td><td>'+esc(dayKey(x.lr_date))+'</td><td>'+esc(x.from_location||'—')+'</td><td>'+esc(x.to_location||'—')+'</td><td>'+esc(x.consignee_name||'—')+'</td><td>'+money(total(x))+'</td><td><span class="status '+statusClass(st)+'">'+esc(st)+'</span></td></tr>'}).join('')||'<tr><td colspan="7">No NRT bookings found.</td></tr>';
+ const map={};monthRows.forEach(x=>{const k=String(x.from_location||'—').trim()+' → '+String(x.to_location||'—').trim();map[k]=(map[k]||0)+1});
+ $('routes').innerHTML=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([name,n])=>'<div class="route"><b>'+esc(name)+'</b><span>'+n+' LR'+(n===1?'':'s')+'</span></div>').join('')||'<div class="route">No bookings this month.</div>';
 }
-window.addEventListener('load',async()=>{
- const {data,error}=await sb.auth.getSession();
- if(error || !data.session){location.href='bilty.html';}
-});
-</script>
-</body>
-</html>
+window.addEventListener('load',loadDashboard);
+</script></body></html>
