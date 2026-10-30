@@ -138,17 +138,17 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
 <div class="full party-pair">
   <section class="party-panel">
     <h3>CONSIGNOR DETAILS</h3>
-    <div><label for="consignor_name">Name</label><input id="consignor_name" list="partyNames" autocomplete="off" placeholder="Select party from Party Master"><a href="party-master.html" target="_blank" style="font-size:11px;font-weight:700;color:#1257a6">+ Add / Manage Party</a></div>
+    <div><label for="consignor_name">Name</label><input id="consignor_name" list="partyNames" autocomplete="off"><a href="party-master.html" target="_blank" style="font-size:11px;font-weight:700;color:#1257a6">+ Add / Manage Party</a></div>
     <div><label for="consignor_phone">Phone No</label><input id="consignor_phone" inputmode="tel"></div>
     <div><label for="consignor_gstin">GSTIN</label><input id="consignor_gstin" autocomplete="off"></div>
-    <div><label for="consignor_address">Address</label><textarea id="consignor_address" placeholder="Consignor address"></textarea></div>
+    <div><label for="consignor_address">Address</label><textarea id="consignor_address"></textarea></div>
   </section>
   <section class="party-panel">
     <h3>CONSIGNEE DETAILS</h3>
-    <div><label for="consignee_name">Name</label><input id="consignee_name" list="partyNames" autocomplete="off" placeholder="Select party from Party Master"><a href="party-master.html" target="_blank" style="font-size:11px;font-weight:700;color:#1257a6">+ Add / Manage Party</a></div>
+    <div><label for="consignee_name">Name</label><input id="consignee_name" list="partyNames" autocomplete="off"><a href="party-master.html" target="_blank" style="font-size:11px;font-weight:700;color:#1257a6">+ Add / Manage Party</a></div>
     <div><label for="consignee_phone">Phone No</label><input id="consignee_phone" inputmode="tel"></div>
     <div><label for="consignee_gstin">GSTIN</label><input id="consignee_gstin" autocomplete="off"></div>
-    <div><label for="consignee_address">Address</label><textarea id="consignee_address" placeholder="Consignee address"></textarea></div>
+    <div><label for="consignee_address">Address</label><textarea id="consignee_address"></textarea></div>
   </section>
 </div>
 
@@ -324,6 +324,48 @@ status:(currentLR && editingId && currentLR.status ? currentLR.status : 'Booked'
 }
 }
 
+// Save consignor and consignee details into Party Master after the LR is saved.
+async function savePartyMasterEntry(name,phone,gstin,address){
+  const partyName=String(name||'').trim();
+  if(!partyName) return;
+
+  const {data:parties,error:readError}=await sb
+    .from('nrt_parties')
+    .select('id,party_name,phone,gstin,address')
+    .limit(2000);
+  if(readError) throw readError;
+
+  const key=partyName.toLocaleLowerCase();
+  const existing=(parties||[]).find(p=>
+    String(p.party_name||'').trim().toLocaleLowerCase()===key
+  );
+
+  const details={
+    party_name:partyName,
+    phone:String(phone||'').trim(),
+    gstin:String(gstin||'').trim().toUpperCase(),
+    address:String(address||'').trim()
+  };
+
+  if(existing){
+    const updateData={
+      party_name:partyName,
+      phone:details.phone || existing.phone || '',
+      gstin:details.gstin || existing.gstin || '',
+      address:details.address || existing.address || ''
+    };
+    const {error}=await sb.from('nrt_parties')
+      .update(updateData).eq('id',existing.id);
+    if(error) throw error;
+  }else{
+    const {error}=await sb.from('nrt_parties').insert({
+      ...details,
+      is_active:true
+    });
+    if(error) throw error;
+  }
+}
+
 async function saveLR(){
 let r=row();
 let q=editingId?
@@ -334,6 +376,22 @@ let{error}=await q;
 if(error){msg(error.message);return}
 
 msg(`${r.lr_no} saved successfully.`);
+let partySaveWarnings=[];
+for(const p of [
+  {name:r.consignor_name,phone:r.consignor_phone,gstin:r.consignor_gstin,address:r.consignor_address},
+  {name:r.consignee_name,phone:r.consignee_phone,gstin:r.consignee_gstin,address:r.consignee_address}
+]){
+  try{
+    await savePartyMasterEntry(p.name,p.phone,p.gstin,p.address);
+  }catch(e){
+    partySaveWarnings.push(e.message||String(e));
+  }
+}
+if(partySaveWarnings.length){
+  msg(`${r.lr_no} saved. Party Master update failed: ${partySaveWarnings.join(' | ')}`);
+}else{
+  msg(`${r.lr_no} saved successfully. Consignor and Consignee details saved to Party Master.`);
+}
 try{
   const savedGST=JSON.parse(localStorage.getItem('nrt_party_gstins')||'{}');
   if(r.consignor_name && r.consignor_gstin)savedGST[r.consignor_name.trim()]=r.consignor_gstin.trim().toUpperCase();
