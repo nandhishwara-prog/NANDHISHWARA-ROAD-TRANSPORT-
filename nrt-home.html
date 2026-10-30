@@ -18,9 +18,16 @@ main{max-width:1450px;margin:auto;padding:22px 3% 35px}.welcome,.stat,.tile,.pan
 h2.section{margin:22px 0 10px;color:var(--navy);font-size:18px}.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.stat{padding:15px;min-width:0}.stat label{font-size:12px;color:#526174;font-weight:800}.stat strong{display:block;font-size:clamp(22px,2.5vw,30px);color:var(--navy);margin-top:8px}.stat small{font-size:11px;color:#64748b}.ico{float:right;border-radius:9px;padding:9px;color:white;font-weight:900;background:#2386e8}.green{background:#269b58}.orange{background:#ff8916}.purple{background:#7750ed}.teal{background:#078b9d}.gold{background:#b8950c}.red{background:#c62828}
 .quick{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}.tile{display:flex;align-items:center;gap:13px;padding:15px;text-decoration:none;color:var(--ink)}.tile:hover{background:white;transform:translateY(-2px)}.tile i{width:46px;height:46px;flex:none;border-radius:11px;display:grid;place-items:center;color:white;font-weight:900;font-style:normal;background:#2386e8}.tile b{display:block;color:var(--navy);font-size:14px}.tile span{font-size:11px;color:#64748b;line-height:1.4}
 .panels{display:grid;grid-template-columns:1.5fr 1fr;gap:14px;margin-top:14px}.panel{padding:16px;min-width:0}.panel h3{margin:0 0 12px;color:var(--navy)}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:560px}th,td{padding:9px 8px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:12px;white-space:nowrap}th{background:#eef5ff;color:var(--navy)}.status{padding:4px 8px;border-radius:20px;background:#eaf2ff;color:#174b88;font-size:10px;font-weight:900}.delivered{background:#e5f7eb;color:#16713a}.cancelled{background:#fee2e2;color:#991b1b}.route{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #e2e8f0;font-size:12px}.route b{color:var(--navy)}.btn{display:inline-block;padding:10px 14px;border-radius:8px;text-decoration:none;font-size:12px;font-weight:900;background:var(--navy);color:white;margin:10px 5px 0 0}
-#loadMsg{font-size:12px;color:#9a3412;font-weight:bold;margin-top:10px;white-space:pre-wrap}footer{background:#073b8fe8;color:white;padding:14px 3%;font-size:12px}.foot{max-width:1450px;margin:auto;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-@media(max-width:950px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.quick{grid-template-columns:repeat(2,minmax(0,1fr))}.panels{grid-template-columns:1fr}.contact{display:none}}
-@media(max-width:560px){.logo{width:47px;height:47px}.tag,.gst{font-size:9px}.nav{padding:6px}.nav a,.nav button{font-size:11px;padding:10px}.welcome{padding:15px}.stats{gap:8px}.stat{padding:11px}.quick{grid-template-columns:1fr;gap:9px}.tile{padding:12px}main{padding:14px 9px 25px}}
+#loadMsg{font-size:12px;color:#9a3412;font-weight:bold;margin-top:10px;white-space:pre-wrap}
+.expense-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-bottom:12px}
+.expense-form{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.expense-form input,.expense-form select{width:100%;min-width:0;padding:11px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:var(--ink)}
+.expense-btn{border:0;border-radius:8px;padding:11px 14px;background:var(--navy);color:#fff;font-weight:900;cursor:pointer}
+.expense-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.expense-actions button{border:0;border-radius:8px;padding:9px 12px;background:#eaf2ff;color:var(--navy);font-weight:800;cursor:pointer}
+.expense-note{font-size:11px;color:#64748b;margin:9px 0 0}.delete-btn{border:0;border-radius:6px;padding:6px 9px;background:#fee2e2;color:#991b1b;font-weight:800;cursor:pointer}
+footer{background:#073b8fe8;color:white;padding:14px 3%;font-size:12px}.foot{max-width:1450px;margin:auto;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+@media(max-width:950px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.quick{grid-template-columns:repeat(2,minmax(0,1fr))}.panels{grid-template-columns:1fr}.contact{display:none}.expense-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.expense-form{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.logo{width:47px;height:47px}.tag,.gst{font-size:9px}.nav{padding:6px}.nav a,.nav button{font-size:11px;padding:10px}.welcome{padding:15px}.stats{gap:8px}.stat{padding:11px}.quick{grid-template-columns:1fr;gap:9px}.tile{padding:12px}main{padding:14px 9px 25px}.expense-form{grid-template-columns:1fr}.expense-summary{gap:8px}}
 </style></head>
 <body><div class="shade">
 <header><div class="head"><div class="brand"><img class="logo" src="nrt-transport-logo.jpg" alt="NRT Logo"><div><h1>NANDHISHWARA ROAD TRANSPORT</h1><p class="tag">ONE DAY DELIVERY SERVICE</p><p class="gst">GSTIN: 36HSYPK0996J1ZM</p></div></div><div class="contact">Autonagar, Hyderabad - 500070<br>Phone: 9885410410 | 9989581732</div></div></header>
@@ -46,6 +53,33 @@ h2.section{margin:22px 0 10px;color:var(--navy);font-size:18px}.stats{display:gr
 <a class="tile" href="operations.html"><i class="orange">D</i><span><b>Delivery</b>Manage delivery updates</span></a>
 <a class="tile" href="reports.html"><i class="purple">R</i><span><b>LR Reports</b>Search, print and export records</span></a>
 </section>
+
+<h2 class="section">Office & Transport Expenses</h2>
+<section class="expense-summary">
+ <div class="stat"><label>This Month Expenses</label><strong id="expTotal">₹0</strong><small>All expense categories</small></div>
+ <div class="stat"><label>Office Maintenance</label><strong id="expOffice">₹0</strong><small>This month</small></div>
+ <div class="stat"><label>Diesel</label><strong id="expDiesel">₹0</strong><small>This month</small></div>
+ <div class="stat"><label>Extra Expenses</label><strong id="expExtra">₹0</strong><small>This month</small></div>
+</section>
+<section class="panel">
+ <h3>Add New Expense</h3>
+ <div class="expense-form">
+  <input type="date" id="expDate" aria-label="Expense date">
+  <select id="expCategory">
+   <option value="Office Maintenance">Office Maintenance</option>
+   <option value="Diesel">Diesel</option>
+   <option value="Extra">Extra</option>
+  </select>
+  <input type="number" id="expAmount" placeholder="Amount ₹" min="0.01" step="0.01">
+  <input type="text" id="expNote" placeholder="Description / Note">
+  <button class="expense-btn" id="saveExpenseBtn" onclick="saveExpense()">+ Save Expense</button>
+ </div>
+ <p class="expense-note" id="expenseMsg">Expense records will be stored in Supabase and shared across devices for the same login.</p>
+ <h3 style="margin-top:20px">Expense History</h3>
+ <div class="tablewrap"><table style="min-width:650px"><thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th>Delete</th></tr></thead><tbody id="expenseRows"><tr><td colspan="5">Loading expenses…</td></tr></tbody></table></div>
+ <div class="expense-actions"><button onclick="exportExpenses()">Export Expenses CSV</button><button onclick="loadExpenses()">Refresh Expenses</button></div>
+</section>
+
 <section class="panels">
 <div class="panel"><h3>Recent NRT Bookings</h3><div class="tablewrap"><table><thead><tr><th>LR Number</th><th>Date</th><th>From</th><th>To</th><th>Consignee</th><th>Amount</th><th>Status</th></tr></thead><tbody id="recentRows"><tr><td colspan="7">Loading…</td></tr></tbody></table></div><a class="btn" href="reports.html">Open Full Reports</a><a class="btn" href="bilty.html">+ New Booking</a></div>
 <div class="panel"><h3>Top Routes This Month</h3><div id="routes"><div class="route">Loading route summary…</div></div><p style="font-size:11px;color:#64748b;margin-top:12px">Based on From and To locations in this month's NRT LR records.</p></div>
@@ -90,5 +124,56 @@ async function loadDashboard(){
  const map={};monthRows.forEach(x=>{const k=String(x.from_location||'—').trim()+' → '+String(x.to_location||'—').trim();map[k]=(map[k]||0)+1});
  $('routes').innerHTML=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([name,n])=>'<div class="route"><b>'+esc(name)+'</b><span>'+n+' LR'+(n===1?'':'s')+'</span></div>').join('')||'<div class="route">No bookings this month.</div>';
 }
-window.addEventListener('load',loadDashboard);
+
+// EXPENSE MANAGEMENT - Supabase table: public.nrt_expenses
+let expenseRecords=[];
+async function loadExpenses(){
+ $('expenseMsg').textContent='Loading expense records from Supabase…';
+ const {data,error}=await sb.from('nrt_expenses').select('*').order('expense_date',{ascending:false}).order('created_at',{ascending:false});
+ if(error){
+  $('expenseMsg').textContent='Expenses table is not ready or access is blocked: '+error.message+' Please run the SQL setup supplied with this HTML.';
+  $('expenseRows').innerHTML='<tr><td colspan="5">Expense records unavailable.</td></tr>';
+  return;
+ }
+ expenseRecords=data||[];
+ renderExpenses();
+ $('expenseMsg').textContent='Expenses synced with Supabase. Records are available across devices using this login.';
+}
+function renderExpenses(){
+ const month=new Date().toISOString().slice(0,7);
+ const current=expenseRecords.filter(x=>dayKey(x.expense_date).slice(0,7)===month);
+ const sum=category=>current.filter(x=>x.category===category).reduce((s,x)=>s+Number(x.amount||0),0);
+ $('expTotal').textContent=money(current.reduce((s,x)=>s+Number(x.amount||0),0));
+ $('expOffice').textContent=money(sum('Office Maintenance'));
+ $('expDiesel').textContent=money(sum('Diesel'));
+ $('expExtra').textContent=money(sum('Extra'));
+ $('expenseRows').innerHTML=expenseRecords.length?expenseRecords.map(x=>'<tr><td>'+esc(dayKey(x.expense_date))+'</td><td>'+esc(x.category)+'</td><td>'+esc(x.description||'—')+'</td><td>'+money(x.amount)+'</td><td><button class="delete-btn" onclick="deleteExpense('+Number(x.id)+')">Delete</button></td></tr>').join(''):'<tr><td colspan="5">No expenses added yet.</td></tr>';
+}
+async function saveExpense(){
+ const date=$('expDate').value,category=$('expCategory').value,amount=Number($('expAmount').value),description=$('expNote').value.trim();
+ if(!date||!Number.isFinite(amount)||amount<=0){alert('Please enter expense date and a valid amount.');return}
+ $('saveExpenseBtn').disabled=true;$('saveExpenseBtn').textContent='Saving…';
+ const {data:{user}}=await sb.auth.getUser();
+ if(!user){alert('Please login again.');location.href='bilty.html';return}
+ const {error}=await sb.from('nrt_expenses').insert([{expense_date:date,category,amount,description,created_by:user.id}]);
+ $('saveExpenseBtn').disabled=false;$('saveExpenseBtn').textContent='+ Save Expense';
+ if(error){alert('Expense save failed: '+error.message);return}
+ $('expAmount').value='';$('expNote').value='';
+ await loadExpenses();
+}
+async function deleteExpense(id){
+ if(!confirm('Delete this expense record?'))return;
+ const {error}=await sb.from('nrt_expenses').delete().eq('id',id);
+ if(error){alert('Delete failed: '+error.message);return}
+ await loadExpenses();
+}
+function exportExpenses(){
+ if(!expenseRecords.length){alert('No expense records to export.');return}
+ const cols=['expense_date','category','amount','description'];
+ const csv=[cols.join(','),...expenseRecords.map(r=>cols.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n');
+ const blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+ a.href=url;a.download='NRT_Expenses_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(url);
+}
+$('expDate').value=new Date().toISOString().slice(0,10);
+window.addEventListener('load',()=>{loadDashboard();loadExpenses()});
 </script></body></html>
