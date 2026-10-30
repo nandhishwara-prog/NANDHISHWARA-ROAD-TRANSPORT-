@@ -9,7 +9,9 @@
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;background-color:#f4f7fb;background-image:linear-gradient(rgba(247,249,255,.28),rgba(247,249,255,.34)),url('shiva-parvathi-background.jpg');background-position:center center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed;font-family:Arial,sans-serif;color:#172033}
+body{margin:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#172033;position:relative;min-height:100vh}
+body:before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(255,255,255,.30),rgba(255,255,255,.30)),url('shiva-parvathi-background.jpg');background-position:center center;background-size:cover;background-repeat:no-repeat;background-attachment:fixed;z-index:0}
+.top{position:relative;z-index:2}
 .top{background:linear-gradient(110deg,rgba(5,48,119,.97),rgba(12,77,150,.94));color:#fff;padding:12px 14px;box-shadow:0 3px 14px rgba(5,35,75,.2)}
 .topin{width:100%;max-width:none;margin:0;display:flex;justify-content:space-between;align-items:center;gap:12px}
 .top a{color:#fff;text-decoration:none;white-space:nowrap;font-weight:700}
@@ -18,8 +20,8 @@ body{margin:0;background-color:#f4f7fb;background-image:linear-gradient(rgba(247
 .brandtext{min-width:0}
 .brandtext b{display:block;font-size:18px;line-height:1.15;letter-spacing:.35px}
 .brandtext span{display:block;font-size:10px;letter-spacing:1.4px;font-weight:800;color:#ffdf55;margin-top:4px}
-.wrap{width:100%;max-width:none;margin:0;padding:12px}
-.box{background:rgba(255,255,255,.62);backdrop-filter:blur(1px);-webkit-backdrop-filter:blur(1px);border:1px solid rgba(210,222,238,.88);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 6px 20px rgba(28,52,86,.07)}
+.wrap{position:relative;z-index:1;width:100%;max-width:1180px;margin:0 auto;padding:18px 20px}
+.box{background:rgba(255,255,255,.78);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);border:1px solid rgba(210,222,238,.88);border-radius:12px;padding:18px;margin-bottom:16px;box-shadow:0 6px 20px rgba(28,52,86,.07)}
 .title{color:#1257a6}
 .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
 .party-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
@@ -47,7 +49,8 @@ th,td{padding:7px;border-bottom:1px solid #e2e7ee;text-align:left;white-space:no
 .printarea{display:none}
 
 @media(max-width:750px){
-.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.full{grid-column:1/-1}.wrap{padding:10px}
+body:before{background-position:center center;background-attachment:scroll}
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.full{grid-column:1/-1}.wrap{width:100%;max-width:1180px;margin:0 auto;padding:10px}
 .top{padding:10px}
 .nrt-logo{width:46px;height:46px}
 .brandtext b{font-size:15px}
@@ -62,7 +65,7 @@ th,td{padding:7px;border-bottom:1px solid #e2e7ee;text-align:left;white-space:no
 .brandtext b{font-size:12px;letter-spacing:0}
 .brandtext span{font-size:7px;letter-spacing:.75px;margin-top:3px}
 .top a{font-size:11px}
-.wrap{padding:8px}
+.wrap{width:100%;max-width:1180px;margin:0 auto;padding:8px}
 .box{padding:13px}
 }
 
@@ -135,20 +138,20 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
     <h3>CONSIGNOR DETAILS</h3>
     <div><label for="consignor_name">Name</label><input id="consignor_name" list="partyNames" autocomplete="off"></div>
     <div><label for="consignor_phone">Phone No</label><input id="consignor_phone" inputmode="tel"></div>
-    <div><label for="consignor_gstin">GSTIN</label><input id="consignor_gstin" placeholder="Enter Consignor GSTIN" autocomplete="off"></div>
+    <div><label for="consignor_gstin">GSTIN</label><input id="consignor_gstin" autocomplete="off"></div>
   </section>
   <section class="party-panel">
     <h3>CONSIGNEE DETAILS</h3>
     <div><label for="consignee_name">Name</label><input id="consignee_name" list="partyNames" autocomplete="off"></div>
     <div><label for="consignee_phone">Phone No</label><input id="consignee_phone" inputmode="tel"></div>
-    <div><label for="consignee_gstin">GSTIN</label><input id="consignee_gstin" placeholder="Enter Consignee GSTIN" autocomplete="off"></div>
+    <div><label for="consignee_gstin">GSTIN</label><input id="consignee_gstin" autocomplete="off"></div>
   </section>
 </div>
 
 <div><label>Quantity</label><input id="packages" type="number" min="0" step="1" value="0" placeholder="Enter quantity"></div>
 <div><label>Weight</label><input id="weight" type="number" min="0" value="0"></div>
 
-<div class="full"><label>Goods / Description</label><input id="goods"></div>
+<div><label>Goods / Description</label><input id="goods"></div>
 
 <div><label>Invoice Number</label><input id="invoice_no"></div>
 <div><label>Invoice Value</label><input id="invoice_value" type="number" min="0" value="0"></div>
@@ -156,8 +159,8 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
 <div><label>Hamali Charge</label><input id="hamali" type="number" min="0" value="0"></div>
 <div><label>LR CHARGE</label><input id="other_charges" type="number" min="0" value="20"></div>
 
-<div class="full"><label>Remarks</label><textarea id="remarks"></textarea></div>
-<div class="full"><label>E-Waybill Number</label><input id="ewaybill_no" autocomplete="off"></div>
+<div><label>Remarks</label><textarea id="remarks"></textarea></div>
+<div><label>E-Waybill Number</label><input id="ewaybill_no" autocomplete="off"></div>
 </div>
 
 <div class="actions">
