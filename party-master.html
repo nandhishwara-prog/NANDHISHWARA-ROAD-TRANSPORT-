@@ -57,7 +57,7 @@ th{background:#eaf1fc;color:#073b8c}
     <div><label for="phone">Mobile Number</label><input id="phone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div>
     <div><label for="gstin">GSTIN</label><input id="gstin" maxlength="15" autocapitalize="characters" placeholder="Enter GSTIN"></div>
     <div><label for="address">Address</label><textarea id="address" placeholder="Enter full address"></textarea></div>
-    <div><label for="toLocation">TO / Destination</label><input id="toLocation" maxlength="150" placeholder="Enter destination / TO"></div>
+     <div><label for="toLocation">TO / Destination</label><input id="toLocation" placeholder="Enter delivery destination"></div>
    </div>
    <br>
    <button class="primary" type="submit" id="saveBtn">+ Save Party</button>
@@ -66,7 +66,7 @@ th{background:#eaf1fc;color:#073b8c}
  </section>
  <section class="card">
   <h3>Party List</h3>
-  <input class="search" id="search" placeholder="Search Party Name / Mobile / GSTIN / Address">
+  <input class="search" id="search" placeholder="Search Party Name / Mobile / GSTIN / Address / TO">
   <div>
    <button class="secondary" type="button" id="activeBtn">Active Parties</button>
    <button class="secondary" type="button" id="deletedBtn">Deleted Parties</button>
@@ -174,7 +174,7 @@ form.addEventListener("submit",async event=>{
  const phone=document.getElementById("phone").value.trim();
  const gstin=document.getElementById("gstin").value.trim().toUpperCase();
  const address=document.getElementById("address").value.trim();
-  const to_location=document.getElementById("toLocation").value.trim();
+ const to_location=document.getElementById("toLocation").value.trim();
  if(!party_name){showMessage("Party name is required.",true);return;}
  if(phone&&!/^[0-9]{10}$/.test(phone)){showMessage("Enter a valid 10 digit mobile number.",true);return;}
  if(gstin&&!/^[0-9A-Z]{15}$/.test(gstin)){showMessage("GSTIN must be 15 letters/numbers.",true);return;}
@@ -210,7 +210,7 @@ rows.addEventListener("click",async event=>{
   document.getElementById("phone").value=party.phone||"";
   document.getElementById("gstin").value=party.gstin||"";
   document.getElementById("address").value=party.address||"";
-   document.getElementById("toLocation").value=party.to_location||"";
+  document.getElementById("toLocation").value=party.to_location||"";
   document.getElementById("saveBtn").textContent="Update Party";
   window.scrollTo({top:0,behavior:"smooth"});
  }else if(action==="delete"||action==="restore"){
