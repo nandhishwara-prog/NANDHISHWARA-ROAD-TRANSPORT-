@@ -57,6 +57,7 @@ th{background:#eaf1fc;color:#073b8c}
     <div><label for="phone">Mobile Number</label><input id="phone" inputmode="numeric" maxlength="10" placeholder="10 digit mobile number"></div>
     <div><label for="gstin">GSTIN</label><input id="gstin" maxlength="15" autocapitalize="characters" placeholder="Enter GSTIN"></div>
     <div><label for="address">Address</label><textarea id="address" placeholder="Enter full address"></textarea></div>
+    <div><label for="toLocation">TO / Destination</label><input id="toLocation" maxlength="150" placeholder="Enter destination / TO"></div>
    </div>
    <br>
    <button class="primary" type="submit" id="saveBtn">+ Save Party</button>
@@ -75,8 +76,8 @@ th{background:#eaf1fc;color:#073b8c}
   <p id="count">Connecting to Supabase...</p>
   <div class="tablewrap">
    <table>
-    <thead><tr><th>S.No</th><th>Party Name</th><th>Mobile</th><th>GSTIN</th><th>Address</th><th>Status</th><th>Action</th></tr></thead>
-    <tbody id="partyRows"><tr><td colspan="7">Loading...</td></tr></tbody>
+    <thead><tr><th>S.No</th><th>Party Name</th><th>Mobile</th><th>GSTIN</th><th>Address</th><th>TO / Destination</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody id="partyRows"><tr><td colspan="8">Loading...</td></tr></tbody>
    </table>
   </div>
  </section>
@@ -115,15 +116,15 @@ async function loadParties(){
   showMessage("Supabase config not found. Check supabase-config.js variable names.",true);
   return;
  }
- rows.innerHTML='<tr><td colspan="7">Loading...</td></tr>';
+ rows.innerHTML='<tr><td colspan="8">Loading...</td></tr>';
  document.getElementById("count").textContent="Loading party records...";
  try{
   const {data,error}=await db.from("nrt_parties")
-   .select("id,party_name,phone,gstin,address,is_active")
+   .select("id,party_name,phone,gstin,address,to_location,is_active")
    .order("party_name",{ascending:true})
    .range(0,4999);
   if(error){
-   rows.innerHTML='<tr><td colspan="7">Unable to load parties.</td></tr>';
+   rows.innerHTML='<tr><td colspan="8">Unable to load parties.</td></tr>';
    document.getElementById("count").textContent="Party loading failed";
    showMessage("Supabase read error: "+error.message+" (Code: "+(error.code||"none")+")",true);
    return;
@@ -147,18 +148,18 @@ function renderParties(){
  const filtered=parties.filter(p=>{
   const isActive=p.is_active!==false;
   const viewOk=currentView==="active"?isActive:!isActive;
-  const hay=[p.party_name,p.phone,p.gstin,p.address].join(" ").toLowerCase();
+  const hay=[p.party_name,p.phone,p.gstin,p.address,p.to_location].join(" ").toLowerCase();
   return viewOk&&hay.includes(query);
  });
  document.getElementById("count").textContent=
   "Total "+parties.length+" records | Showing "+filtered.length+" "+(currentView==="active"?"active":"deleted")+" parties";
  if(!filtered.length){
-  rows.innerHTML='<tr><td colspan="7">No parties found.</td></tr>';
+  rows.innerHTML='<tr><td colspan="8">No parties found.</td></tr>';
   return;
  }
  rows.innerHTML=filtered.map((p,index)=>`<tr>
   <td>${index+1}</td><td>${esc(p.party_name)}</td><td>${esc(p.phone)}</td>
-  <td>${esc(p.gstin)}</td><td>${esc(p.address)}</td>
+  <td>${esc(p.gstin)}</td><td>${esc(p.address)}</td><td>${esc(p.to_location)}</td>
   <td class="status">${p.is_active===false?"Deleted":"Active"}</td>
   <td>${p.is_active===false
    ?`<button class="success" type="button" data-action="restore" data-id="${esc(p.id)}">Restore</button>`
@@ -173,12 +174,13 @@ form.addEventListener("submit",async event=>{
  const phone=document.getElementById("phone").value.trim();
  const gstin=document.getElementById("gstin").value.trim().toUpperCase();
  const address=document.getElementById("address").value.trim();
+  const to_location=document.getElementById("toLocation").value.trim();
  if(!party_name){showMessage("Party name is required.",true);return;}
  if(phone&&!/^[0-9]{10}$/.test(phone)){showMessage("Enter a valid 10 digit mobile number.",true);return;}
  if(gstin&&!/^[0-9A-Z]{15}$/.test(gstin)){showMessage("GSTIN must be 15 letters/numbers.",true);return;}
  const duplicate=parties.find(p=>p.is_active!==false&&p.party_name.toLowerCase()===party_name.toLowerCase()&&String(p.id)!==String(id));
  if(duplicate&&!confirm("A party with this name already exists. Save anyway?"))return;
- const payload={party_name,phone:phone||null,gstin:gstin||null,address:address||null};
+ const payload={party_name,phone:phone||null,gstin:gstin||null,address:address||null,to_location:to_location||null};
  const button=document.getElementById("saveBtn");
  button.disabled=true;
  try{
@@ -208,6 +210,7 @@ rows.addEventListener("click",async event=>{
   document.getElementById("phone").value=party.phone||"";
   document.getElementById("gstin").value=party.gstin||"";
   document.getElementById("address").value=party.address||"";
+   document.getElementById("toLocation").value=party.to_location||"";
   document.getElementById("saveBtn").textContent="Update Party";
   window.scrollTo({top:0,behavior:"smooth"});
  }else if(action==="delete"||action==="restore"){
@@ -220,7 +223,7 @@ rows.addEventListener("click",async event=>{
 });
 function exportCSV(){
  const list=parties.filter(p=>currentView==="active"?p.is_active!==false:p.is_active===false);
- const data=[["Party Name","Mobile","GSTIN","Address","Status"],...list.map(p=>[p.party_name,p.phone,p.gstin,p.address,p.is_active===false?"Deleted":"Active"])];
+ const data=[["Party Name","Mobile","GSTIN","Address","TO / Destination","Status"],...list.map(p=>[p.party_name,p.phone,p.gstin,p.address,p.to_location,p.is_active===false?"Deleted":"Active"])];
  const csv=data.map(row=>row.map(value=>'"'+String(value??"").replace(/"/g,'""')+'"').join(",")).join("\r\n");
  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
  const url=URL.createObjectURL(blob);
