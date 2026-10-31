@@ -321,24 +321,35 @@ status:(currentLR && editingId && currentLR.status ? currentLR.status : 'Booked'
 }
 }
 
-async function savePartyDestination(partyName, destination){
+async function savePartyMasterEntry(partyName, phone, gstin, destination=''){
   const name=String(partyName||'').trim();
-  const to=String(destination||'').trim();
-  if(!name || !to) return;
-  const {data,error}=await sb.from('nrt_parties')
-    .select('id,party_name')
-    .ilike('party_name',name)
-    .limit(1);
-  if(error) throw error;
-  if(data && data.length){
-    const {error:updateError}=await sb.from('nrt_parties')
-      .update({to_location:to})
-      .eq('id',data[0].id);
-    if(updateError) throw updateError;
+  if(!name) return;
+
+  // Find an existing party by normalized name so we do not create duplicates.
+  const {data:allParties,error:findError}=await sb.from('nrt_parties')
+    .select('id,party_name,phone,gstin,to_location,is_active')
+    .range(0,1999);
+  if(findError) throw findError;
+
+  const existing=(allParties||[]).find(p=>
+    String(p.party_name||'').trim().toLowerCase()===name.toLowerCase()
+  );
+
+  const updateData={
+    party_name:name,
+    phone:String(phone||'').trim() || (existing?.phone||null),
+    gstin:String(gstin||'').trim().toUpperCase() || (existing?.gstin||null),
+    is_active:true
+  };
+  if(destination) updateData.to_location=String(destination).trim();
+  else if(existing?.to_location) updateData.to_location=existing.to_location;
+
+  if(existing){
+    const {error}=await sb.from('nrt_parties').update(updateData).eq('id',existing.id);
+    if(error) throw error;
   }else{
-    const {error:insertError}=await sb.from('nrt_parties')
-      .insert({party_name:name,to_location:to,is_active:true});
-    if(insertError) throw insertError;
+    const {error}=await sb.from('nrt_parties').insert(updateData);
+    if(error) throw error;
   }
 }
 
@@ -351,12 +362,15 @@ sb.from('lrs').insert(r);
 let{error}=await q;
 if(error){msg(error.message);return}
 
-msg(`${r.lr_no} saved successfully.`);
+let partySaveMessage='';
 try{
-  await savePartyDestination(r.consignee_name,r.to_location);
+  await savePartyMasterEntry(r.consignor_name,r.consignor_phone,r.consignor_gstin,'');
+  await savePartyMasterEntry(r.consignee_name,r.consignee_phone,r.consignee_gstin,r.to_location);
+  partySaveMessage=' Consignor and Consignee saved to Party Master.';
 }catch(partyError){
-  msg(`${r.lr_no} saved, but Party Master destination update failed: ${partyError.message}`);
+  partySaveMessage=' WARNING: LR saved, but Party Master save failed: '+partyError.message;
 }
+msg(`${r.lr_no} saved successfully.${partySaveMessage}`);
 try{
   const savedGST=JSON.parse(localStorage.getItem('nrt_party_gstins')||'{}');
   if(r.consignor_name && r.consignor_gstin)savedGST[r.consignor_name.trim()]=r.consignor_gstin.trim().toUpperCase();
