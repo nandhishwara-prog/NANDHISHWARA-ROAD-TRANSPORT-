@@ -133,7 +133,7 @@ html,body{width:210mm!important;height:297mm!important;margin:0!important;paddin
 </div>
 
 <div><label>From</label><input id="from_location" value="HYDERABAD"></div>
-<div><label>To</label><input id="to_location"></div>
+<div><label>To</label><input id="to_location" autocomplete="off"></div>
 
 <div class="full party-pair">
   <section class="party-panel">
@@ -256,7 +256,7 @@ loadParties()
 async function loadParties(){
   // NRT Party Master is the master source for active customer details.
   const {data,error}=await sb.from('nrt_parties')
-    .select('id,party_name,phone,gstin,address,is_active')
+    .select('id,party_name,phone,gstin,address,to_location,is_active')
     .eq('is_active',true)
     .order('party_name',{ascending:true});
 
@@ -283,6 +283,10 @@ async function loadParties(){
     if(!p) return; // Do not erase manually entered details for non-master names.
     $(prefix+'_phone').value=p.phone||'';
     $(prefix+'_gstin').value=(p.gstin||'').toUpperCase();
+    // Destination (TO) belongs to the consignee party.
+    if(prefix==='consignee' && p.to_location){
+      $('to_location').value=p.to_location;
+    }
   }
 
   ['consignor','consignee'].forEach(prefix=>{
@@ -319,6 +323,26 @@ status:(currentLR && editingId && currentLR.status ? currentLR.status : 'Booked'
 }
 }
 
+async function saveConsigneeToPartyMaster(name,phone,gstin,toLocation){
+ const partyName=String(name||'').trim();
+ if(!partyName)return;
+ const {data,error}=await sb.from('nrt_parties')
+   .select('id,party_name,phone,gstin,to_location')
+   .range(0,4999);
+ if(error)throw error;
+ const existing=(data||[]).find(p=>String(p.party_name||'').trim().toLowerCase()===partyName.toLowerCase());
+ const payload={
+   party_name:partyName,
+   phone:String(phone||'').trim() || (existing&&existing.phone) || null,
+   gstin:String(gstin||'').trim().toUpperCase() || (existing&&existing.gstin) || null,
+   to_location:String(toLocation||'').trim() || (existing&&existing.to_location) || null
+ };
+ const result=existing
+   ?await sb.from('nrt_parties').update(payload).eq('id',existing.id)
+   :await sb.from('nrt_parties').insert({...payload,is_active:true});
+ if(result.error)throw result.error;
+}
+
 async function saveLR(){
 let r=row();
 let q=editingId?
@@ -329,6 +353,11 @@ let{error}=await q;
 if(error){msg(error.message);return}
 
 msg(`${r.lr_no} saved successfully.`);
+try{
+   await saveConsigneeToPartyMaster(r.consignee_name,r.consignee_phone,r.consignee_gstin,r.to_location);
+ }catch(partyError){
+   msg(`${r.lr_no} saved, but Consignee Party Master update failed: ${partyError.message}`);
+ }
 try{
   const savedGST=JSON.parse(localStorage.getItem('nrt_party_gstins')||'{}');
   if(r.consignor_name && r.consignor_gstin)savedGST[r.consignor_name.trim()]=r.consignor_gstin.trim().toUpperCase();
