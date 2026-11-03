@@ -49,7 +49,7 @@ button.secondary{background:#e8eef8;color:#073b8f}button.danger{background:#b423
 <div class="field"><label>Selected LR Date Range</label><input id="lrRangeInfo" readonly value="Select LR date range"></div>
 <div class="field wide"><label>Trip Notes</label><textarea id="notes" placeholder="Loading details, driver instructions, etc."></textarea></div>
 </div>
-<div class="actions"><button id="saveTripBtn" onclick="saveTrip()">Create Trip Memo</button><button type="button" class="secondary" id="cancelEditBtn" style="display:none" onclick="cancelTripEdit()">Cancel Edit</button><button class="secondary" onclick="loadData()">Refresh LR List</button></div>
+<div class="actions"><button onclick="saveTrip()">Create Trip Memo</button><button class="secondary" onclick="loadData()">Refresh LR List</button></div>
 <div class="msg" id="formMsg">Choose LR From Date and To Date, then select LRs for this trip.</div>
 </section>
 <section class="panel">
@@ -67,7 +67,7 @@ button.secondary{background:#e8eef8;color:#073b8f}button.danger{background:#b423
 <script>
 const sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:false}});
 const $=id=>document.getElementById(id);
-let currentUser=null, lrRecords=[], assignedLRs=new Set(), trips=[], selectedLRNos=new Set(), editingTripId=null;
+let currentUser=null, lrRecords=[], assignedLRs=new Set(), trips=[], selectedLRNos=new Set();
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 function dateText(v){if(!v)return '—';const d=new Date(v);return isNaN(d)?esc(v):d.toLocaleString('en-IN',{dateStyle:'medium',timeStyle:'short'})}
 function localDateValue(){const d=new Date();d.setMinutes(d.getMinutes()-d.getTimezoneOffset());return d.toISOString().slice(0,10)}
@@ -87,7 +87,7 @@ async function init(){
 async function loadData(){
  $('lrMsg').textContent='Loading existing LR records…';$('tripMsg').textContent='';
  const [lrRes,tripRes,linkRes]=await Promise.all([
-  sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,status,freight,hamali,other_charges').order('lr_date',{ascending:false}).limit(1000),
+  sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,status,freight_type,freight,hamali,other_charges').order('lr_date',{ascending:false}).limit(1000),
   sb.from('nrt_trips').select('*').order('created_at',{ascending:false}).limit(500),
   sb.from('nrt_trip_lrs').select('lr_no,trip_id')
  ]);
@@ -103,7 +103,7 @@ function renderLRs(){
  const q=$('lrSearch').value.trim().toLowerCase();
  if(!dateRangeValid()){$('lrList').innerHTML='<div class="muted">Please select a valid LR From Date and To Date.</div>';updateSelectedLRCount();return}
  const fromDate=$('lrDateFrom').value,toDate=$('lrDateTo').value;
- const available=lrRecords.filter(x=>{const d=lrDateOf(x.lr_date);return d>=fromDate&&d<=toDate&&(!assignedLRs.has(String(x.lr_no))||selectedLRNos.has(String(x.lr_no)))&&[x.lr_no,x.consignee_name,x.from_location,x.to_location].join(' ').toLowerCase().includes(q)});
+ const available=lrRecords.filter(x=>{const d=lrDateOf(x.lr_date);return d>=fromDate&&d<=toDate&&!assignedLRs.has(String(x.lr_no))&&[x.lr_no,x.consignee_name,x.from_location,x.to_location].join(' ').toLowerCase().includes(q)});
  $('lrList').innerHTML=available.map(x=>`<label class="lr"><input type="checkbox" name="tripLR" value="${esc(x.lr_no)}" ${selectedLRNos.has(String(x.lr_no))?'checked':''} onchange="toggleLRSelection(this)"><span><b>${esc(x.lr_no)}</b><br>${esc(x.from_location||'—')} → ${esc(x.to_location||'—')}<br><span class="muted">${esc(x.consignee_name||'')} · ${esc(x.packages??'')} pkgs · ${esc(x.lr_date||'')}</span></span></label>`).join('')||'<div class="muted">No unassigned LRs match this date range/search.</div>';
  updateSelectedLRCount();
 }
@@ -127,36 +127,6 @@ function clearSelectedLRs(){
  document.querySelectorAll('input[name="tripLR"]').forEach(box=>box.checked=false);
  updateSelectedLRCount();
 }
-function setTripFormMode(editing){
- $('saveTripBtn').textContent=editing?'Save Changes':'Create Trip Memo';
- $('cancelEditBtn').style.display=editing?'inline-block':'none';
- const heading=document.querySelector('.panel h3');
- if(heading)heading.textContent=editing?'Edit Trip Memo':'Create New Trip Memo';
-}
-async function editTrip(id){
- const trip=trips.find(t=>Number(t.id)===Number(id));
- if(!trip){alert('Trip record not found. Refresh Trips and try again.');return}
- $('formMsg').textContent='Loading Trip details…';
- const {data:links,error}=await sb.from('nrt_trip_lrs').select('lr_no').eq('trip_id',id);
- if(error){$('formMsg').textContent='Could not load attached LRs: '+error.message;return}
- editingTripId=Number(id);
- $('vehicleType').value=trip.vehicle_type||'Own';$('vehicleNo').value=trip.vehicle_no||'';
- $('driverName').value=trip.driver_name||'';$('driverPhone').value=trip.driver_phone||'';
- $('fromLocation').value=trip.from_location||'';$('toLocation').value=trip.to_location||'';
- if(trip.departure_at){const d=new Date(trip.departure_at);d.setMinutes(d.getMinutes()-d.getTimezoneOffset());$('departureAt').value=d.toISOString().slice(0,16)}else $('departureAt').value='';
- $('startingKm').value=trip.starting_km??'';$('hireAmount').value=trip.hire_amount??'';
- $('lrDateFrom').value=lrDateOf(trip.lr_date_from);$('lrDateTo').value=lrDateOf(trip.lr_date_to);
- $('notes').value=trip.notes||'';selectedLRNos=new Set((links||[]).map(x=>String(x.lr_no)));
- setTripFormMode(true);dateRangeValid();renderLRs();
- $('formMsg').textContent='Editing '+trip.trip_no+'. Attached LRs are selected. Make changes and press Save Changes.';
- window.scrollTo({top:0,behavior:'smooth'});
-}
-function cancelTripEdit(){
- editingTripId=null;selectedLRNos.clear();
- ['vehicleNo','driverName','driverPhone','fromLocation','toLocation','startingKm','hireAmount','notes'].forEach(id=>$(id).value='');
- setTripFormMode(false);setDefaultDate();renderLRs();
- $('formMsg').textContent='Edit cancelled. You can create a new Trip Memo.';
-}
 async function saveTrip(){
  const selected=[...selectedLRNos];
  const vehicleType=$('vehicleType').value,vehicleNo=$('vehicleNo').value.trim().toUpperCase(),driverName=$('driverName').value.trim();
@@ -167,38 +137,18 @@ async function saveTrip(){
  if(!selected.length){alert('Please select at least one LR within the selected date range.');return}
  const selectedRecords=lrRecords.filter(x=>selected.includes(String(x.lr_no)));
  if(selectedRecords.some(x=>{const d=lrDateOf(x.lr_date);return d<lrFrom||d>lrTo})){alert('Selected LR date is outside the selected range. Refresh and select again.');return}
- const row={vehicle_type:vehicleType,vehicle_no:vehicleNo,driver_name:driverName,driver_phone:$('driverPhone').value.trim()||null,from_location:from,to_location:to,departure_at:new Date(departure).toISOString(),starting_km:$('startingKm').value===''?null:Number($('startingKm').value),hire_amount:$('hireAmount').value===''?0:Number($('hireAmount').value),lr_date_from:lrFrom,lr_date_to:lrTo,notes:$('notes').value.trim()||null};
- if(editingTripId!==null){
-  const id=editingTripId,oldTrip=trips.find(t=>Number(t.id)===Number(id));
-  const {data:oldLinks,error:oldErr}=await sb.from('nrt_trip_lrs').select('lr_no').eq('trip_id',id);
-  if(oldErr){$('formMsg').textContent='Could not read current LR links: '+oldErr.message;return}
-  $('formMsg').textContent='Saving Trip changes…';
-  const {error:updateErr}=await sb.from('nrt_trips').update(row).eq('id',id).eq('created_by',currentUser.id);
-  if(updateErr){$('formMsg').textContent='Trip update failed: '+updateErr.message;return}
-  const {error:delErr}=await sb.from('nrt_trip_lrs').delete().eq('trip_id',id);
-  if(delErr){if(oldTrip)await sb.from('nrt_trips').update(oldTrip).eq('id',id).eq('created_by',currentUser.id);$('formMsg').textContent='Could not replace LR links: '+delErr.message;return}
-  const newLinks=selected.map(lr_no=>({trip_id:id,lr_no,created_by:currentUser.id}));
-  const {error:linkErr}=newLinks.length?await sb.from('nrt_trip_lrs').insert(newLinks):{error:null};
-  if(linkErr){
-   if(oldLinks?.length)await sb.from('nrt_trip_lrs').insert(oldLinks.map(x=>({trip_id:id,lr_no:x.lr_no,created_by:currentUser.id})));
-   if(oldTrip)await sb.from('nrt_trips').update(oldTrip).eq('id',id).eq('created_by',currentUser.id);
-   $('formMsg').textContent='LR update failed; previous trip details and LR links were restored where permitted: '+linkErr.message;return;
-  }
-  const oldNo=oldTrip?.trip_no||'Trip';editingTripId=null;selectedLRNos.clear();
-  ['vehicleNo','driverName','driverPhone','fromLocation','toLocation','startingKm','hireAmount','notes'].forEach(id=>$(id).value='');
-  setTripFormMode(false);setDefaultDate();
-  $('formMsg').textContent=oldNo+' updated successfully. Trip number and original LR booking records were preserved.';
-  await loadData();return;
- }
- const memoDate=localDateValue(),tripPrefix='NRT/'+memoDate.slice(0,7).replace('-','');
- const {data:existingTrips,error:seqError}=await sb.from('nrt_trips').select('trip_no').like('trip_no',tripPrefix+'%');
- if(seqError){$('formMsg').textContent='Could not generate Trip Number: '+seqError.message;return}
- const nextSerial=(existingTrips||[]).reduce((max,x)=>{const n=Number(String(x.trip_no||'').slice(tripPrefix.length));return Number.isFinite(n)?Math.max(max,n):max},0)+1;
- const tripNo=tripPrefix+String(nextSerial).padStart(2,'0');
- const insertRow={...row,trip_no:tripNo,status:'Loaded',created_by:currentUser.id};
+ // Open a blank tab immediately from the button click to avoid popup blocking after async save.
  const printWindow=window.open('about:blank','_blank');
  $('formMsg').textContent='Saving trip memo…';
- const {data,error}=await sb.from('nrt_trips').insert(insertRow).select('id,trip_no').single();
+ const memoDate=localDateValue();
+ const memoDateKey=memoDate.replaceAll('-','');
+ const tripPrefix='NRT/'+memoDateKey+'/';
+ const {data:existingTrips,error:seqError}=await sb.from('nrt_trips').select('trip_no').like('trip_no',tripPrefix+'%');
+ if(seqError){if(printWindow)printWindow.close();$('formMsg').textContent='Could not generate Trip Number: '+seqError.message;return}
+ const nextSerial=(existingTrips||[]).reduce((max,x)=>{const n=Number(String(x.trip_no||'').slice(tripPrefix.length));return Number.isFinite(n)?Math.max(max,n):max},0)+1;
+ const tripNo=tripPrefix+String(nextSerial).padStart(2,'0');
+ const row={trip_no:tripNo,vehicle_type:vehicleType,vehicle_no:vehicleNo,driver_name:driverName,driver_phone:$('driverPhone').value.trim()||null,from_location:from,to_location:to,departure_at:new Date(departure).toISOString(),starting_km:$('startingKm').value===''?null:Number($('startingKm').value),hire_amount:$('hireAmount').value===''?0:Number($('hireAmount').value),lr_date_from:lrFrom,lr_date_to:lrTo,notes:$('notes').value.trim()||null,status:'Loaded',created_by:currentUser.id};
+ const {data,error}=await sb.from('nrt_trips').insert(row).select('id,trip_no').single();
  if(error){if(printWindow)printWindow.close();$('formMsg').textContent='Trip save failed: '+error.message;return}
  const links=selected.map(lr_no=>({trip_id:data.id,lr_no,created_by:currentUser.id}));
  const {error:linkError}=await sb.from('nrt_trip_lrs').insert(links);
@@ -212,11 +162,11 @@ async function saveTrip(){
  else alert('Trip saved. Popup was blocked. Use the Print button in Trip Memo Register.');
  ['vehicleNo','driverName','driverPhone','fromLocation','toLocation','startingKm','hireAmount','notes'].forEach(id=>$(id).value='');
  selectedLRNos.clear();
- setTripFormMode(false);setDefaultDate();await loadData();
+ setDefaultDate();await loadData();
 }
 function renderTrips(){
  $('tripRows').innerHTML=trips.map(t=>{
-  const lrCount='';return `<tr><td><b>${esc(t.trip_no)}</b></td><td>${dateText(t.departure_at)}</td><td>${esc(t.vehicle_no)}<br><span class="muted">${esc(t.vehicle_type)}</span></td><td>${esc(t.driver_name)}<br><span class="muted">${esc(t.driver_phone||'')}</span></td><td>${esc(t.from_location)} → ${esc(t.to_location)}</td><td><button class="secondary" onclick="showTripLRs(${Number(t.id)})">View LRs</button></td><td><select id="status-${Number(t.id)}"><option ${t.status==='Loaded'?'selected':''}>Loaded</option><option ${t.status==='Planned'?'selected':''}>Planned</option><option ${t.status==='Dispatched'?'selected':''}>Dispatched</option><option ${t.status==='Arrived'?'selected':''}>Arrived</option><option ${t.status==='Closed'?'selected':''}>Closed</option></select></td><td><div class="actions" style="margin:0"><button class="secondary" onclick="editTrip(${Number(t.id)})">Edit</button><button onclick="updateStatus(${Number(t.id)})">Update</button><button class="secondary" onclick="printTrip(${Number(t.id)})">Print</button><button class="danger" onclick="deleteTrip(${Number(t.id)})">Delete</button></div></td></tr>`
+  const lrCount='';return `<tr><td><b>${esc(t.trip_no)}</b></td><td>${dateText(t.departure_at)}</td><td>${esc(t.vehicle_no)}<br><span class="muted">${esc(t.vehicle_type)}</span></td><td>${esc(t.driver_name)}<br><span class="muted">${esc(t.driver_phone||'')}</span></td><td>${esc(t.from_location)} → ${esc(t.to_location)}</td><td><button class="secondary" onclick="showTripLRs(${Number(t.id)})">View LRs</button></td><td><select id="status-${Number(t.id)}"><option ${t.status==='Loaded'?'selected':''}>Loaded</option><option ${t.status==='Planned'?'selected':''}>Planned</option><option ${t.status==='Dispatched'?'selected':''}>Dispatched</option><option ${t.status==='Arrived'?'selected':''}>Arrived</option><option ${t.status==='Closed'?'selected':''}>Closed</option></select></td><td><div class="actions" style="margin:0"><button onclick="updateStatus(${Number(t.id)})">Update</button><button class="secondary" onclick="printTrip(${Number(t.id)})">Print</button><button class="danger" onclick="deleteTrip(${Number(t.id)})">Delete</button></div></td></tr>`
  }).join('')||'<tr><td colspan="8">No trip memos created yet.</td></tr>';
 }
 function printDocHtml(trip,lrRows){
@@ -224,7 +174,9 @@ function printDocHtml(trip,lrRows){
  const phone='9885410410 | 9989581732';
  const gst='36HSYPK0996J1ZM';
  const money=v=>'₹'+(Number(v)||0).toLocaleString('en-IN',{minimumFractionDigits:2,maximumFractionDigits:2});
- const lrAmount=x=>(Number(x.freight)||0)+(Number(x.hamali)||0)+(Number(x.other_charges)||0);
+ // Trip Sheet: PAID and ON ACCOUNT LR amounts must not be displayed or included in totals.
+ const isExcludedFromTripAmount=x=>['PAID','ON ACCOUNT'].includes(String(x.freight_type||'').trim().toUpperCase());
+ const lrAmount=x=>isExcludedFromTripAmount(x)?0:(Number(x.freight)||0)+(Number(x.hamali)||0)+(Number(x.other_charges)||0);
  const rows=lrRows.map((x,i)=>`<tr><td>${i+1}</td><td>${esc(x.lr_no)}</td><td>${esc(formatDateDMY(x.lr_date))}</td><td>${esc(x.to_location||'—')}</td><td>${esc(x.consignee_name||'—')}</td><td>${esc(x.packages??'—')}</td><td class="amount">${money(lrAmount(x))}</td></tr>`).join('');
  const totalPackages=lrRows.reduce((n,x)=>n+(Number(x.packages)||0),0);
  const totalLRAmount=lrRows.reduce((n,x)=>n+lrAmount(x),0);
@@ -271,7 +223,7 @@ async function fillTripPrint(win,id,autoPrint){
  ]);
  if(tripRes.error||linkRes.error){win.document.body.innerHTML='<p>Could not load Trip Memo: '+esc((tripRes.error||linkRes.error).message)+'</p>';return}
  const lrNos=(linkRes.data||[]).map(x=>x.lr_no);
- const lrRes=lrNos.length?await sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,freight,hamali,other_charges').in('lr_no',lrNos):{data:[],error:null};
+ const lrRes=lrNos.length?await sb.from('lrs').select('lr_no,lr_date,from_location,to_location,consignee_name,packages,freight_type,freight,hamali,other_charges').in('lr_no',lrNos):{data:[],error:null};
  if(lrRes.error){win.document.body.innerHTML='<p>Could not load LR details: '+esc(lrRes.error.message)+'</p>';return}
  win.document.open();win.document.write(printDocHtml(tripRes.data,lrRes.data||[]));win.document.close();
 }
